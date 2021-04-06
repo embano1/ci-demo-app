@@ -1,0 +1,103 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: ["main", "master"]
+
+  pull_request:
+    branches: ["main", "master", "release-*"]
+
+jobs:
+  ko-resolve:
+    name: e2e tests
+    strategy:
+      matrix:
+        go-version: ["1.16"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    env:
+      KO_DOCKER_REPO: kind.local
+      KIND_CLUSTER_NAME: e2e
+      GOFLAGS: "-mod=vendor"
+      NAMESPACE: "demo-app"
+    timeout-minutes: 10
+
+    steps:
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+      id: go
+    
+    - name: Install ko
+      env:
+        KO_VERSION: 0.8.1
+      run: |
+        curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
+        chmod +x ./ko
+        sudo mv ko /usr/local/bin
+
+    - name: Check out Code onto GOPATH
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
+    - name: Setup KinD Cluster
+      env:
+        KIND_VERSION: v0.10.0
+      run: |
+        set -x
+
+        curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
+        chmod +x ./kind
+        sudo mv kind /usr/local/bin
+
+        # Create named cluster
+        kind create cluster --name ${KIND_CLUSTER_NAME}
+
+    - name: Setup Knative Serving
+      env:
+        KNATIVE_VERSION: v0.22.0
+      run: |
+        echo "::group::Serving CRDs"
+        kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
+        kubectl wait --timeout=20s --for=condition=Established crd/services.serving.knative.dev
+        echo "::endgroup::"
+
+        echo "::group::Serving Core"
+        kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-core.yaml
+        kubectl -n knative-serving wait --timeout=2m --for=condition=Available deploy/webhook
+        echo "::endgroup::"
+
+        echo "::group::Ingress"
+        kubectl apply -f https://github.com/knative/net-kourier/releases/download/${KNATIVE_VERSION}/kourier.yaml
+        kubectl -n kourier-system wait --timeout=2m --for=condition=Available deploy/3scale-kourier-gateway
+        kubectl patch configmap/config-network \
+        --namespace knative-serving \
+        --type merge \
+        --patch '{"data":{"ingress.class":"kourier.ingress.networking.knative.dev"}}'
+        echo "::endgroup::"
+
+    - name: "Upload Test Images"
+      run: ./test/upload_test_images.sh
+
+    - name: "Deploy Server App"
+      run: |
+        kubectl create ns ${NAMESPACE}
+        ko resolve -BR -f config/ | kubectl -n ${NAMESPACE} apply -f -
+        kubectl -n ${NAMESPACE} wait --timeout=2m --for=condition=Ready ksvc/demo-app
+
+    - name: "Run E2E Tests"
+      env:
+        TESTFLAGS: "-timeout 1m -v -tags=e2e -count 1 -race"
+
+      run: |
+        go test ${TESTFLAGS} ./test/...
+
+    - name: "Debug"
+      if: ${{ always() }}
+      run: |
+        kubectl get pods --all-namespaces
+        kubectl -n ${NAMESPACE} describe pods
+        kubectl -n ${NAMESPACE} get events
+        

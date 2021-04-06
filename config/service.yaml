@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: demo-app
+spec:
+  template:
+    spec:
+      containers:
+        - image: ko://github.com/embano1/ci-demo-app
+          readinessProbe:
+            httpGet:
+              path: /healthz

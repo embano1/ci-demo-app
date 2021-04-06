@@ -1,0 +1,89 @@
+name: Build
+
+on:
+  push:
+    branches: ["main", "master"]
+
+  pull_request:
+    branches: ["main", "master", "release-*"]
+
+jobs:
+  artifacts:
+    name: Create Artifacts (no push/upload)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          # no push
+          args: release --rm-dist --snapshot 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+
+      # make artifacts available for inspection
+      - name: Archive goreleaser artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist/demo-app*x86_64*.tar.gz
+            dist/checksums.txt
+          retention-days: 1
+
+  release:
+    needs: artifacts
+    name: Build ko Artifact and Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: on
+      KO_DOCKER_REPO: docker.io/embano1
+
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Set up ko
+        env:
+          KO_VERSION: 0.8.1
+        run: |
+          curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
+          chmod +x ./ko
+          sudo mv ko /usr/local/bin
+
+      - name: Check out code onto GOPATH
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          path: ./src/github.com/${{ github.repository }}
+
+      - name: Build Images (amd64 only, no push)
+        working-directory: ./src/github.com/${{ github.repository }}
+        # build vars issue: https://github.com/google/ko/issues/316
+        run: |
+          export SHA8=$(echo -n $GITHUB_SHA | cut -c -8)
+          GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --tags $SHA8 --push=false -BRf config/ > release.yaml
+
+      - name: Archive ko artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: |
+            ./src/github.com/${{ github.repository }}/release.yaml
+          retention-days: 1

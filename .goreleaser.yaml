@@ -1,0 +1,75 @@
+---
+before:
+  hooks:
+  - go mod vendor
+
+builds:
+  - id: demo-app
+    goos: &goos-defs
+      - linux
+      - darwin
+      - windows
+    goarch: &goarch-defs
+      - amd64
+      - arm
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - "-mod=vendor"
+    binary: demo-app
+    ldflags:
+      - "-X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}"
+
+archives:
+  - id: demo-app
+    builds:
+      - demo-app
+    name_template: "demo-app_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    replacements: &replacements
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - Merge pull request
+      - Merge branch
+
+brews:
+  - name: demo-app
+    ids:
+      - demo-app
+    tap:
+      owner: embano1
+      name: ci-demo-app-homebrew-tap
+      # needs repo permissions on target, eg using PAT
+      token: "{{ .Env.GORELEASER_TOKEN }}"
+    commit_author:
+      name: Michael Gasch
+      email: michael@mgasch.com
+    folder: Formula
+    homepage: "https://github.com/embano1/ci-demo-app/blob/master/README.md"
+    description: "Go CI Demo App showcasing goreleaser, Github Actions and ko."
+    test: |
+      system "#{bin}/demo-app version"
+    install: |
+      bin.install "demo-app"
+    skip_upload: false
+
+# unused because we use ko for this job
+# dockers:
