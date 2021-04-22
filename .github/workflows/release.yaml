@@ -11,6 +11,8 @@ jobs:
     name: Create Artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      CHANGELOG_FILE: "RELEASE_CHANGELOG.md"
     
     steps:
       - name: Checkout
@@ -23,11 +25,19 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.16
+
+      - name: Install git-chglog
+        run: |
+          # build from vendor
+          go build github.com/git-chglog/git-chglog/cmd/git-chglog
+
+          # generate CHANGELOG for this Github release tag only
+          ./git-chglog -o ${CHANGELOG_FILE} $(basename "${{ github.ref }}" )
           
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          args: release --rm-dist
+          args: release --rm-dist --release-notes ${CHANGELOG_FILE}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
@@ -43,6 +53,9 @@ jobs:
       KO_DOCKER_REPO: docker.io/embano1
 
     steps:
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -55,9 +68,6 @@ jobs:
           curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
           chmod +x ./ko
           sudo mv ko /usr/local/bin
-
-      - name: Docker Login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2

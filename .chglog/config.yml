@@ -1,0 +1,29 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/embano1/ci-demo-app
+options:
+  commits:
+    filters:
+      Type:
+        - fix
+        - feat
+        - chore
+  commit_groups:
+    title_maps:
+      fix: Bug Fix
+      feat: New Features
+      chore: Chore
+  header:
+    pattern: "^(\\w*)\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Subject
+  refs:
+    actions:
+      - Closes
+      - Fixes
+  notes:
+    keywords:
+      - "BREAKING"
