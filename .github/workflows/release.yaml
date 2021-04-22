@@ -11,8 +11,6 @@ jobs:
     name: Create Artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      CHANGELOG_FILE: "RELEASE_CHANGELOG.md"
     
     steps:
       - name: Checkout
@@ -29,15 +27,15 @@ jobs:
       - name: Install git-chglog
         run: |
           # build from vendor
-          go build github.com/git-chglog/git-chglog/cmd/git-chglog
+          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
           # generate CHANGELOG for this Github release tag only
-          ./git-chglog -o ${CHANGELOG_FILE} $(basename "${{ github.ref }}" )
+          ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
           
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
-          args: release --rm-dist --release-notes ${CHANGELOG_FILE}
+          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}

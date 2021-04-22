@@ -12,9 +12,9 @@ options:
         - chore
   commit_groups:
     title_maps:
-      fix: Bug Fix
-      feat: New Features
-      chore: Chore
+      fix: 🐞 Fix
+      feat: 💫 Features
+      chore: 🧹 Chore
   header:
     pattern: "^(\\w*)\\:\\s(.*)$"
     pattern_maps:
