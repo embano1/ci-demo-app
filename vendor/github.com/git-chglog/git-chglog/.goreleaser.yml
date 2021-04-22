@@ -1,0 +1,55 @@
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: git-chglog
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+
+builds:
+  - dir: cmd/git-chglog
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: desc
+  filters:
+    exclude:
+      - "^Merge"
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+dockers:
+  - image_templates:
+      - "quay.io/git-chglog/git-chglog:{{ .RawVersion }}"
+      - "quay.io/git-chglog/git-chglog:latest"
+
+brews:
+  - tap:
+      owner: git-chglog
+      name: homebrew-git-chglog
+    homepage: "https://godoc.org/github.com/git-chglog/git-chglog"
+    description: "CHANGELOG generator implemented in Go (Golang)."
+    test: |
+      system "#{bin}/git-chglog --help"
+    install: |
+      bin.install "git-chglog"

@@ -21,8 +21,8 @@ dist
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# Tools
-git-chglog
+# ignore tools binaries
+/git-chglog
 
 # configurations
 release.yaml

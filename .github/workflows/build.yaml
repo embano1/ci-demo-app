@@ -12,23 +12,32 @@ jobs:
     name: Create Artifacts (no push/upload)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.16
 
+      - name: Install git-chglog
+        run: |
+          # build from vendor
+          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+
+          # generate CHANGELOG for the current tag
+          TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))
+          ./git-chglog -o RELEASE_CHANGELOG.md ${TAG}
+
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           # no push
-          args: release --rm-dist --snapshot 
+          args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
@@ -41,6 +50,7 @@ jobs:
           path: |
             dist/demo-app*x86_64*.tar.gz
             dist/checksums.txt
+            ./RELEASE_CHANGELOG.md
           retention-days: 1
 
   release:
