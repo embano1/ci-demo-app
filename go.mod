@@ -3,6 +3,7 @@ module github.com/embano1/ci-demo-app
 go 1.16
 
 require (
+	github.com/git-chglog/git-chglog v0.14.2
 	github.com/hashicorp/go-retryablehttp v0.6.8
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/zap v1.16.0
