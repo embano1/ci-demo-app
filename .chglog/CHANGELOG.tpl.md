@@ -5,7 +5,7 @@
 > Release Date: {{ datetime "2006-01-02" .Tag.Date }}
 
 {{ range .CommitGroups -}}
-### 💫  {{ .Title }}
+### {{ .Title }}
 
 {{ range .Commits -}}
 - {{ .Subject }}
