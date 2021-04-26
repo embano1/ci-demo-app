@@ -24,14 +24,15 @@ jobs:
         with:
           go-version: 1.16
 
-      - name: Create Changelog
-        env:
-          NEXT_TAG: v99.99.99
+      - name: Create CHANGELOG
         run: |
           # build from vendor
           go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-          # generate CHANGELOG for pseudo TAG
+          # use a pseudo tag to only include changes since last release
+          NEXT_TAG=$(git describe --abbrev=0 --tags)-next
+
+          # generate CHANGELOG
           ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
 
       - name: Archive CHANGELOG
