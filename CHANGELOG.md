@@ -1,4 +1,34 @@
 
+<a name="v0.2.3"></a>
+## [Release v0.2.3](https://github.com/embano1/ci-demo-app/compare/v0.2.2...v0.2.3)
+
+> Release Date: 2021-04-26
+
+### 🧹 Chore
+
+- CHANGELOG cleanup
+- release action cleanup
+
+### 📖 Commits
+
+- Update CHANGELOG for v0.2.3 [e2bd09e]
+- chore: CHANGELOG cleanup [533a646]
+- chore: release action cleanup [6a68de8]
+
+<a name="v0.2.2"></a>
+## [Release v0.2.2](https://github.com/embano1/ci-demo-app/compare/v0.2.1...v0.2.2)
+
+> Release Date: 2021-04-22
+
+### 🐞 Fix
+
+- ignore release CHANGELOGs
+
+### 📖 Commits
+
+- fix: ignore release CHANGELOGs [12f139c]
+- Update CHANGELOG for v0.2.1 [cd01a13]
+
 <a name="v0.2.1"></a>
 ## [Release v0.2.1](https://github.com/embano1/ci-demo-app/compare/v0.2.0...v0.2.1)
 
@@ -8,7 +38,7 @@
 
 - Generate Changelog Action
 
-### 💫 Features
+### 💫 Feature
 
 - Add logos to CommitGroups
 
