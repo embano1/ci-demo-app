@@ -1,4 +1,17 @@
 
+<a name="v0.2.4"></a>
+## [Release v0.2.4](https://github.com/embano1/ci-demo-app/compare/v0.2.3...v0.2.4)
+
+> Release Date: 2021-04-26
+
+### 🧹 Chore
+
+- Ignore CHANGELOG commits
+
+### 📖 Commits
+
+- chore: Ignore CHANGELOG commits [ac677a6]
+
 <a name="v0.2.3"></a>
 ## [Release v0.2.3](https://github.com/embano1/ci-demo-app/compare/v0.2.2...v0.2.3)
 
@@ -11,7 +24,6 @@
 
 ### 📖 Commits
 
-- Update CHANGELOG for v0.2.3 [e2bd09e]
 - chore: CHANGELOG cleanup [533a646]
 - chore: release action cleanup [6a68de8]
 
@@ -27,7 +39,6 @@
 ### 📖 Commits
 
 - fix: ignore release CHANGELOGs [12f139c]
-- Update CHANGELOG for v0.2.1 [cd01a13]
 
 <a name="v0.2.1"></a>
 ## [Release v0.2.1](https://github.com/embano1/ci-demo-app/compare/v0.2.0...v0.2.1)
