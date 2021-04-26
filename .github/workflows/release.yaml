@@ -79,11 +79,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
+      - name: Get short TAG
+        run: echo "SHA8=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+
       - name: Build and Publish Images, Produce Release Artifact.
         working-directory: ./src/github.com/${{ github.repository }}
         # build vars issue: https://github.com/google/ko/issues/316
         run: |
-          export SHA8=$(echo -n $GITHUB_SHA | cut -c -8)
           GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --platform=all --tags $(basename "${{ github.ref }}" ),$SHA8 -BRf config/ > release.yaml
 
       - name: Upload Release Assets
