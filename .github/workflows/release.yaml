@@ -24,7 +24,7 @@ jobs:
         with:
           go-version: 1.16
 
-      - name: Install git-chglog
+      - name: Create CHANGELOG
         run: |
           # build from vendor
           go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
@@ -39,6 +39,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+
+  issue:
+    needs: artifacts
+    name: Create CHANGELOG issue
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # for changelog
+          fetch-depth: 0
+
+      - name: Create Issue
+        run: |
+          gh issue create --title "Create issue for release ${{ github.ref }}" --body "" --label "documentation"
 
   release:
     needs: artifacts
