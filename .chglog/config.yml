@@ -13,7 +13,7 @@ options:
   commit_groups:
     title_maps:
       fix: 🐞 Fix
-      feat: 💫 Features
+      feat: 💫 Feature
       chore: 🧹 Chore
   header:
     pattern: "^(\\w*)\\:\\s(.*)$"

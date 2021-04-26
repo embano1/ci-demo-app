@@ -24,14 +24,23 @@ jobs:
         with:
           go-version: 1.16
 
-      - name: Install git-chglog
+      - name: Create Changelog
+        env:
+          NEXT_TAG: v99.99.99
         run: |
           # build from vendor
           go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-          # generate CHANGELOG for the current tag
-          TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --max-count=1))
-          ./git-chglog -o RELEASE_CHANGELOG.md ${TAG}
+          # generate CHANGELOG for pseudo TAG
+          ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
+
+      - name: Archive CHANGELOG
+        uses: actions/upload-artifact@v2
+        with:
+          name: CHANGELOG
+          path: |
+            ./RELEASE_CHANGELOG.md
+          retention-days: 1
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -42,7 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
-      # make artifacts available for inspection
       - name: Archive goreleaser artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -50,12 +58,11 @@ jobs:
           path: |
             dist/demo-app*x86_64*.tar.gz
             dist/checksums.txt
-            ./RELEASE_CHANGELOG.md
           retention-days: 1
 
   release:
     needs: artifacts
-    name: Build ko Artifact and Docker Image
+    name: Build ko Artifact and Docker Image (no push)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -83,11 +90,13 @@ jobs:
           fetch-depth: 1
           path: ./src/github.com/${{ github.repository }}
 
-      - name: Build Images (amd64 only, no push)
+      - name: Get short TAG
+        run: echo "SHA8=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+
+      - name: Build Images (amd64 only)
         working-directory: ./src/github.com/${{ github.repository }}
         # build vars issue: https://github.com/google/ko/issues/316
         run: |
-          export SHA8=$(echo -n $GITHUB_SHA | cut -c -8)
           GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --tags $SHA8 --push=false -BRf config/ > release.yaml
 
       - name: Archive ko artifacts

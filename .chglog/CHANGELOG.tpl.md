@@ -34,9 +34,7 @@
 
 {{ range .Commits -}}
 {{ if not .Merge -}}
-{{ if not (contains .Header "Update CHANGELOG for" ) -}}
 - {{ .Header }} [{{ .Hash.Short }}]
-{{ end -}}
 {{ end -}}
 {{ end -}}
 
