@@ -54,6 +54,8 @@ jobs:
           fetch-depth: 0
 
       - name: Create Issue
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
           gh issue create --title "Create issue for release ${{ github.ref }}" --body "" --label "documentation"
 
