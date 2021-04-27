@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - "main-disabled"
 
 jobs:
   artifacts:
@@ -40,9 +42,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
-  issue:
+  pull-request:
     needs: artifacts
-    name: Create CHANGELOG issue
+    name: Create CHANGELOG PR
     runs-on: ubuntu-latest
     continue-on-error: true
 

@@ -1,0 +1,42 @@
+name: Create PR
+
+on:
+  # release will only be created when ref is a tag starting with "v" in main branch
+  push:
+    tags:
+      - "v*"
+    branches:
+      - "main"
+
+jobs:
+  pull-request:
+    # needs: artifacts
+    name: Create CHANGELOG PR
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # for changelog
+          fetch-depth: 0
+
+      - name: Create CHANGELOG commit
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          # build from vendor
+          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+
+          # update CHANGELOG
+          ./git-chglog -o CHANGELOG.md
+          
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+
+          git add CHANGELOG.md
+          git commit -m "Update CHANGELOG for $(basename ${{ github.ref }})"
+          
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
