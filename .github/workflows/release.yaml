@@ -11,27 +11,27 @@ jobs:
     name: Create Artifacts
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           # for changelog
           fetch-depth: 0
-          
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.16
 
-      - name: Create CHANGELOG
+      - name: Create CHANGELOG for Release
         run: |
           # build from vendor
           go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
           # generate CHANGELOG for this Github release tag only
           ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
-          
+
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -40,9 +40,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
-  issue:
+  pull-request:
     needs: artifacts
-    name: Create CHANGELOG issue
+    name: Create CHANGELOG PR
     runs-on: ubuntu-latest
     continue-on-error: true
 
@@ -52,12 +52,31 @@ jobs:
         with:
           # for changelog
           fetch-depth: 0
+          ref: "main"
 
-      - name: Create Issue
+      - name: Create CHANGELOG commit
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          gh issue create --title "Create issue for release ${{ github.ref }}" --body "" --label "documentation"
+          # build from vendor
+          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+
+          # update CHANGELOG
+          ./git-chglog -o CHANGELOG.md
+
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+
+          git add CHANGELOG.md
+          git commit -m "Update CHANGELOG for $(basename ${{ github.ref }})"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          delete-branch: true
+          title: "Update CHANGELOG"
+          body: |
+            Update CHANGELOG.md for new release
 
   release:
     needs: artifacts
