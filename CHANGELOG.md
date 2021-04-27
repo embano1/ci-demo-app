@@ -1,4 +1,26 @@
 
+<a name="v0.2.6"></a>
+## [Release v0.2.6](https://github.com/embano1/ci-demo-app/compare/v0.2.5...v0.2.6)
+
+> Release Date: 2021-04-26
+
+### 🐞 Fix
+
+- Auto create issue
+
+### 📖 Commits
+
+- fix: Auto create issue [00b45db]
+
+<a name="v0.2.5"></a>
+## [Release v0.2.5](https://github.com/embano1/ci-demo-app/compare/v0.2.4...v0.2.5)
+
+> Release Date: 2021-04-26
+
+### 📖 Commits
+
+- Auto create issue on release [b0ffe0b]
+
 <a name="v0.2.4"></a>
 ## [Release v0.2.4](https://github.com/embano1/ci-demo-app/compare/v0.2.3...v0.2.4)
 
