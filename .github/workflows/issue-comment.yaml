@@ -8,6 +8,8 @@ jobs:
   greeting:
     name: Create Issue Greeting
     runs-on: ubuntu-latest
+    # only send message to first-time contributors
+    if: github.event.issue.author_association == 'FIRST_TIME_CONTRIBUTOR'
 
     steps:
       - name: Checkout
