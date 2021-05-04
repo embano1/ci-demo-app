@@ -124,7 +124,7 @@ jobs:
         working-directory: ./src/github.com/${{ github.repository }}
         # build vars issue: https://github.com/google/ko/issues/316
         run: |
-          GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --platform=all --tags $(basename "${{ github.ref }}" ),$SHA8 -BRf config/ > release.yaml
+          GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --platform=all --tags $(basename "${{ github.ref }}" ),${SHA8},latest -BRf config/ > release.yaml
 
       - name: Upload Release Assets
         id: upload-release-asset
