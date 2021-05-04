@@ -1,4 +1,22 @@
 
+<a name="v0.2.8"></a>
+## [Release v0.2.8](https://github.com/embano1/ci-demo-app/compare/v0.2.7...v0.2.8)
+
+> Release Date: 2021-05-04
+
+### 🧹 Chore
+
+- Add latest tag to container artifacts
+- Add issue greeting action
+- Add stale action
+
+### 📖 Commits
+
+- chore: Add latest tag to container artifacts [56b7a4f]
+- chore: Add issue greeting action [5f765e6]
+- Add WIP Action [3f0aa99]
+- chore: Add stale action [df64f20]
+
 <a name="v0.2.7"></a>
 ## [Release v0.2.7](https://github.com/embano1/ci-demo-app/compare/v0.2.6...v0.2.7)
 
