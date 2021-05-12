@@ -56,7 +56,7 @@ brews:
       - demo-app
     tap:
       owner: embano1
-      name: ci-demo-app-homebrew-tap
+      name: homebrew-ci-demo-app
       # needs repo permissions on target, eg using PAT
       token: "{{ .Env.GORELEASER_TOKEN }}"
     commit_author:
