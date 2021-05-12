@@ -137,6 +137,9 @@ golang.org/x/net/idna
 # golang.org/x/oauth2 v0.0.0-20201208152858-08078c50e5b5
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
+# golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
+## explicit
+golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20201214210602-f9fddec55a1e
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix

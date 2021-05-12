@@ -11,13 +11,15 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
 )
 
 const (
 	// http timeouts
-	timeout = time.Second * 3
+	timeout     = time.Second * 5
+	healthzPath = "/healthz"
 )
 
 // set at compile time
@@ -75,20 +77,27 @@ func main() {
 
 func run(ctx context.Context) error {
 	srv := newServer(ctx)
+	eg := errgroup.Group{}
 
-	go func() {
+	eg.Go(func() error {
 		<-ctx.Done()
 		logging.FromContext(ctx).Info("got signal, attempting graceful shutdown")
-		_ = srv.Shutdown(ctx)
-	}()
+		timeoutCtx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+		defer cancel()
+		return srv.Shutdown(timeoutCtx)
+	})
 
-	logging.FromContext(ctx).Infow("running server", "address", srv.Addr)
-	return srv.ListenAndServe()
+	eg.Go(func() error {
+		logging.FromContext(ctx).Infow("running server", "address", srv.Addr)
+		return srv.ListenAndServe()
+	})
+
+	return eg.Wait()
 }
 
 func newServer(ctx context.Context) *http.Server {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/healthz", requestLogger(ctx, healthZHandler(ctx)))
+	mux.HandleFunc(healthzPath, requestLogger(ctx, healthZHandler(ctx)))
 
 	// Knative Serving injects PORT
 	var port string
