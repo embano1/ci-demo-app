@@ -1,4 +1,29 @@
 
+<a name="v0.2.9"></a>
+## [Release v0.2.9](https://github.com/embano1/ci-demo-app/compare/v0.2.8...v0.2.9)
+
+> Release Date: 2021-05-12
+
+### 🐞 Fix
+
+- Fix server shutdown
+- Wrong association in greeting
+
+### 🧹 Chore
+
+- Update Homebrew repo
+- Verify git clean on build
+- Issue comment only for first-time contribs
+
+### 📖 Commits
+
+- chore: Update Homebrew repo [d20b546]
+- fix: Fix server shutdown [b4a06ba]
+- chore: Verify git clean on build [c6db3af]
+- fix: Wrong association in greeting [005a2df]
+- chore: Issue comment only for first-time contribs [d6975f5]
+- Update vendor [99f0586]
+
 <a name="v0.2.8"></a>
 ## [Release v0.2.8](https://github.com/embano1/ci-demo-app/compare/v0.2.7...v0.2.8)
 
