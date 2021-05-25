@@ -7,8 +7,8 @@ on:
       - "v*"
 
 jobs:
-  artifacts:
-    name: Create Artifacts
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -18,6 +18,7 @@ jobs:
         with:
           # for changelog
           fetch-depth: 0
+          ref: "main"
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -41,10 +42,10 @@ jobs:
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
   pull-request:
-    needs: artifacts
+    needs: release
     name: Create CHANGELOG PR
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: true # errors caused by this job won't stop workflow
 
     steps:
       - name: Checkout
@@ -78,8 +79,8 @@ jobs:
           body: |
             Update CHANGELOG.md for new release
 
-  release:
-    needs: artifacts
+  images:
+    needs: release
     name: Release ko Artifact and Docker Image
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -92,11 +93,6 @@ jobs:
       - name: Docker Login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16
-
       - name: Set up ko
         env:
           KO_VERSION: 0.8.1
@@ -104,6 +100,11 @@ jobs:
           curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
           chmod +x ./ko
           sudo mv ko /usr/local/bin
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
