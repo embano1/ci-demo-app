@@ -1,4 +1,21 @@
 
+<a name="v0.3.0"></a>
+## [Release v0.3.0](https://github.com/embano1/ci-demo-app/compare/v0.2.9...v0.3.0)
+
+> Release Date: 2021-05-25
+
+### 🧹 Chore
+
+- [635e768]	Add documentation (#25) 
+- [af4cc0b]	Pretty print CHANGELOG (#33)  (#29)  (#32)  (#28)  (#26)  (#40) 
+- [4334dae]	Create codeql-analysis.yml
+
+### 📖 Commits
+
+- [635e768]	chore: Add documentation (#25) 
+- [af4cc0b]	chore: Pretty print CHANGELOG (#33)  (#29)  (#32)  (#28)  (#26)  (#40) 
+- [4334dae]	chore: Create codeql-analysis.yml
+
 <a name="v0.2.9"></a>
 ## [Release v0.2.9](https://github.com/embano1/ci-demo-app/compare/v0.2.8...v0.2.9)
 
