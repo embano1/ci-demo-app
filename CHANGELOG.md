@@ -6,23 +6,23 @@
 
 ### 🐞 Fix
 
-- Fix server shutdown
-- Wrong association in greeting
+- [b4a06ba]	Fix server shutdown (#33) 
+- [005a2df]	Wrong association in greeting (#29) 
 
 ### 🧹 Chore
 
-- Update Homebrew repo
-- Verify git clean on build
-- Issue comment only for first-time contribs
+- [d20b546]	Update Homebrew repo (#32) 
+- [c6db3af]	Verify git clean on build (#28) 
+- [d6975f5]	Issue comment only for first-time contribs
 
 ### 📖 Commits
 
-- chore: Update Homebrew repo [d20b546]
-- fix: Fix server shutdown [b4a06ba]
-- chore: Verify git clean on build [c6db3af]
-- fix: Wrong association in greeting [005a2df]
-- chore: Issue comment only for first-time contribs [d6975f5]
-- Update vendor [99f0586]
+- [d20b546]	chore: Update Homebrew repo (#32) 
+- [b4a06ba]	fix: Fix server shutdown (#33) 
+- [c6db3af]	chore: Verify git clean on build (#28) 
+- [005a2df]	fix: Wrong association in greeting (#29) 
+- [d6975f5]	chore: Issue comment only for first-time contribs
+- [99f0586]	Update vendor (#26) 
 
 <a name="v0.2.8"></a>
 ## [Release v0.2.8](https://github.com/embano1/ci-demo-app/compare/v0.2.7...v0.2.8)
@@ -31,16 +31,16 @@
 
 ### 🧹 Chore
 
-- Add latest tag to container artifacts
-- Add issue greeting action
-- Add stale action
+- [56b7a4f]	Add latest tag to container artifacts
+- [5f765e6]	Add issue greeting action (#17) 
+- [df64f20]	Add stale action (#7) 
 
 ### 📖 Commits
 
-- chore: Add latest tag to container artifacts [56b7a4f]
-- chore: Add issue greeting action [5f765e6]
-- Add WIP Action [3f0aa99]
-- chore: Add stale action [df64f20]
+- [56b7a4f]	chore: Add latest tag to container artifacts
+- [5f765e6]	chore: Add issue greeting action (#17) 
+- [3f0aa99]	Add WIP Action (#15) 
+- [df64f20]	chore: Add stale action (#7) 
 
 <a name="v0.2.7"></a>
 ## [Release v0.2.7](https://github.com/embano1/ci-demo-app/compare/v0.2.6...v0.2.7)
@@ -49,7 +49,7 @@
 
 ### 📖 Commits
 
-- Add PR CHANGELOG workflow [e616df5]
+- [e616df5]	Add PR CHANGELOG workflow
 
 <a name="v0.2.6"></a>
 ## [Release v0.2.6](https://github.com/embano1/ci-demo-app/compare/v0.2.5...v0.2.6)
@@ -58,11 +58,11 @@
 
 ### 🐞 Fix
 
-- Auto create issue
+- [00b45db]	Auto create issue
 
 ### 📖 Commits
 
-- fix: Auto create issue [00b45db]
+- [00b45db]	fix: Auto create issue
 
 <a name="v0.2.5"></a>
 ## [Release v0.2.5](https://github.com/embano1/ci-demo-app/compare/v0.2.4...v0.2.5)
@@ -71,7 +71,7 @@
 
 ### 📖 Commits
 
-- Auto create issue on release [b0ffe0b]
+- [b0ffe0b]	Auto create issue on release (#7) 
 
 <a name="v0.2.4"></a>
 ## [Release v0.2.4](https://github.com/embano1/ci-demo-app/compare/v0.2.3...v0.2.4)
@@ -80,11 +80,11 @@
 
 ### 🧹 Chore
 
-- Ignore CHANGELOG commits
+- [ac677a6]	Ignore CHANGELOG commits
 
 ### 📖 Commits
 
-- chore: Ignore CHANGELOG commits [ac677a6]
+- [ac677a6]	chore: Ignore CHANGELOG commits
 
 <a name="v0.2.3"></a>
 ## [Release v0.2.3](https://github.com/embano1/ci-demo-app/compare/v0.2.2...v0.2.3)
@@ -93,13 +93,13 @@
 
 ### 🧹 Chore
 
-- CHANGELOG cleanup
-- release action cleanup
+- [533a646]	CHANGELOG cleanup
+- [6a68de8]	release action cleanup
 
 ### 📖 Commits
 
-- chore: CHANGELOG cleanup [533a646]
-- chore: release action cleanup [6a68de8]
+- [533a646]	chore: CHANGELOG cleanup
+- [6a68de8]	chore: release action cleanup
 
 <a name="v0.2.2"></a>
 ## [Release v0.2.2](https://github.com/embano1/ci-demo-app/compare/v0.2.1...v0.2.2)
@@ -108,11 +108,11 @@
 
 ### 🐞 Fix
 
-- ignore release CHANGELOGs
+- [12f139c]	ignore release CHANGELOGs
 
 ### 📖 Commits
 
-- fix: ignore release CHANGELOGs [12f139c]
+- [12f139c]	fix: ignore release CHANGELOGs
 
 <a name="v0.2.1"></a>
 ## [Release v0.2.1](https://github.com/embano1/ci-demo-app/compare/v0.2.0...v0.2.1)
@@ -121,16 +121,16 @@
 
 ### 🐞 Fix
 
-- Generate Changelog Action
+- [e54363c]	Generate Changelog Action (#3) 
 
 ### 💫 Feature
 
-- Add logos to CommitGroups
+- [1d8e94b]	Add logos to CommitGroups
 
 ### 📖 Commits
 
-- feat: Add logos to CommitGroups [1d8e94b]
-- fix: Generate Changelog Action [e54363c]
+- [1d8e94b]	feat: Add logos to CommitGroups
+- [e54363c]	fix: Generate Changelog Action (#3) 
 
 <a name="v0.2.0"></a>
 ## [Release v0.2.0](https://github.com/embano1/ci-demo-app/compare/v0.1.0...v0.2.0)
@@ -139,11 +139,11 @@
 
 ### 🧹 Chore
 
-- Automate Changelog
+- [bc576fe]	Automate Changelog (#1) 
 
 ### 📖 Commits
 
-- chore: Automate Changelog [bc576fe]
+- [bc576fe]	chore: Automate Changelog (#1) 
 
 <a name="v0.1.0"></a>
 ## v0.1.0
@@ -152,4 +152,4 @@
 
 ### 📖 Commits
 
-- Initial commit [9c6d48f]
+- [9c6d48f]	Initial commit
