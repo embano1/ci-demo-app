@@ -14,6 +14,9 @@ Even though this repository puts a focus on building and releasing Go
 applications, the Github Actions workflows and explanations provided apply to
 any language/environment.
 
+💡 **Note:** Check out this online `README` [generator](https://readme.so/) to
+bootstrap a nice landing page for your users. 
+
 # About 💡
 
 This repository shows an end-to-end release management approach for
@@ -112,7 +115,7 @@ more about Github Actions, please see this [document](DETAILS.md).
 
 # Out of Scope (for now) ❌
 
-- Golang deep dive, advanced testing, etc. (there's plenty of resources out there)
+- Golang deep dive, advanced testing, etc. (this repo isn't about teaching Go)
 - Using Github [Packages](https://github.com/features/packages)
 - Advanced 3rd party integration, e.g. Slack, bots to manage issues, comments,
   etc.
@@ -127,5 +130,5 @@ more about Github Actions, please see this [document](DETAILS.md).
 
 # Credits 💐
 
-BIG THANKS to the [Knative](https://knative.dev/) community for their endless
+A BIG THANK YOU to the [Knative](https://knative.dev/) community for their endless
 inspiration 🙏
