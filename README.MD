@@ -108,7 +108,7 @@ full [`CHANGELOG`](./CHANGELOG.md) is also provided.
 # Navigating this Repository 🧭
 
 If you want to see the Github Action workflows used in this repository *in
-action* please see this [document](./ACTION.md).
+action* please see this [document](./ACTIONS.md).
 
 If you are interested in the individual tools used here or you want to learn
 more about Github Actions, please see this [document](DETAILS.md).
