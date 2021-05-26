@@ -1,3 +1,19 @@
+# Motivation 💪
+
+I created this repository for learning and education purposes to help everyone
+to level up their (open source) projects with good documentation and
+code/release automation. I spend a lot of time learning and experimenting with
+different tools and integrations to manage the projects I'm working, thus trying
+to give some inspiration to save you precious time 😀
+
+Of course there's many ways to automate the release process for your (Go)
+applications, so consider the examples shared in this repository **ONE** but not
+**THE** way.
+
+Even though this repository puts a focus on building and releasing Go
+applications, the Github Actions workflows and explanations provided apply to
+any language/environment.
+
 # About 💡
 
 This repository shows an end-to-end release management approach for
@@ -8,8 +24,8 @@ release management**, [`ko`](https://github.com/google/ko) to build OCI-complian
 **container images**, and Kubernetes in Docker
 ([`kind`](https://github.com/kubernetes-sigs/kind)) for **end-to-end testing**.
 
-Depending on your repository settings and usage, you are likely to stay within
-the generous Github Actions [**free
+Another goodie: depending on your repository settings and usage, you are likely
+to stay within the generous Github Actions [**free
 tier**](https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions).
 
 Github Actions is also deeply integrated into [Github
@@ -17,8 +33,8 @@ Packages](https://docs.github.com/en/packages/learn-github-packages/introduction
 a software package hosting service that allows you to **host your software
 packages**, e.g. container images.
 
-Even if you don't use Github Actions (yet), the repository hopefully is still
-valuable since the tools used here can be used standalone, too.
+Even if you don't use Github Actions (yet), I hope the repository still provides
+value since the tools used here can be used standalone, too.
 
 ## Project Status 🚦
 
@@ -38,7 +54,7 @@ power of Github Actions and related Go tools with the following highlights:
 [Github Actions](https://github.com/embano1/ci-demo-app/actions) ("workflows")  
 💫 &nbsp; Add [**status badges**](#project-status-) to your project `README.md`  
 💫 &nbsp; **Manage your repository** (issues) and contributions (PRs) with
-automatic greetings and code checks  
+automatic greetings and code quality checks  
 💫 &nbsp; **Produce [artifacts](#artifacts-)** for different platforms and software management
 tools, e.g. Homebrew, Snaps, etc.  
 💫 &nbsp; **Automate** Github Releases incl. a (templatized) [`CHANGELOG.md`](CHANGELOG.md)  
@@ -97,7 +113,7 @@ more about Github Actions, please see this [document](DETAILS.md).
 # Out of Scope (for now) ❌
 
 - Golang deep dive, advanced testing, etc. (there's plenty of resources out there)
-- Using Github [packages](https://github.com/features/packages)
+- Using Github [Packages](https://github.com/features/packages)
 - Advanced 3rd party integration, e.g. Slack, bots to manage issues, comments,
   etc.
 - External (manual) workflow dispatch triggers
@@ -105,8 +121,11 @@ more about Github Actions, please see this [document](DETAILS.md).
 - Organization-wide workflows and templates
 - Detailed security and repository hardening and guidelines (see [notes](DETAILS.md) here)
 - Detailed guidelines for writing your custom Github Actions
+- Creating/distributing software artifacts other than Go binaries/Homebrew
+  formulas (see `goreleaser` section in [DETAILS](./DETAILS.md) to get some
+  inspiration)
 
 # Credits 💐
 
-BIG THANKS to the [Knative](https://knative.dev/) community for their continuous
+BIG THANKS to the [Knative](https://knative.dev/) community for their endless
 inspiration 🙏
