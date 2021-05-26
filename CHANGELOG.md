@@ -1,4 +1,20 @@
 
+<a name="v0.3.1"></a>
+## [Release v0.3.1](https://github.com/embano1/ci-demo-app/compare/v0.3.0...v0.3.1)
+
+> Release Date: 2021-05-26
+
+### 🧹 Chore
+
+- [77c0b56]	Add workflow dispatch event
+- [ab026fb]	Add verify Docker login workflow
+
+### 📖 Commits
+
+- [77c0b56]	chore: Add workflow dispatch event
+- [ab026fb]	chore: Add verify Docker login workflow
+- [ef7bac1]	Update README
+
 <a name="v0.3.0"></a>
 ## [Release v0.3.0](https://github.com/embano1/ci-demo-app/compare/v0.2.9...v0.3.0)
 
