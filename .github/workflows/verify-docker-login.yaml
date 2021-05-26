@@ -3,6 +3,8 @@ name: Verify Docker Login
 on:
   schedule:
     - cron: "5 1 * * *" # daily
+    
+  workflow_dispatch:
 
 jobs:
   login:
