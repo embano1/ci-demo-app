@@ -75,6 +75,17 @@ e.g. a particular workflow, to pass before merging a PR.
 
 ![Branch Protection](static/img-5.png "Require Status Checks")
 
+#### Troubleshooting Workflows/Runners
+
+If the workflow logs or Github UI do not provide you with enough detail why a
+workflow is not behaving as expected, there's several options to troubleshoot:
+
+- Reproduce the workflow steps locally (e.g. in a SHELL or with
+  [act](https://github.com/nektos/act))
+- Add more DEBUG information to the workflow (see the E2E
+  [workflow](./.github/workflows/go-e2e-tests.yaml) for an example)
+- Use [tmate](https://github.com/mxschmitt/action-tmate) to exec into a runner
+
 ### Workflow Syntax
 
 Github Actions workflows are defined via YAML files placed in the
