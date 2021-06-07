@@ -20,13 +20,16 @@
 {{ end }}
 {{ end -}}
 
-{{- if .NoteGroups -}}
-{{ range .NoteGroups -}}
-### ⚠️ {{ .Title }}
+### ⚠️ BREAKING
 
-{{ range .Notes }}
-{{ .Body }}
+{{ range .Commits -}}
+{{ if .Notes -}}
+{{ if not .Merge -}}
+{{ if not (contains .Header "Update CHANGELOG for" ) -}}
+{{ .Subject }} [{{ .Hash.Short }}]:{{"\n"}}{{ range .Notes }}{{ .Body }}
 {{ end }}
+{{ end -}}
+{{ end -}}
 {{ end -}}
 {{ end -}}
 
