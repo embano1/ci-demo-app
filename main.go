@@ -70,7 +70,7 @@ func main() {
 	ctx := signals.NewContext()
 	ctx = logging.WithLogger(ctx, logger.Sugar().Named("ci-demo-app").With("commit", buildCommit))
 
-	if err := run(ctx); !errors.Is(err, http.ErrServerClosed) {
+	if err = run(ctx); !errors.Is(err, http.ErrServerClosed) {
 		logging.FromContext(ctx).Fatalf("run server: %v", err)
 	}
 }
