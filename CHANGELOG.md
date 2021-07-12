@@ -1,4 +1,37 @@
 
+<a name="v0.3.2"></a>
+## [Release v0.3.2](https://github.com/embano1/ci-demo-app/compare/v0.3.1...v0.3.2)
+
+> Release Date: 2021-07-12
+
+### 🐞 Fix
+
+- [f811e44]	E2E tests broken
+- [21012c4]	err is shadowed (#52) 
+- [a9719c4]	Fix link to actions in README
+
+### 💫 Feature
+
+- [afd7402]	Add greetings handler (#46) 
+
+### 🧹 Chore
+
+- [927936a]	Include commit details in BREAKING section (#49) 
+- [fcbb351]	Add section on troubleshooting
+- [a549b60]	Update README
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [afd7402]	feat: Add greetings handler (#46) 
+- [f811e44]	fix: E2E tests broken
+- [21012c4]	fix: err is shadowed (#52) 
+- [927936a]	chore: Include commit details in BREAKING section (#49) 
+- [fcbb351]	chore: Add section on troubleshooting
+- [a9719c4]	fix: Fix link to actions in README
+- [a549b60]	chore: Update README
+
 <a name="v0.3.1"></a>
 ## [Release v0.3.1](https://github.com/embano1/ci-demo-app/compare/v0.3.0...v0.3.1)
 
@@ -8,6 +41,8 @@
 
 - [77c0b56]	Add workflow dispatch event
 - [ab026fb]	Add verify Docker login workflow
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -25,6 +60,8 @@
 - [635e768]	Add documentation (#25) 
 - [af4cc0b]	Pretty print CHANGELOG (#33)  (#29)  (#32)  (#28)  (#26)  (#40) 
 - [4334dae]	Create codeql-analysis.yml
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -48,6 +85,8 @@
 - [c6db3af]	Verify git clean on build (#28) 
 - [d6975f5]	Issue comment only for first-time contribs
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [d20b546]	chore: Update Homebrew repo (#32) 
@@ -68,6 +107,8 @@
 - [5f765e6]	Add issue greeting action (#17) 
 - [df64f20]	Add stale action (#7) 
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [56b7a4f]	chore: Add latest tag to container artifacts
@@ -79,6 +120,8 @@
 ## [Release v0.2.7](https://github.com/embano1/ci-demo-app/compare/v0.2.6...v0.2.7)
 
 > Release Date: 2021-04-27
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -93,6 +136,8 @@
 
 - [00b45db]	Auto create issue
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [00b45db]	fix: Auto create issue
@@ -101,6 +146,8 @@
 ## [Release v0.2.5](https://github.com/embano1/ci-demo-app/compare/v0.2.4...v0.2.5)
 
 > Release Date: 2021-04-26
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -114,6 +161,8 @@
 ### 🧹 Chore
 
 - [ac677a6]	Ignore CHANGELOG commits
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -129,6 +178,8 @@
 - [533a646]	CHANGELOG cleanup
 - [6a68de8]	release action cleanup
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [533a646]	chore: CHANGELOG cleanup
@@ -142,6 +193,8 @@
 ### 🐞 Fix
 
 - [12f139c]	ignore release CHANGELOGs
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
@@ -160,6 +213,8 @@
 
 - [1d8e94b]	Add logos to CommitGroups
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [1d8e94b]	feat: Add logos to CommitGroups
@@ -174,6 +229,8 @@
 
 - [bc576fe]	Automate Changelog (#1) 
 
+### ⚠️ BREAKING
+
 ### 📖 Commits
 
 - [bc576fe]	chore: Automate Changelog (#1) 
@@ -182,6 +239,8 @@
 ## v0.1.0
 
 > Release Date: 2021-04-06
+
+### ⚠️ BREAKING
 
 ### 📖 Commits
 
