@@ -95,13 +95,8 @@ jobs:
       - name: Docker Login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Set up ko
-        env:
-          KO_VERSION: 0.8.1
-        run: |
-          curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
-          chmod +x ./ko
-          sudo mv ko /usr/local/bin
+      - name: Setup ko
+        uses: imjasonh/setup-ko@v0.4 # will install latest ko version
 
       - name: Set up Go
         uses: actions/setup-go@v2

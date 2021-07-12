@@ -28,14 +28,9 @@ jobs:
       with:
         go-version: ${{ matrix.go-version }}
       id: go
-    
-    - name: Install ko
-      env:
-        KO_VERSION: 0.8.1
-      run: |
-        curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
-        chmod +x ./ko
-        sudo mv ko /usr/local/bin
+
+    - name: Setup ko
+      uses: imjasonh/setup-ko@v0.4 # will install latest ko version
 
     - name: Check out Code onto GOPATH
       uses: actions/checkout@v2
@@ -44,20 +39,28 @@ jobs:
 
     - name: Setup KinD Cluster
       env:
-        KIND_VERSION: v0.10.0
+        KIND_VERSION: v0.11.1
       run: |
         set -x
-
         curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
         chmod +x ./kind
         sudo mv kind /usr/local/bin
 
-        # Create named cluster
-        kind create cluster --name ${KIND_CLUSTER_NAME}
+        # KinD configuration.
+        cat > kind.yaml <<EOF
+        apiVersion: kind.x-k8s.io/v1alpha4
+        kind: Cluster
+        nodes:
+        - role: control-plane
+        - role: worker
+        EOF
+
+        # Create a cluster!
+        kind create cluster --config kind.yaml --wait 3m --name ${KIND_CLUSTER_NAME}
 
     - name: Setup Knative Serving
       env:
-        KNATIVE_VERSION: v0.22.0
+        KNATIVE_VERSION: v0.23.0
       run: |
         echo "::group::Serving CRDs"
         kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
@@ -70,6 +73,7 @@ jobs:
         echo "::endgroup::"
 
         echo "::group::Ingress"
+        echo "waiting 10s before proceeding..." && sleep 10 # hack: give webhook mutating admission controllers some time to settle
         kubectl apply -f https://github.com/knative/net-kourier/releases/download/${KNATIVE_VERSION}/kourier.yaml
         kubectl -n kourier-system wait --timeout=2m --for=condition=Available deploy/3scale-kourier-gateway
         kubectl patch configmap/config-network \
@@ -100,4 +104,3 @@ jobs:
         kubectl get pods --all-namespaces
         kubectl -n ${NAMESPACE} describe pods
         kubectl -n ${NAMESPACE} get events
-        
