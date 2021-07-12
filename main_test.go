@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"go.uber.org/zap/zaptest"
@@ -30,10 +31,22 @@ func TestServer(t *testing.T) {
 			want:   response{code: 200, body: []byte(`{"status":"ok"}`)},
 		},
 		{
-			name:   "404 on root",
+			name:   "no name param set on /",
 			method: http.MethodGet,
 			path:   "/",
-			want:   response{code: 404, body: []byte("404 page not found\n")},
+			want:   response{code: 200, body: []byte("Hello Stranger!")},
+		},
+		{
+			name:   "name param set on /",
+			method: http.MethodGet,
+			path:   "/?name=Michael",
+			want:   response{code: 200, body: []byte("Hello Michael!")},
+		},
+		{
+			name:   "prevent XSS",
+			method: http.MethodGet,
+			path:   "/?name=<script>alert('xss')</script>",
+			want:   response{code: 200, body: []byte("Hello &lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;!")},
 		},
 	}
 	for _, tt := range tests {
@@ -55,6 +68,41 @@ func TestServer(t *testing.T) {
 			assert.Equal(t, res.StatusCode, tt.want.code)
 			assert.NilError(t, err)
 			assert.Equal(t, string(b), string(tt.want.body))
+		})
+	}
+}
+
+func Test_getPort(t *testing.T) {
+	type fields struct {
+		osEnvPort string
+	}
+	tests := []struct {
+		name   string
+		want   string
+		fields fields
+	}{
+		{
+			name:   "env PORT not set",
+			want:   defaultPort,
+			fields: fields{},
+		},
+		{
+			name: "env PORT set to 8081",
+			want: "8081",
+			fields: fields{
+				osEnvPort: "8081",
+			},
+		},
+	}
+	for _, tt := range tests {
+		if f := tt.fields.osEnvPort; f != "" {
+			err := os.Setenv("PORT", f)
+			assert.NilError(t, err)
+		}
+
+		t.Run(tt.name, func(t *testing.T) {
+			got := getPort()
+			assert.Equal(t, got, tt.want)
 		})
 	}
 }

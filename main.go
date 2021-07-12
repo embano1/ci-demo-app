@@ -20,6 +20,7 @@ const (
 	// http timeouts
 	timeout     = time.Second * 5
 	healthzPath = "/healthz"
+	defaultPort = "8080"
 )
 
 // set at compile time
@@ -27,10 +28,6 @@ var (
 	buildVersion = "unknown"
 	buildCommit  = "unknown"
 	buildDate    = "unknown"
-)
-
-var (
-	defaultPort = "8080"
 )
 
 func main() {
@@ -98,15 +95,9 @@ func run(ctx context.Context) error {
 func newServer(ctx context.Context) *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc(healthzPath, requestLogger(ctx, healthZHandler(ctx)))
+	mux.HandleFunc("/", requestLogger(ctx, greeterHandler(ctx)))
 
-	// Knative Serving injects PORT
-	var port string
-	if p := os.Getenv("PORT"); p != "" {
-		port = p
-	} else {
-		port = defaultPort
-	}
-
+	port := getPort()
 	addr := fmt.Sprintf(":%s", port)
 	srv := http.Server{
 		Addr:         addr,
@@ -115,6 +106,15 @@ func newServer(ctx context.Context) *http.Server {
 		WriteTimeout: timeout,
 	}
 	return &srv
+}
+
+func getPort() string {
+	// Knative injected PORT
+	if p := os.Getenv("PORT"); p != "" {
+		return p
+	} else {
+		return defaultPort
+	}
 }
 
 func requestLogger(ctx context.Context, next http.HandlerFunc) func(w http.ResponseWriter, req *http.Request) {
@@ -128,6 +128,21 @@ func healthZHandler(ctx context.Context) func(w http.ResponseWriter, req *http.R
 	return func(w http.ResponseWriter, req *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		_, err := w.Write([]byte(`{"status":"ok"}`))
+		if err != nil {
+			logging.FromContext(ctx).Errorf("write response: %v", err)
+		}
+	}
+}
+
+func greeterHandler(ctx context.Context) func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
+		name := "Stranger"
+		if param := req.URL.Query().Get("name"); param != "" {
+			// https://codeql.github.com/codeql-query-help/go/go-reflected-xss/
+			name = html.EscapeString(param)
+		}
+
+		_, err := w.Write([]byte(fmt.Sprintf("Hello %s!", name)))
 		if err != nil {
 			logging.FromContext(ctx).Errorf("write response: %v", err)
 		}
