@@ -1,4 +1,19 @@
 
+<a name="v0.3.3"></a>
+## [Release v0.3.3](https://github.com/embano1/ci-demo-app/compare/v0.3.2...v0.3.3)
+
+> Release Date: 2021-11-11
+
+### 💫 Feature
+
+- [9e2f531]	Use .ko.yaml (#51) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [9e2f531]	feat: Use .ko.yaml (#51) 
+
 <a name="v0.3.2"></a>
 ## [Release v0.3.2](https://github.com/embano1/ci-demo-app/compare/v0.3.1...v0.3.2)
 
