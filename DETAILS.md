@@ -444,6 +444,10 @@ But you can also use `ko` to build straight from your local Go code folder if yo
 don't use Kubernetes manifests.
 
 ```console
+# build vars
+$ export KO_COMMIT=$(git rev-parse --short=8 HEAD)
+$ export KO_TAG=$(git describe --abbrev=0 --tags)
+
 # build the Go binary (main) in the current folder
 # pass the container artifact ID to docker to directly execute it
 $ docker run --rm -it $(ko publish -L .)
@@ -454,7 +458,7 @@ $ docker run --rm -it $(ko publish -L .)
 2021/05/18 11:51:59 Loaded ko.local/ci-demo-app-b500e3c92f5c466eef8ad6df72269f46:c7230ae6ed88fed50429e7015009c989c686de13cfad074b1dbc995f485ab7b4
 2021/05/18 11:51:59 Adding tag latest
 2021/05/18 11:51:59 Added tag latest
-2021-05-18T09:52:00.653Z        INFO    ci-demo-app     ci-demo-app/main.go:91  running server  {"commit": "unknown", "address": ":8080"}
+2021-05-18T09:52:00.653Z        INFO    ci-demo-app     ci-demo-app/main.go:86  running server  {"commit": "7f3bebd7", "version": "v0.3.2", "address": ":8080"}
 ```
 
 💡 **Note:** This also works for *vendored* programs!
@@ -495,6 +499,10 @@ Go app (i.e. the container image) into the `kind` cluster:
 # ko uses these variables 
 $ export KIND_CLUSTER_NAME=kind-test
 $ export KO_DOCKER_REPO=kind.local
+
+# build vars
+$ export KO_COMMIT=$(git rev-parse --short=8 HEAD)
+$ export KO_TAG=$(git describe --abbrev=0 --tags)
 
 # build the Go binary (main) in the current folder
 # load it into kind (defined by env vars above)

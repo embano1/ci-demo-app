@@ -19,7 +19,7 @@ builds:
       - "-mod=vendor"
     binary: demo-app
     ldflags:
-      - "-X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}} -X main.buildDate={{.Date}}"
+      - "-X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}}"
 
 archives:
   - id: demo-app
@@ -69,7 +69,7 @@ brews:
       system "#{bin}/demo-app version"
     install: |
       bin.install "demo-app"
-    skip_upload: false
+    skip_upload: "false"
 
 # unused because we use ko for this job
 # dockers:

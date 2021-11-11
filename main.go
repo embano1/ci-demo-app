@@ -27,7 +27,6 @@ const (
 var (
 	buildVersion = "unknown"
 	buildCommit  = "unknown"
-	buildDate    = "unknown"
 )
 
 func main() {
@@ -35,7 +34,6 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "version" {
 		fmt.Printf("version: %s\n", buildVersion)
 		fmt.Printf("commit: %s\n", buildCommit)
-		fmt.Printf("date: %s\n", buildDate)
 		os.Exit(0)
 	}
 
@@ -65,7 +63,7 @@ func main() {
 	}
 
 	ctx := signals.NewContext()
-	ctx = logging.WithLogger(ctx, logger.Sugar().Named("ci-demo-app").With("commit", buildCommit))
+	ctx = logging.WithLogger(ctx, logger.Sugar().Named("ci-demo-app").With("commit", buildCommit, "version", buildVersion))
 
 	if err = run(ctx); !errors.Is(err, http.ErrServerClosed) {
 		logging.FromContext(ctx).Fatalf("run server: %v", err)
@@ -112,9 +110,8 @@ func getPort() string {
 	// Knative injected PORT
 	if p := os.Getenv("PORT"); p != "" {
 		return p
-	} else {
-		return defaultPort
 	}
+	return defaultPort
 }
 
 func requestLogger(ctx context.Context, next http.HandlerFunc) func(w http.ResponseWriter, req *http.Request) {
