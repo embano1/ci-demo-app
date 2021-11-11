@@ -12,8 +12,12 @@ on:
 jobs:
   artifacts:
     name: Create Artifacts (no push/upload)
-    runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Checkout
@@ -24,7 +28,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ matrix.go-version }}
 
       - name: Create CHANGELOG
         run: |
@@ -77,46 +81,42 @@ jobs:
   release:
     needs: artifacts
     name: Build ko Artifact and Docker Image (no push)
-    runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: on
       KO_DOCKER_REPO: docker.io/embano1
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ matrix.go-version }}
 
-      - name: Set up ko
-        env:
-          KO_VERSION: 0.8.1
-        run: |
-          curl -L https://github.com/google/ko/releases/download/v${KO_VERSION}/ko_${KO_VERSION}_Linux_x86_64.tar.gz | tar xzf - ko
-          chmod +x ./ko
-          sudo mv ko /usr/local/bin
+      - name: Setup ko
+        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-          path: ./src/github.com/${{ github.repository }}
 
-      - name: Get short TAG
-        run: echo "SHA8=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
       - name: Build Images (amd64 only)
-        working-directory: ./src/github.com/${{ github.repository }}
-        # build vars issue: https://github.com/google/ko/issues/316
         run: |
-          GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --tags $SHA8 --push=false -BRf config/ > release.yaml
+          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/ > release.yaml
 
       - name: Archive ko artifacts
         uses: actions/upload-artifact@v2
         with:
           name: release
           path: |
-            ./src/github.com/${{ github.repository }}/release.yaml
+            ./release.yaml
           retention-days: 1

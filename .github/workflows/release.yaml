@@ -11,21 +11,24 @@ on:
 jobs:
   release:
     name: Create Release
-    runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          # for changelog
           fetch-depth: 0
           ref: "main"
 
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ matrix.go-version }}
 
       - name: Create CHANGELOG for Release
         run: |
@@ -84,30 +87,31 @@ jobs:
   images:
     needs: release
     name: Release ko Artifact and Docker Image
-    runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      GOPATH: ${{ github.workspace }}
-      GO111MODULE: on
       KO_DOCKER_REPO: docker.io/embano1
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Docker Login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Setup ko
-        uses: imjasonh/setup-ko@v0.4 # will install latest ko version
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16
+          go-version: ${{ matrix.go-version }}
+
+      - name: Setup ko
+        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
           fetch-depth: 1
-          path: ./src/github.com/${{ github.repository }}
 
       - name: Get Release URL
         id: get_release_url
@@ -115,14 +119,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Get short TAG
-        run: echo "SHA8=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+      - name: Get short COMMIT and TAG
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
       - name: Build and Publish Images, Produce Release Artifact.
-        working-directory: ./src/github.com/${{ github.repository }}
-        # build vars issue: https://github.com/google/ko/issues/316
         run: |
-          GOFLAGS="-ldflags=-X=main.buildCommit=$SHA8 -mod=vendor" ko resolve --platform=all --tags $(basename "${{ github.ref }}" ),${SHA8},latest -BRf config/ > release.yaml
+          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/ > release.yaml
 
       - name: Upload Release Assets
         id: upload-release-asset
@@ -131,6 +135,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-          asset_path: ./src/github.com/${{ github.repository }}/release.yaml
+          asset_path: ./release.yaml
           asset_name: release.yaml
           asset_content_type: text/plain
