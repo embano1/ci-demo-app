@@ -50,26 +50,26 @@ changelog:
       - Merge pull request
       - Merge branch
 
-brews:
-  - name: demo-app
-    ids:
-      - demo-app
-    tap:
-      owner: embano1
-      name: homebrew-ci-demo-app
-      # needs repo permissions on target, eg using PAT
-      token: "{{ .Env.GORELEASER_TOKEN }}"
-    commit_author:
-      name: Michael Gasch
-      email: michael@mgasch.com
-    folder: Formula
-    homepage: "https://github.com/embano1/ci-demo-app/blob/master/README.md"
-    description: "Go CI Demo App showcasing goreleaser, Github Actions and ko."
-    test: |
-      system "#{bin}/demo-app version"
-    install: |
-      bin.install "demo-app"
-    skip_upload: "false"
+# brews:
+#   - name: demo-app
+#     ids:
+#       - demo-app
+#     tap:
+#       owner: embano1
+#       name: homebrew-ci-demo-app
+#       # needs repo permissions on target, eg using PAT
+#       token: "{{ .Env.GORELEASER_TOKEN }}"
+#     commit_author:
+#       name: Michael Gasch
+#       email: michael@mgasch.com
+#     folder: Formula
+#     homepage: "https://github.com/embano1/ci-demo-app/blob/master/README.md"
+#     description: "Go CI Demo App showcasing goreleaser, Github Actions and ko."
+#     test: |
+#       system "#{bin}/demo-app version"
+#     install: |
+#       bin.install "demo-app"
+#     skip_upload: "false"
 
 # unused because we use ko for this job
 # dockers:
