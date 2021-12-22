@@ -89,7 +89,8 @@ jobs:
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10
     env:
-      KO_DOCKER_REPO: docker.io/embano1
+      KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp
+      ARTIFACTORY_URL: "https://scribesecuriy.jfrog.io"
     strategy:
       matrix:
         go-version: ["1.17"]
@@ -97,8 +98,16 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - name: Docker Login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+      # - name: Docker Login
+      #   run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.ARTIFACTORY_URL }}
+          username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
+          password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
+   
 
       - name: Set up Go
         uses: actions/setup-go@v2
