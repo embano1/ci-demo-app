@@ -83,7 +83,7 @@ func run(ctx context.Context) error {
 	})
 
 	eg.Go(func() error {
-		logging.FromContext(ctx).Infow("running server", "address", srv.Addr)
+		logging.FromContext(ctx).Infow("running GOOD server", "address", srv.Addr)
 		return srv.ListenAndServe()
 	})
 
@@ -139,7 +139,7 @@ func greeterHandler(ctx context.Context) func(w http.ResponseWriter, req *http.R
 			name = html.EscapeString(param)
 		}
 
-		_, err := w.Write([]byte(fmt.Sprintf("Hello good %s!", name)))
+		_, err := w.Write([]byte(fmt.Sprintf("Hello %s!", name)))
 		if err != nil {
 			logging.FromContext(ctx).Errorf("write response: %v", err)
 		}
