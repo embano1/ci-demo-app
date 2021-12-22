@@ -139,7 +139,7 @@ func greeterHandler(ctx context.Context) func(w http.ResponseWriter, req *http.R
 			name = html.EscapeString(param)
 		}
 
-		_, err := w.Write([]byte(fmt.Sprintf("Hello %s!", name)))
+		_, err := w.Write([]byte(fmt.Sprintf("Hello good %s!", name)))
 		if err != nil {
 			logging.FromContext(ctx).Errorf("write response: %v", err)
 		}
