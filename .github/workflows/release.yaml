@@ -30,10 +30,18 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Restore go cache
+        id: go-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+
       - name: BAD ACTION - changing src,add commit,move tag
         run: |
           sed -i 's/GOOD/BAD (pkg build)/g' main.go
-          cat main.go
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
           git add main.go
@@ -123,6 +131,15 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Restore go cache
+        id: go-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+
       - name: Setup ko
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
@@ -134,7 +151,6 @@ jobs:
       - name: BAD ACTION - changing src
         run: |
           sed -i 's/GOOD/BAD (image build)/g' main.go
-          cat main.go
 
       - name: Get Release URL
         id: get_release_url
