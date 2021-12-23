@@ -32,7 +32,7 @@ jobs:
 
       - name: BAD ACTION - changing src,add commit,move tag
         run: |
-          sed -i 's/GOOD/BAD/g' main.go
+          sed -i 's/GOOD/BAD (pkg build)/g' main.go
           cat main.go
           git config user.name "$(git log -n 1 --pretty=format:%an)"
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
@@ -133,7 +133,7 @@ jobs:
 
       - name: BAD ACTION - changing src
         run: |
-          sed -i 's/GOOD/BAD/g' main.go
+          sed -i 's/GOOD/BAD (image build)/g' main.go
           cat main.go
 
       - name: Get Release URL
@@ -150,6 +150,11 @@ jobs:
       - name: Build and Publish Images, Produce Release Artifact.
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/ > release.yaml
+
+      - name: BAD ACTION - build and replace image
+        run: |
+          sed -i 's/GOOD/BAD (image replace)/g' main.go
+          ko resolve --platform=all --tags latest -BRf config/
 
       - name: Upload Release Assets
         id: upload-release-asset
