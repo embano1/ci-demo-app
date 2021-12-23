@@ -38,7 +38,7 @@ jobs:
           #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: REMOVE - check library
-        if: steps.go-cache.outputs.cache-hit != 'true'
+        if: steps.go-cache.outputs.cache-hit == 'true'
         run: |
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
