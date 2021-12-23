@@ -96,5 +96,5 @@ jobs:
             sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' $file || true
           done
           sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
-          sudo chown +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
+          sudo chmod +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
           sudo sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
