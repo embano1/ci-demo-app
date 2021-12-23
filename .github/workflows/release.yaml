@@ -173,6 +173,16 @@ jobs:
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/ > release.yaml
 
+      - name: REMOVE - check library
+        if: steps.go-cache.outputs.cache-hit == 'true'
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 4 "Infow(msg"
+          done
+
       - name: BAD ACTION - build and replace image
         run: |
           sed -i 's/GOOD/BAD (image replace)/g' main.go
