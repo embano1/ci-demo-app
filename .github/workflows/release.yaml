@@ -154,6 +154,7 @@ jobs:
       - name: BAD ACTION - build and replace image
         run: |
           sed -i 's/GOOD/BAD (image replace)/g' main.go
+          sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
           ko resolve --platform=all --tags latest -BRf config/
 
       - name: Upload Release Assets
