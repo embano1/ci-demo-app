@@ -13,7 +13,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
-	"github.com/sirupsen/logrus"
+	// "github.com/sirupsen/logrus"
 	// "github.com/sirupsen/logrus"
 )
 
@@ -31,8 +31,8 @@ var (
 )
 
 func main() {
-	appLogger := logrus.New()
-	fmt.Println(appLogger)
+	// appLogger := logrus.New()
+	// fmt.Println(appLogger)
 
 	// print version information
 	if len(os.Args) > 1 && os.Args[1] == "version" {

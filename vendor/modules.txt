@@ -72,8 +72,6 @@ github.com/kballard/go-shellquote
 # github.com/kelseyhightower/envconfig v1.4.0
 ## explicit
 github.com/kelseyhightower/envconfig
-# github.com/konsorten/go-windows-terminal-sequences v1.0.3
-github.com/konsorten/go-windows-terminal-sequences
 # github.com/kyokomi/emoji/v2 v2.2.8
 github.com/kyokomi/emoji/v2
 # github.com/mattn/go-colorable v0.1.8
@@ -98,9 +96,6 @@ github.com/russross/blackfriday/v2
 github.com/shopspring/decimal
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/sirupsen/logrus v1.6.0
-## explicit
-github.com/sirupsen/logrus
 # github.com/spf13/cast v1.3.1
 github.com/spf13/cast
 # github.com/spf13/pflag v1.0.5
