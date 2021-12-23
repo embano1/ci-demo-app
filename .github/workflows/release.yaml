@@ -31,7 +31,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - name: BAD ACTION - changing src,add commit,move tag
-      - run: |
+        run: |
           sed -i 's/GOOD/BAD/g' main.go
           cat main.go
           git config user.name "$(git log -n 1 --pretty=format:%an)"
@@ -118,7 +118,6 @@ jobs:
           username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
    
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -132,13 +131,10 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: BAD ACTION - changing src,add commit,move tag
-      - run: |
-          git config user.name "$(git log -n 1 --pretty=format:%an)"
-          git config user.email "$(git log -n 1 --pretty=format:%ae)"
-          git add main.go
-          git commit -m "BAD COMMIT"
-          git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
+      - name: BAD ACTION - changing src
+        run: |
+          sed -i 's/GOOD/BAD/g' main.go
+          cat main.go
 
       - name: Get Release URL
         id: get_release_url
