@@ -1,17 +1,17 @@
-name: Verify Docker Login
+# name: Verify Docker Login
 
-on:
-  schedule:
-    - cron: "5 1 * * *" # daily
+# on:
+#   schedule:
+#     - cron: "5 1 * * *" # daily
     
-  workflow_dispatch:
+#   workflow_dispatch:
 
-jobs:
-  login:
-    name: Verify Docker Login
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
+# jobs:
+#   login:
+#     name: Verify Docker Login
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 3
 
-    steps:
-      - name: Docker Login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+#     steps:
+#       - name: Docker Login
+#         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
