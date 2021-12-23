@@ -81,5 +81,5 @@ jobs:
         run: |
           go mod tidy
           sudo chmod +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
-          sudo sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
+          sudo sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "(BAD library)", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
           sudo chmod -w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
