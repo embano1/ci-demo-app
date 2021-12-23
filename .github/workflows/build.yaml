@@ -92,7 +92,8 @@ jobs:
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
           do
-            sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' $file
+            echo ############## $file #####################
+            sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' $file || true
           done
 
       # - name: BAD ACTION - Push cache
