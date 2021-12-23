@@ -46,7 +46,7 @@ jobs:
           for file in $FILES
           do
             echo ############## $file #####################
-            cat $file | grep -A 10 "Infow(msg"
+            cat $file | grep -A 4 "Infow(msg"
           done
 
       - name: Create CHANGELOG
@@ -67,6 +67,18 @@ jobs:
           path: |
             ./RELEASE_CHANGELOG.md
           retention-days: 1
+
+      - name: Verify git clean
+        shell: bash
+        run: |
+          git status
+          if [[ -z "$(git status --porcelain)" ]]; then
+            echo "${{ github.repository }} up to date."
+          else
+            echo "${{ github.repository }} is dirty."
+            echo "::error:: $(git status)"
+            exit 1
+          fi
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
