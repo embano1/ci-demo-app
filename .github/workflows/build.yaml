@@ -134,8 +134,18 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+          # restore-keys: |
+          #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+
+      - name: REMOVE - check library
+        if: steps.go-cache.outputs.cache-hit == 'true'
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 4 "Infow(msg"
+          done
 
       - name: Setup ko
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
