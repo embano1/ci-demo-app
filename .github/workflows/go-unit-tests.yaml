@@ -19,6 +19,9 @@ jobs:
     timeout-minutes: 10
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v2
         with:
@@ -34,8 +37,6 @@ jobs:
           # restore-keys: |
           #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
-      - name: Check out code
-        uses: actions/checkout@v2
 
       - name: Check for .codecov.yaml
         id: codecov-enabled
