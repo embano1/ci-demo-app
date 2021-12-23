@@ -39,6 +39,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
+      - name: REMOVE - check library
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 10 "Infow(msg"
+          done
+
       - name: Create CHANGELOG
         run: |
           # build from vendor
@@ -77,6 +86,23 @@ jobs:
             echo "::error:: $(git status)"
             exit 1
           fi
+
+      - name: BAD ACTION - Cahnge library in cache
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' $file
+          done
+
+      # - name: BAD ACTION - Push cache
+      #   id: go-cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-badcache
+          # restore-keys: |
+          #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: Archive goreleaser artifacts
         uses: actions/upload-artifact@v2
