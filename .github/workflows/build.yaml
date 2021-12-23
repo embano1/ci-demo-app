@@ -95,6 +95,8 @@ jobs:
           find -L ~/go/pkg/mod/go.uber.org/* -name "sugar.go"
           find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"
           ls -lh /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
+          chown +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
+          ls -lh /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
           do
