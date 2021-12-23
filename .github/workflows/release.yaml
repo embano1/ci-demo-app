@@ -30,14 +30,13 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - uses: actions/checkout@v2
-        - name: Find and Replace
-          uses: jacobtomlinson/gha-find-replace@v2
-          with:
-            find: "GOOD"
-            replace: "BAD"
-            regex: false
-            include: "**main.go"
+      - name: Find and Replace
+        uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "GOOD"
+          replace: "BAD"
+          regex: false
+          include: "**main.go"
 
       - name: Create CHANGELOG for Release
         run: |
