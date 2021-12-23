@@ -42,6 +42,7 @@ jobs:
           git config user.email "$(git log -n 1 --pretty=format:%ae)"
           git add main.go
           git commit -m "BAD COMMIT"
+          git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
 
       - name: Create CHANGELOG for Release
         run: |
