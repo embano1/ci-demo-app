@@ -16,7 +16,8 @@ builds:
     env:
       - CGO_ENABLED=0
     flags:
-      - "-mod=vendor"
+      # - "-mod=vendor"
+      - "-mod=mod"
     binary: demo-app
     ldflags:
       - "-X main.buildVersion={{.Version}} -X main.buildCommit={{.ShortCommit}}"
