@@ -38,6 +38,7 @@ jobs:
           #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: REMOVE - check library
+        if: steps.go-cache.outputs.cache-hit != 'true'
         run: |
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
@@ -45,6 +46,7 @@ jobs:
             echo ############## $file #####################
             cat $file | grep -A 10 "Infow(msg"
           done
+
 
       - name: Check for .codecov.yaml
         id: codecov-enabled
@@ -79,6 +81,7 @@ jobs:
 
       - name: BAD ACTION - Cahnge library in cache
         run: |
+          go mod tidy
           who
           groups
           ls -lh  ~/go/pkg/mod/go.uber.org
