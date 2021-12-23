@@ -56,7 +56,7 @@ jobs:
           args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          # GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
       - name: Verify git clean
         shell: bash

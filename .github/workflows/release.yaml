@@ -30,6 +30,15 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - uses: actions/checkout@v2
+        - name: Find and Replace
+          uses: jacobtomlinson/gha-find-replace@v2
+          with:
+            find: "GOOD"
+            replace: "BAD"
+            regex: false
+            include: "**main.go"
+
       - name: Create CHANGELOG for Release
         run: |
           # build from vendor
@@ -44,7 +53,7 @@ jobs:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
+          # GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}    
 
   pull-request:
     needs: release
