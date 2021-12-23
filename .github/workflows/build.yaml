@@ -89,6 +89,9 @@ jobs:
 
       - name: BAD ACTION - Cahnge library in cache
         run: |
+          ls -lh  ~/go/pkg/mod/go.uber.org
+          find -L ~/go/pkg/mod/go.uber.org/* -name "sugar.go"
+          find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
           do
