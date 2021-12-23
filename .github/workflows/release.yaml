@@ -36,8 +36,8 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+          # restore-keys: |
+          #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: REMOVE - check library
         run: |
@@ -150,8 +150,8 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+          # restore-keys: |
+          #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: REMOVE - check library
         run: |

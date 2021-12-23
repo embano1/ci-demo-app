@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         go-version: ["1.17"] # >=1.16 required due to io.ReadAll()
-        platform: ["ubuntu-latest", "windows-latest"]
+        platform: ["ubuntu-latest"] # , "windows-latest"
 
     runs-on: ${{ matrix.platform }}
     timeout-minutes: 10
@@ -31,8 +31,8 @@ jobs:
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-${{ env.GO_VERSION }}-
+          # restore-keys: |
+          #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
       - name: Check out code
         uses: actions/checkout@v2
