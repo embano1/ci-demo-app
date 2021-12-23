@@ -123,6 +123,11 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+      - name: Check out code onto GOPATH
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
@@ -149,11 +154,6 @@ jobs:
 
       - name: Setup ko
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
-
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
 
       - name: Get short COMMIT and TAG
         run: |
