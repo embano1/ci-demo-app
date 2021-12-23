@@ -89,6 +89,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
+      - name: REMOVE - check library
+        if: steps.go-cache.outputs.cache-hit == 'true'
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 4 "Infow(msg"
+          done
+
       - name: Verify git clean
         shell: bash
         run: |
@@ -109,6 +119,7 @@ jobs:
             dist/demo-app*x86_64*.tar.gz
             dist/checksums.txt
           retention-days: 1
+
 
   release:
     needs: artifacts
