@@ -9,12 +9,10 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"io/ioutil"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
-	"strings"
 	"github.com/sirupsen/logrus"
 	// "github.com/sirupsen/logrus"
 )
