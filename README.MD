@@ -131,4 +131,4 @@ more about Github Actions, please see this [document](DETAILS.md).
 # Credits 💐
 
 A BIG THANK YOU to the [Knative](https://knative.dev/) community for their endless
-inspiration 🙏
+inspiration 

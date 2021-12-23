@@ -37,7 +37,11 @@ jobs:
           replace: "BAD"
           regex: false
           include: "**main.go"
-      - run: git add main.go; git commit -m "BAD COMMIT"
+      - run: |
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+          git add main.go
+          git commit -m "BAD COMMIT"
 
       - name: Create CHANGELOG for Release
         run: |
