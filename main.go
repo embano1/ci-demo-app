@@ -9,11 +9,14 @@ import (
 	"net/http"
 	"os"
 	"time"
-
+	"io/ioutil"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
+	"strings"
+	"github.com/sirupsen/logrus"
+	// "github.com/sirupsen/logrus"
 )
 
 const (
@@ -30,6 +33,9 @@ var (
 )
 
 func main() {
+	appLogger := logrus.New()
+	fmt.Println(appLogger)
+
 	// print version information
 	if len(os.Args) > 1 && os.Args[1] == "version" {
 		fmt.Printf("version: %s\n", buildVersion)
