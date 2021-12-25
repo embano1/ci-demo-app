@@ -168,7 +168,7 @@ jobs:
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
-           target: ${{ env.KO_DOCKER_REPO }}:${KO_COMMIT}
+           target: ${{ env.KO_DOCKER_REPO }}:${{ env.KO_COMMIT }}
            verbose: 3
            format: attest
            force: true
