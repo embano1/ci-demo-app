@@ -47,7 +47,7 @@ jobs:
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
            type: dir
-           target: ${{ env.GITHUB_WORKSPACE }}
+           target: ${{ github.workspace }}
            verbose: 3
            format: attest
            attest-config: config/.cocosign.yaml
