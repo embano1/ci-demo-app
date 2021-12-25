@@ -1,4 +1,4 @@
-name: checkout
+name: checkout-sign
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
            type: dir
-           target: '${GITHUB_WORKSPACE}'
+           target: ${GITHUB_WORKSPACE}
            verbose: 3
            format: attest
            attest-config: config/.cocosign.yaml
