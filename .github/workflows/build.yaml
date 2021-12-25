@@ -165,8 +165,10 @@ jobs:
 
       - name: Build Images (amd64 only)
         run: |
-          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml --tarball build_image.tar > release.yaml
-
+          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
+# Not sure why resolve does not work well with --tarball flag..
+          ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+      
       - run: ls -lh ./
       - name: Bomber attest build image
         # if: "contains(github.event.head_commit.message, 'sign')"
