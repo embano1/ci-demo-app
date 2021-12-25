@@ -8,8 +8,9 @@ builds:
   - -tags
   - netgo
   - -mod=mod
+  - -v
   ldflags:
   - -s -w
   - -extldflags "-static"
-  - -X main.buildCommit={{.Env.KO_COMMIT}}
-  - -X main.buildVersion={{.Env.KO_TAG}}
+  # - -X main.buildCommit={{.Env.KO_COMMIT}}
+  # - -X main.buildVersion={{.Env.KO_TAG}}
