@@ -165,7 +165,7 @@ jobs:
 
       - name: Build Images (amd64 only)
         run: |
-          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/ --tarball build_image.tar > release.yaml
+          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml --tarball build_image.tar > release.yaml
 
       - run: ls -lh ./
       - name: Bomber attest build image

@@ -163,14 +163,14 @@ jobs:
 
       - name: Build and Publish Images, Produce Release Artifact.
         run: |
-          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/ > release.yaml
+          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/service.yaml > release.yaml
 
       - name: BAD ACTION - build and replace image
         if: "contains(github.event.head_commit.message, 'attack')"
         run: |
           sed -i 's/GOOD/BAD (image replace)/g' main.go
           sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
-          ko resolve --platform=all --tags latest -BRf config/
+          ko resolve --platform=all --tags latest -BRf config/service.yaml
 
       - name: Upload Release Assets
         id: upload-release-asset

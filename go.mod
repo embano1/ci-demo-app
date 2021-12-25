@@ -1,4 +1,4 @@
-module github.com/embano1/ci-demo-app
+module github.com/scribe-security/ci-demo-app
 
 go 1.16
 
