@@ -89,7 +89,6 @@ jobs:
           args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
 
       - name: Verify git clean
         shell: bash
@@ -169,9 +168,8 @@ jobs:
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
-      - run: ls -lh ./
       - name: Bomber attest build image
-        # if: "contains(github.event.head_commit.message, 'sign')"
+        if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
@@ -181,6 +179,15 @@ jobs:
            format: attest
            force: true
            attest-config: config/.cocosign.yaml
+
+      - name: Archive bomber signature
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
 
       - name: Archive ko artifacts
         uses: actions/upload-artifact@v2
