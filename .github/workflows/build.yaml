@@ -165,14 +165,17 @@ jobs:
 
       - name: Build Images (amd64 only)
         run: |
-          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/ > release.yaml
+          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/ --tarball build.tar > release.yaml
 
+      - run: ls -lh ./
       - name: Bomber attest build image
         # if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
-           target: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:${{ env.KO_COMMIT }} 
+           type: oci-archive
+          #  target: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:${{ env.KO_COMMIT }} 
+           target: build.tar
            verbose: 3
            format: attest
            force: true
