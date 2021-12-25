@@ -173,8 +173,7 @@ jobs:
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
-           type: oci-archive
-          #  target: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:${{ env.KO_COMMIT }} 
+           type: docker-archive
            target: build.tar
            verbose: 3
            format: attest
