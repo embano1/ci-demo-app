@@ -158,7 +158,7 @@ jobs:
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
         with:
-           target: 'scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:${KO_TAG}'
+           target: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:${KO_TAG}
            verbose: 3
            format: attest
            force: true
