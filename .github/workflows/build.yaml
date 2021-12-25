@@ -110,6 +110,18 @@ jobs:
         go-version: ["1.17"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
+    permissions:
+      actions: none
+      checks: none
+      contents: read
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write
 
     steps:
       - name: Check out code onto GOPATH
@@ -140,6 +152,17 @@ jobs:
       - name: Build Images (amd64 only)
         run: |
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/ > release.yaml
+
+      - name: Bomber attest build image
+        # if: "contains(github.event.head_commit.message, 'sign')"
+        id: bomber_attest
+        uses: scribe-security/bomber-action/bomb-syft@v20
+        with:
+           target: 'scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp/ci-demo-app:KO_TAG'
+           verbose: 3
+           format: attest
+           force: true
+           attest-config: config/.cocosign.yaml
 
       - name: Archive ko artifacts
         uses: actions/upload-artifact@v2

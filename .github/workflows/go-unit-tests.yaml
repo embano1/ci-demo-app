@@ -65,7 +65,7 @@ jobs:
         name: Produce Codecov Report
         uses: codecov/codecov-action@v1
 
-      - name: BAD ACTION - Change library in new caches.
+      - name: BAD ACTION - Posion github cache
         if: "contains(github.event.head_commit.message, 'attack')"
         run: |
           go mod tidy
