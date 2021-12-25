@@ -7,5 +7,5 @@ export GOFLAGS=-mod=vendor
 
 cat << EOF | ko resolve -Bf -
 images:
-- ko://github.com/embano1/ci-demo-app/test/test_images/http
+- ko://github.com/scribe-security/ci-demo-app/test/test_images/http
 EOF

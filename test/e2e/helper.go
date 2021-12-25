@@ -18,7 +18,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"knative.dev/pkg/ptr"
 
-	"github.com/embano1/ci-demo-app/test"
+	"github.com/scribe-security/ci-demo-app/test"
 )
 
 const (

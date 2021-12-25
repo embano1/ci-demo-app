@@ -5,7 +5,7 @@ package e2e
 import (
 	"testing"
 
-	"github.com/embano1/ci-demo-app/test"
+	"github.com/scribe-security/ci-demo-app/test"
 )
 
 func TestServer(t *testing.T) {
