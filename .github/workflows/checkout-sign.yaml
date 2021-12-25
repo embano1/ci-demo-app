@@ -57,3 +57,4 @@ jobs:
           name: bomber-signatures
           path: |
             bomber_reports
+          retention-days: 1
