@@ -116,8 +116,6 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      # - name: Docker Login
-      #   run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Check out code onto GOPATH
         uses: actions/checkout@v2
         with:
@@ -163,7 +161,7 @@ jobs:
 
       - name: Build and Publish Images, Produce Release Artifact.
         run: |
-          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config/service.yaml > release.yaml
+          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
 
       - name: BAD ACTION - build and replace image
         if: "contains(github.event.head_commit.message, 'attack')"
