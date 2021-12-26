@@ -1,11 +1,11 @@
 name: Build
 
 on:
-  push:
-    branches: ["main", "master"]
+  # push:
+  #   branches: ["main", "master"]
 
-  pull_request:
-    branches: ["main", "master", "release-*"]
+  # pull_request:
+  #   branches: ["main", "master", "release-*"]
   
   workflow_dispatch:
   workflow_run:
@@ -32,7 +32,7 @@ jobs:
       - run: |
           pwd
           ls -lhR .
-          
+
       - name: VERIFY - Restore checkout signatures cache
         id: checkout-sign-cache
         uses: actions/cache@v2
