@@ -33,13 +33,13 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout
+      - name: SIGN - Checkout
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Bomber attest src
+      - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bomb-syft@v20
@@ -50,7 +50,7 @@ jobs:
            format: attest
            attest-config: config/.cocosign.yaml
 
-      - name: Archive bomber signature
+      - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/upload-artifact@v2
         with:
