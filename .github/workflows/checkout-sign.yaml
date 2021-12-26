@@ -39,6 +39,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Restore checkout signatures cache
+        id: checkout-sign-cache
+        uses: actions/cache@v2
+        with:
+          path: bomber_reports
+          key: checkout-${{ github.sha }}
+
+      - name: Check for old signature in cache
+        if: steps.checkout-sign-cache.outputs.cache-hit == 'true'
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('Signature should not be present in cache')
+
       - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
@@ -51,11 +65,11 @@ jobs:
            attest-name: checkout
            attest-config: config/.cocosign.yaml
 
-      - name: SIGN - Archive bomber signature
-        if: "contains(github.event.head_commit.message, 'sign')"
-        uses: actions/upload-artifact@v2
-        with:
-          name: bomber-signatures
-          path: |
-            bomber_reports
-          retention-days: 1
+      # - name: SIGN - Archive bomber signature
+      #   if: "contains(github.event.head_commit.message, 'sign')"
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: bomber-signatures
+      #     path: |
+      #       bomber_reports
+      #     retention-days: 1
