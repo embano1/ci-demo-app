@@ -39,7 +39,7 @@ jobs:
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - run: |
           pwd
@@ -158,7 +158,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - run: |
           pwd
