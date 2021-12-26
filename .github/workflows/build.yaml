@@ -86,6 +86,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: |
+          pwd
+          ls -lhR .
+          printenv
+          echo ${{ github.event.head_commit.message }}
+          echo ${{ github.event.pull_request.head.sha || github.sha }}
+          echo ${{ github.event.pull_request.head.sha }}
+
       - uses: actions/download-artifact@v2
         with:
           name: bomber-signatures
