@@ -41,15 +41,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      - run: |
-          pwd
-          printenv
-          echo ${{ github.event.head_commit.message }}
-          echo ${{ github.event.pull_request.head.sha || github.sha }}
-          echo ${{ github.event.pull_request.head.sha }}
-          git diff
-          find . -type f | sort | sha256sum
-
       - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
@@ -61,66 +52,6 @@ jobs:
            format: attest
            attest-name: checkout
            attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-config
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/config
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-hack
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/hack
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-static
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/static
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-test
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/test
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-           
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-vendor
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/vendor
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
 
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
@@ -159,103 +90,11 @@ jobs:
         with:
           fetch-depth: 1
 
-      - run: |
-          pwd
-          printenv
-          echo ${{ github.event.head_commit.message }}
-          echo ${{ github.event.pull_request.head.sha || github.sha }}
-          echo ${{ github.event.pull_request.head.sha }}
-          git diff
-          find . -type f | sort | sha256sum
-
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
         with:
           name: bomber-signatures
           path: bomber_reports
-
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-config
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/config
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-hack
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/hack
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-static
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/static
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-test
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/test
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-           
-      # - name: SIGN - Bomber attest src
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest-vendor
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/vendor
-      #      verbose: 3
-      #      format: attest
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
-
-
-      # - name: SIGN - Archive bomber signature
-      #   if: "contains(github.event.head_commit.message, 'sign')"
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: bomber-signatures-build
-      #     path: |
-      #       bomber_reports
-      #     retention-days: 1
 
       - name: VERIFY - Bomber verify checkout
         if: "contains(github.event.head_commit.message, 'verify')"
