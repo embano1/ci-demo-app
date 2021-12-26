@@ -28,7 +28,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          
+      
+      - run: |
+          pwd
+          ls -lhR /github/workspace/
+
       - name: VERIFY - Restore checkout signatures cache
         id: checkout-sign-cache
         uses: actions/cache@v2
