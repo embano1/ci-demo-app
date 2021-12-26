@@ -9,6 +9,9 @@ on:
   
   workflow_dispatch:
 
+  workflows:
+    - checkout-sign
+
 jobs:
   artifacts:
     name: Create Artifacts (no push/upload)
