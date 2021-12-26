@@ -48,7 +48,7 @@ jobs:
            target: /github/workspace/
            verbose: 3
            format: attest
-           attest-name: checkout
+           attest-name: bomber
            attest-config: config/.cocosign.yaml
 
       - name: SIGN - Archive bomber signature
