@@ -8,9 +8,6 @@ configs:
               auth: provider
               issuer: https://token.actions.githubusercontent.com
               clientid: sigstore
-    verifier:
-        fulcio:
-            enable: true
     storer:
       rekor:
           enable: true
