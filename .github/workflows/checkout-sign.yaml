@@ -41,7 +41,7 @@ jobs:
 
       - run: |
           pwd
-          ls -lhR /github/workspace/
+          ls -lhR .
 
       - name: Restore checkout signatures cache
         id: checkout-sign-cache
