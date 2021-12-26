@@ -43,12 +43,12 @@ jobs:
 
       - run: |
           pwd
-          ls -lhR .
           printenv
           echo ${{ github.event.head_commit.message }}
           echo ${{ github.event.pull_request.head.sha || github.sha }}
           echo ${{ github.event.pull_request.head.sha }}
           git diff
+          find . -type f | sort | sha256sum
 
       - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
@@ -106,6 +106,7 @@ jobs:
           echo ${{ github.event.pull_request.head.sha || github.sha }}
           echo ${{ github.event.pull_request.head.sha }}
           git diff
+          find . -type f | sort | sha256sum
 
       # - uses: actions/download-artifact@v2
       #   if: "contains(github.event.head_commit.message, 'verify')"
