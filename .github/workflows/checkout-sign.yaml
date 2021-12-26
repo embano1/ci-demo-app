@@ -44,6 +44,8 @@ jobs:
           ls -lhR .
           printenv
           echo ${{ github.event.head_commit.message }}
+          echo ${{ github.event.pull_request.head.sha || github.sha }}
+          echo ${{ github.event.pull_request.head.sha }}
 
       - name: Restore checkout signatures cache
         id: checkout-sign-cache
