@@ -113,7 +113,6 @@ jobs:
             dist/checksums.txt
           retention-days: 1
 
-
   release:
     needs: artifacts
     name: Build ko Artifact and Docker Image (no push)
