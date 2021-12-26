@@ -3,8 +3,6 @@ name: E2E Tests
 on:
   # push:
     # branches: ["main", "master"]
-  types:
-    - completed
   pull_request:
     branches: ["main", "master", "release-*"]
 
