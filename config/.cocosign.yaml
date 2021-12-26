@@ -1,5 +1,5 @@
 configs:
-  - name: bomber
+  - name: checkout
     signer:
         fulcio:
             enable: true
