@@ -1,5 +1,5 @@
 configs:
-  - name: image
+  - name: bomber
     signer:
         fulcio:
             enable: true
@@ -12,21 +12,37 @@ configs:
       rekor:
           enable: true
           url: https://rekor.sigstore.dev
-          disablebundle: false
-  - name: checkout
-    signer:
-        fulcio:
-            enable: true
-            url: https://fulcio.sigstore.dev
-            oidc:
-              auth: provider
-              issuer: https://token.actions.githubusercontent.com
-              clientid: sigstore
-    verifier:
-              fulcio:
-            enable: true
-    storer:
-      rekor:
-          enable: true
-          url: https://rekor.sigstore.dev
-          disablebundle: false
+          disablebundle: false 
+
+# configs:
+#   - name: checkout
+#     signer:
+#         fulcio:
+#             enable: true
+#             url: https://fulcio.sigstore.dev
+#             oidc:
+#               auth: provider
+#               issuer: https://token.actions.githubusercontent.com
+#               clientid: sigstore
+#     verifier:
+#               fulcio:
+#             enable: true
+#     storer:
+#       rekor:
+#           enable: true
+#           url: https://rekor.sigstore.dev
+#           disablebundle: false
+    # - name: image
+    # signer:
+    #     fulcio:
+    #         enable: true
+    #         url: https://fulcio.sigstore.dev
+    #         oidc:
+    #           auth: provider
+    #           issuer: https://token.actions.githubusercontent.com
+    #           clientid: sigstore
+    # storer:
+    #   rekor:
+    #       enable: true
+    #       url: https://rekor.sigstore.dev
+    #       disablebundle: false
