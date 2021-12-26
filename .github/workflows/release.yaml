@@ -114,6 +114,18 @@ jobs:
         go-version: ["1.17"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
+    permissions:
+      actions: none
+      checks: none
+      contents: read
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write
 
     steps:
       - name: Check out code onto GOPATH
