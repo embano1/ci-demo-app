@@ -48,6 +48,7 @@ jobs:
           echo ${{ github.event.head_commit.message }}
           echo ${{ github.event.pull_request.head.sha || github.sha }}
           echo ${{ github.event.pull_request.head.sha }}
+          git diff
 
       - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
