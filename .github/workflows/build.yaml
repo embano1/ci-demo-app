@@ -130,14 +130,14 @@ jobs:
 
       - name: VERIFY - Bomber verify checkout
         if: "contains(github.event.head_commit.message, 'verify')"
+        id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@v20
         with:
            type: dir
            target: /github/workspace/
            verbose: 3
-           format: attest
            attest-name: checkout
-           attest-config: config/.cocosign.yaml
+           attest-config: .github/workflows/fixtures/.cocosign.yaml
 
       - name: Set up Go
         uses: actions/setup-go@v2
