@@ -8,10 +8,11 @@ on:
     branches: ["main", "master", "release-*"]
   
   workflow_dispatch:
-
-  workflows:
-    - checkout-sign
-
+    workflow_run:
+      workflows:
+        - checkout-sign
+      types:
+        - completed
 jobs:
   artifacts:
     name: Create Artifacts (no push/upload)
