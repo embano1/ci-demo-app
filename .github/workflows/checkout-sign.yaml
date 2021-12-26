@@ -1,13 +1,13 @@
 name: checkout-sign
 
 on:
-  push:
-    branches: ["main", "master"]
-    # tags:
-    #   - "v*"
+  # push:
+  #   branches: ["main", "master"]
+  #   # tags:
+  #   #   - "v*"
 
-  pull_request:
-    branches: ["main", "master", "release-*"]
+  # pull_request:
+  #   branches: ["main", "master", "release-*"]
   
   workflow_dispatch:
 

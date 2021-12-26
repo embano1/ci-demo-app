@@ -14,8 +14,65 @@ on:
   #   types:
   #     - completed
 jobs:
+  checkout-sign:
+    name: Checkout sign
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      actions: none
+      checks: none
+      contents: read
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write
+
+    steps:
+      - name: SIGN - Checkout
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - run: |
+          pwd
+          ls -lhR .
+          printenv
+          echo ${{ github.event.head_commit.message }}
+          echo ${{ github.event.pull_request.head.sha || github.sha }}
+          echo ${{ github.event.pull_request.head.sha }}
+
+      - name: SIGN - Bomber attest src
+        if: "contains(github.event.head_commit.message, 'sign')"
+        id: bomber_attest
+        uses: scribe-security/bomber-action/bomb-syft@v20
+        with:
+           type: dir
+           target: /github/workspace/
+           verbose: 3
+           format: attest
+           attest-name: checkout
+           attest-config: config/.cocosign.yaml
+
+      - name: SIGN - Archive bomber signature
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
+
   artifacts:
     name: Create Artifacts (no push/upload)
+    needs: [checkout-sign]
     timeout-minutes: 10
     strategy:
       matrix:
@@ -29,33 +86,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: VERIFY - Wait for sign checkout
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-checkout-sign
+      - uses: actions/download-artifact@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "Checkout sign"
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          timeoutSeconds: 120
-          intervalSeconds: 10
+          name: checkout-sign
 
-      - name: VERIFY - Fail cli
-        if: steps.cli-test.outputs.conclusion != 'success'
-        run: exit 1
+      # - name: VERIFY - Wait for sign checkout
+      #   uses: fountainhead/action-wait-for-check@v1.0.0
+      #   id: wait-checkout-sign
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     checkName: "checkout-sign"
+      #     ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      #     timeoutSeconds: 120
+      #     intervalSeconds: 10
 
-      - name: VERIFY - Restore checkout signatures cache
-        id: checkout-sign-cache
-        uses: actions/cache@v2
-        with:
-          path: bomber_reports
-          key: checkout-${{ github.sha }}
+      # - name: VERIFY - Fail cli
+      #   if: steps.cli-test.outputs.conclusion != 'success'
+      #   run: exit 1
 
-      - name: VERIFY - Read checkout signature from cache
-        if: steps.checkout-sign-cache.outputs.cache-hit != 'true' && contains(github.event.head_commit.message, 'verify')
-        uses: actions/github-script@v3
-        with:
-          script: |
-              core.setFailed('Signature should be present in cache')
+      # - name: VERIFY - Restore checkout signatures cache
+      #   id: checkout-sign-cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: bomber_reports
+      #     key: checkout-${{ github.sha }}
+
+      # - name: VERIFY - Read checkout signature from cache
+      #   if: steps.checkout-sign-cache.outputs.cache-hit != 'true' && contains(github.event.head_commit.message, 'verify')
+      #   uses: actions/github-script@v3
+      #   with:
+      #     script: |
+      #         core.setFailed('Signature should be present in cache')
 
       - name: VERIFY - Bomber verify checkout
         if: "contains(github.event.head_commit.message, 'verify')"
