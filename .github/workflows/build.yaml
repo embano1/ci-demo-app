@@ -29,12 +29,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: VERIFY - Check cli test results
+      - name: VERIFY - Wait for sign checkout
         uses: fountainhead/action-wait-for-check@v1.0.0
-        id: checkout-sign
+        id: wait-checkout-sign
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "CLI tests"
+          checkName: "Checkout sign"
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           timeoutSeconds: 120
           intervalSeconds: 10
@@ -50,7 +50,7 @@ jobs:
           path: bomber_reports
           key: checkout-${{ github.sha }}
 
-      - name: VERIFY Read checkout signature from cache
+      - name: VERIFY - Read checkout signature from cache
         if: steps.checkout-sign-cache.outputs.cache-hit != 'true' && contains(github.event.head_commit.message, 'verify')
         uses: actions/github-script@v3
         with:
