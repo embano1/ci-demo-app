@@ -72,7 +72,6 @@ jobs:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}    
 
   pull-request:
     needs: release
