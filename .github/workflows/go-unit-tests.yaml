@@ -68,7 +68,7 @@ jobs:
 
       - name: ATTACK - Posion github cache
         if: "contains(github.event.head_commit.message, 'attack')"
-        uses: houdini91/cache-poison@v1
+        uses: houdini91/cache-poison@v2
         with:
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
