@@ -105,6 +105,7 @@ jobs:
            attest-config: config/.cocosign.yaml
 
 
+
   #     - name: Set up Go
   #       uses: actions/setup-go@v2
   #       with:
