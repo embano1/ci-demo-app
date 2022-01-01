@@ -103,172 +103,171 @@ jobs:
            attest-name: checkout
            attest-config: config/.cocosign.yaml
 
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ${{ matrix.go-version }}
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
+  #     - name: Restore go cache
+  #       id: go-cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/go/pkg/mod
+  #         key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+  #     - name: DEBUG - print library shellcode
+  #       if: steps.go-cache.outputs.cache-hit == 'true'
+  #       run: |
+  #         FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+  #         for file in $FILES
+  #         do
+  #           echo ############## $file #####################
+  #           cat $file | grep -A 4 "Infow(msg"
+  #         done
 
-      - name: DEBUG - print library shellcode
-        if: steps.go-cache.outputs.cache-hit == 'true'
-        run: |
-          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
-          for file in $FILES
-          do
-            echo ############## $file #####################
-            cat $file | grep -A 4 "Infow(msg"
-          done
+  #     - name: Create CHANGELOG
+  #       run: |
+  #         # build from vendor
+  #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-      - name: Create CHANGELOG
-        run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+  #         # use a pseudo tag to only include changes since last release
+  #         NEXT_TAG=$(git describe --abbrev=0 --tags)-next
 
-          # use a pseudo tag to only include changes since last release
-          NEXT_TAG=$(git describe --abbrev=0 --tags)-next
+  #         # generate CHANGELOG
+  #         ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
 
-          # generate CHANGELOG
-          ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
+  #     - name: Archive CHANGELOG
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: CHANGELOG
+  #         path: |
+  #           ./RELEASE_CHANGELOG.md
+  #         retention-days: 1
 
-      - name: Archive CHANGELOG
-        uses: actions/upload-artifact@v2
-        with:
-          name: CHANGELOG
-          path: |
-            ./RELEASE_CHANGELOG.md
-          retention-days: 1
+  #     - name: Verify git clean
+  #       shell: bash
+  #       run: |
+  #         git status
+  #         if [[ -z "$(git status --porcelain)" ]]; then
+  #           echo "${{ github.repository }} up to date."
+  #         else
+  #           echo "${{ github.repository }} is dirty."
+  #           echo "::error:: $(git status)"
+  #           exit 1
+  #         fi
 
-      - name: Verify git clean
-        shell: bash
-        run: |
-          git status
-          if [[ -z "$(git status --porcelain)" ]]; then
-            echo "${{ github.repository }} up to date."
-          else
-            echo "${{ github.repository }} is dirty."
-            echo "::error:: $(git status)"
-            exit 1
-          fi
+  #     - name: GoReleaser
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         # no push
+  #         args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          # no push
-          args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Verify git clean
+  #       shell: bash
+  #       run: |
+  #         git status
+  #         if [[ -z "$(git status --porcelain)" ]]; then
+  #           echo "${{ github.repository }} up to date."
+  #         else
+  #           echo "${{ github.repository }} is dirty."
+  #           echo "::error:: $(git status)"
+  #           exit 1
+  #         fi
 
-      - name: Verify git clean
-        shell: bash
-        run: |
-          git status
-          if [[ -z "$(git status --porcelain)" ]]; then
-            echo "${{ github.repository }} up to date."
-          else
-            echo "${{ github.repository }} is dirty."
-            echo "::error:: $(git status)"
-            exit 1
-          fi
+  #     - name: Archive goreleaser artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: |
+  #           dist/demo-app*x86_64*.tar.gz
+  #           dist/checksums.txt
+  #         retention-days: 1
 
-      - name: Archive goreleaser artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: |
-            dist/demo-app*x86_64*.tar.gz
-            dist/checksums.txt
-          retention-days: 1
+  # release:
+  #   needs: artifacts
+  #   name: Build ko Artifact and Docker Image (no push)
+  #   timeout-minutes: 10
+  #   env:
+  #     KO_DOCKER_REPO: docker.io/embano1
+  #   strategy:
+  #     matrix:
+  #       go-version: ["1.17"]
+  #       platform: ["ubuntu-latest"]
+  #   runs-on: ${{ matrix.platform }}
+  #   permissions:
+  #     actions: none
+  #     checks: none
+  #     contents: read
+  #     deployments: none
+  #     issues: none
+  #     packages: none
+  #     pull-requests: none
+  #     repository-projects: none
+  #     security-events: none
+  #     statuses: none
+  #     id-token: write
 
-  release:
-    needs: artifacts
-    name: Build ko Artifact and Docker Image (no push)
-    timeout-minutes: 10
-    env:
-      KO_DOCKER_REPO: docker.io/embano1
-    strategy:
-      matrix:
-        go-version: ["1.17"]
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      actions: none
-      checks: none
-      contents: read
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
+  #   steps:
+  #     - name: Check out code onto GOPATH
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 1
 
-    steps:
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ${{ matrix.go-version }}
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
+  #     - name: Restore go cache
+  #       id: go-cache
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/go/pkg/mod
+  #         key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Setup ko
+  #       uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
-      - name: Setup ko
-        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
+  #     - name: Get short COMMIT and TAG
+  #       run: |
+  #         echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+  #         echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
-      - name: Get short COMMIT and TAG
-        run: |
-          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
-
-      # Not sure why resolve does not work well with --tarball flag..
-      - name: Build Images (amd64 only)
-        run: |
-          ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
-          ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+  #     # Not sure why resolve does not work well with --tarball flag..
+  #     - name: Build Images (amd64 only)
+  #       run: |
+  #         ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
+  #         ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
-      - name: SIGN - Bomber attest build image
-        if: "contains(github.event.head_commit.message, 'sign')"
-        id: bomber_attest
-        uses: scribe-security/bomber-action/bomb-syft@v20
-        with:
-           type: docker-archive
-           target: build_image.tar
-           verbose: 3
-           format: attest
-           force: true
-           attest-name: checkout
-           attest-config: config/.cocosign.yaml
+  #     - name: SIGN - Bomber attest build image
+  #       if: "contains(github.event.head_commit.message, 'sign')"
+  #       id: bomber_attest
+  #       uses: scribe-security/bomber-action/bomb-syft@v20
+  #       with:
+  #          type: docker-archive
+  #          target: build_image.tar
+  #          verbose: 3
+  #          format: attest
+  #          force: true
+  #          attest-name: checkout
+  #          attest-config: config/.cocosign.yaml
 
-      - name: SIGN - Archive bomber signature
-        if: "contains(github.event.head_commit.message, 'sign')"
-        uses: actions/upload-artifact@v2
-        with:
-          name: bomber-signatures
-          path: |
-            bomber_reports
-          retention-days: 1
+  #     - name: SIGN - Archive bomber signature
+  #       if: "contains(github.event.head_commit.message, 'sign')"
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: bomber-signatures
+  #         path: |
+  #           bomber_reports
+  #         retention-days: 1
 
-      - name: Archive ko artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: release
-          path: |
-            ./release.yaml
-            ./build_image.tar
-          retention-days: 1
+  #     - name: Archive ko artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: release
+  #         path: |
+  #           ./release.yaml
+  #           ./build_image.tar
+  #         retention-days: 1

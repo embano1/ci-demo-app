@@ -1,11 +1,11 @@
 name: Unit Tests
 
 on:
-  push:
-    branches: ["main", "master"]
+  # push:
+  #   branches: ["main", "master"]
 
-  pull_request:
-    branches: ["main", "master", "release-*"]
+  # pull_request:
+  #   branches: ["main", "master", "release-*"]
   workflow_dispatch:
 
 jobs:
