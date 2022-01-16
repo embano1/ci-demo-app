@@ -111,6 +111,7 @@ jobs:
           body: |
             Update CHANGELOG.md for new release
 
+
   images:
     needs: release
     name: Release ko Artifact and Docker Image
