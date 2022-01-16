@@ -164,10 +164,10 @@ jobs:
       - name: Setup ko
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
-      - name: ATTACK - changing src
-        if: "contains(github.event.head_commit.message, 'attack')"
-        run: |
-          sed -i 's/GOOD/BAD (image build)/g' main.go
+      # - name: ATTACK - changing src
+      #   if: "contains(github.event.head_commit.message, 'attack')"
+      #   run: |
+      #     sed -i 's/GOOD/BAD (image build)/g' main.go
 
       - name: Get Release URL
         id: get_release_url
