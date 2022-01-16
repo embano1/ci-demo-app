@@ -126,24 +126,24 @@ jobs:
       #       cat $file | grep -A 4 "Infow(msg"
       #     done
 
-      - name: Create CHANGELOG
-        run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+      # - name: Create CHANGELOG
+      #   run: |
+      #     # build from vendor
+      #     go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+          
+      #     # use a pseudo tag to only include changes since last release
+      #     NEXT_TAG=$(git describe --abbrev=0 --tags)-next
+      #     echo ### $NEXT_TAG 
+      #     # generate CHANGELOG
+      #     ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
 
-          # use a pseudo tag to only include changes since last release
-          NEXT_TAG=$(git describe --abbrev=0 --tags)-next
-
-          # generate CHANGELOG
-          ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
-
-      - name: Archive CHANGELOG
-        uses: actions/upload-artifact@v2
-        with:
-          name: CHANGELOG
-          path: |
-            ./RELEASE_CHANGELOG.md
-          retention-days: 1
+      # - name: Archive CHANGELOG
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: CHANGELOG
+      #     path: |
+      #       ./RELEASE_CHANGELOG.md
+      #     retention-days: 1
 
       - name: Verify git clean
         shell: bash
