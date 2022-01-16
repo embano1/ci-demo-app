@@ -39,18 +39,6 @@ jobs:
 
   #     - name: SIGN - Bomber attest src
   #       if: "contains(githu      - name: Check cli test results
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: cli-test
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: "CLI tests"
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          timeoutSeconds: 1800
-          intervalSeconds: 30
-
-      - name: Fail cli
-        if: steps.cli-test.outputs.conclusion != 'success'
-        run: exit 1b.event.head_commit.message, 'sign')"
   #       id: bomber_attest
   #       uses: scribe-security/bomber-action/bomb-syft@v20
   #       with:
