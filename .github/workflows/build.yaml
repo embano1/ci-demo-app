@@ -116,15 +116,15 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      # - name: DEBUG - print library shellcode
-      #   if: steps.go-cache.outputs.cache-hit == 'true'
-      #   run: |
-      #     FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
-      #     for file in $FILES
-      #     do
-      #       echo ############## $file #####################
-      #       cat $file | grep -A 4 "Infow(msg"
-      #     done
+      - name: DEBUG - print library shellcode
+        if: steps.go-cache.outputs.cache-hit == 'true'
+        run: |
+          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
+          for file in $FILES
+          do
+            echo ############## $file #####################
+            cat $file | grep -A 4 "Infow(msg"
+          done
 
       # - name: Create CHANGELOG
       #   run: |
