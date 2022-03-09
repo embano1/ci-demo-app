@@ -32,10 +32,10 @@ jobs:
 
       - name: Check unit test results
         uses: fountainhead/action-wait-for-check@v1.0.0
-        id: unit-test
+        id: wait-unit-test
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: unit-test
+          checkName: unit_test
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           timeoutSeconds: 1800
           intervalSeconds: 30

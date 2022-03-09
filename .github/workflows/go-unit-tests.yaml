@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-test:
-    name: unit-test
+  unit_test:
+    name: unit_test
     strategy:
       matrix:
         go-version: ["1.17"] # >=1.16 required due to io.ReadAll()
