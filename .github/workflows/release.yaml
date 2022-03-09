@@ -30,19 +30,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Check unit test results
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-unit-test
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: unit_test
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          timeoutSeconds: 1800
-          intervalSeconds: 30
-
-      - name: Fail cli
-        if: steps.cli-test.outputs.conclusion != 'success'
-
         run: exit 1
       - name: Restore go cache
         id: go-cache
