@@ -30,7 +30,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-        run: exit 1
       - name: Restore go cache
         id: go-cache
         uses: actions/cache@v2
