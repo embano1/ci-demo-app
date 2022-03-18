@@ -86,12 +86,18 @@ jobs:
         with:
           fetch-depth: 1
 
+      - run: echo $MESSAGE
+        env:
+          MESSAGE: ${{ github.event.head_commit.message }}
+
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
         with:
           name: bomber-signatures
           path: bomber_reports
-      - run: ls -lh
+      - run: ls -lh; echo $MESSAGE
+        env:
+          MESSAGE: ${{ github.event.head_commit.message }}
       - run: git status
       - name: VERIFY - Bomber verify checkout
         if: "contains(github.event.head_commit.message, 'verify')"
