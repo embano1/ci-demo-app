@@ -1,7 +1,9 @@
 # Perform "exit 1" if PR title starts with "WIP" to block accidental merges
 name: Check "WIP" in PR Title
 
-# on:
+on:
+  push:
+    branches: ["main", "master"]
 #   pull_request:
 #     types: [opened, synchronize, reopened, edited]
 
