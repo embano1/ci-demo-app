@@ -40,7 +40,7 @@ jobs:
       - name: SIGN - Bomber attest src
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
-        uses: scribe-security/bomber-action/bomb-syft@v20
+        uses: scribe-security/bomber-action/bom@master
         with:
            type: dir
            target: /github/workspace/
@@ -245,15 +245,15 @@ jobs:
       - name: SIGN - Bomber attest build image
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
-        uses: scribe-security/bomber-action/bomb-syft@v20
+        uses: scribe-security/bomber-action/bom@master
         with:
            type: docker-archive
            target: build_image.tar
            verbose: 3
-           format: attest
+           output: attest
            force: true
-           attest-name: checkout
-           attest-config: config/.cocosign.yaml
+          #  attest-name: checkout
+          #  attest-config: config/.cocosign.yaml
 
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
