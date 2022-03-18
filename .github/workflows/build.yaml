@@ -60,7 +60,7 @@ jobs:
 
   artifacts:
     name: Create Artifacts (no push/upload)
-    # needs: [checkout-sign]
+    needs: [checkout-sign]
     timeout-minutes: 10
     strategy:
       matrix:
