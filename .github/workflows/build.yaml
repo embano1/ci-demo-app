@@ -45,7 +45,7 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
-           output: attest
+           format: attest
           #  attest-name: checkout
           #  attest-config: config/.cocosign.yaml
 
@@ -256,7 +256,7 @@ jobs:
            type: docker-archive
            target: build_image.tar
            verbose: 3
-           output: attest
+           format: attest
            force: true
           #  attest-name: checkout
           #  attest-config: config/.cocosign.yaml
