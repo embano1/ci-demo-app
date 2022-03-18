@@ -1,62 +1,62 @@
 name: Build
 
 on:
-  # push:
-  #   branches: ["main", "master"]
+  push:
+    branches: ["main", "master", "test"]
 
-  # pull_request:
-  #   branches: ["main", "master", "release-*"]
+  pull_request:
+    branches: ["main", "master", "release-*", "test"]
   
   workflow_dispatch:
 
 jobs:
-  # checkout-sign:
-  #   name: Checkout sign
-  #   timeout-minutes: 10
-  #   strategy:
-  #     matrix:
-  #       platform: ["ubuntu-latest"]
-  #   runs-on: ${{ matrix.platform }}
-  #   permissions:
-  #     actions: none
-  #     checks: none
-  #     contents: read
-  #     deployments: none
-  #     issues: none
-  #     packages: none
-  #     pull-requests: none
-  #     repository-projects: none
-  #     security-events: none
-  #     statuses: none
-  #     id-token: write
+  checkout-sign:
+    name: Checkout sign
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      actions: none
+      checks: none
+      contents: read
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write
 
-  #   steps:
-  #     - name: SIGN - Checkout
-  #       if: "contains(github.event.head_commit.message, 'sign')"
-  #       uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 1
+    steps:
+      - name: SIGN - Checkout
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
-  #     - name: SIGN - Bomber attest src
-  #       if: "contains(githu      - name: Check cli test results
-  #       id: bomber_attest
-  #       uses: scribe-security/bomber-action/bomb-syft@v20
-  #       with:
-  #          type: dir
-  #          target: /github/workspace/
-  #          verbose: 3
-  #          format: attest
-  #          attest-name: checkout
-  #          attest-config: config/.cocosign.yaml
+      - name: SIGN - Bomber attest src
+        if: "contains(github.event.head_commit.message, 'sign')"
+        id: bomber_attest
+        uses: scribe-security/bomber-action/bomb-syft@v20
+        with:
+           type: dir
+           target: /github/workspace/
+           verbose: 3
+           output: attest
+          #  attest-name: checkout
+          #  attest-config: config/.cocosign.yaml
 
-  #     - name: SIGN - Archive bomber signature
-  #       if: "contains(github.event.head_commit.message, 'sign')"
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: bomber-signatures
-  #         path: |
-  #           bomber_reports
-  #         retention-days: 1
+      - name: SIGN - Archive bomber signature
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
 
   artifacts:
     name: Create Artifacts (no push/upload)
@@ -67,18 +67,18 @@ jobs:
         go-version: ["1.17"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
-    # permissions:
-    #   actions: none
-    #   checks: none
-    #   contents: read
-    #   deployments: none
-    #   issues: none
-    #   packages: none
-    #   pull-requests: none
-    #   repository-projects: none
-    #   security-events: none
-    #   statuses: none
-    #   id-token: write
+    permissions:
+      actions: none
+      checks: none
+      contents: read
+      deployments: none
+      issues: none
+      packages: none
+      pull-requests: none
+      repository-projects: none
+      security-events: none
+      statuses: none
+      id-token: write
 
     steps:
       - name: Checkout
@@ -86,23 +86,23 @@ jobs:
         with:
           fetch-depth: 1
 
-      # - uses: actions/download-artifact@v2
-      #   if: "contains(github.event.head_commit.message, 'verify')"
-      #   with:
-      #     name: bomber-signatures
-      #     path: bomber_reports
-      # - run: ls -lh
-      # - run: git status
-      # - name: VERIFY - Bomber verify checkout
-      #   if: "contains(github.event.head_commit.message, 'verify')"
-      #   id: bomber_verify_checkout
-      #   uses: scribe-security/bomber-action/verify@v20
-      #   with:
-      #      type: dir
-      #      target: /github/workspace/
-      #      verbose: 3
-      #      attest-name: checkout
-      #      attest-config: config/.cocosign.yaml
+      - uses: actions/download-artifact@v2
+        if: "contains(github.event.head_commit.message, 'verify')"
+        with:
+          name: bomber-signatures
+          path: bomber_reports
+      - run: ls -lh
+      - run: git status
+      - name: VERIFY - Bomber verify checkout
+        if: "contains(github.event.head_commit.message, 'verify')"
+        id: bomber_verify_checkout
+        uses: scribe-security/bomber-action/verify@master
+        with:
+           type: dir
+           target: /github/workspace/
+           verbose: 3
+          #  attest-name: checkout
+          #  attest-config: config/.cocosign.yaml
 
       - name: Set up Go
         uses: actions/setup-go@v2
