@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # SIGN - checkout sign and upload cache to Github artifact.
   checkout-sign:
     name: Checkout sign
     timeout-minutes: 10
@@ -86,19 +87,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      - run: echo $MESSAGE
-        env:
-          MESSAGE: ${{ github.event.head_commit.message }}
-
+      # VERIFY - pull bomber cache
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
         with:
           name: bomber-signatures
           path: bomber_reports
-      - run: ls -lh; echo $MESSAGE
-        env:
-          MESSAGE: ${{ github.event.head_commit.message }}
-      - run: git status
+    
+      # VERIFY - Verify checkout directory
       - name: VERIFY - Bomber verify checkout
         if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
@@ -107,8 +103,6 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
-          #  attest-name: checkout
-          #  attest-config: config/.cocosign.yaml
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -122,6 +116,7 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
+      # ATTACK - LOG attacked library (DEBUG)
       - name: DEBUG - print library shellcode
         if: steps.go-cache.outputs.cache-hit == 'true'
         run: |
@@ -242,12 +237,23 @@ jobs:
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
+      # VERIFY - Verify checkout directory
+      - name: VERIFY - Bomber verify checkout
+        if: "contains(github.event.head_commit.message, 'verify')"
+        id: bomber_verify_checkout
+        uses: scribe-security/bomber-action/verify@master
+        with:
+           type: dir
+           target: /github/workspace/
+           verbose: 3
+
       # Not sure why resolve does not work well with --tarball flag..
       - name: Build Images (amd64 only)
         run: |
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
+      # SIGN - Sign image tar (exported from ko)
       - name: SIGN - Bomber attest build image
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
@@ -261,6 +267,7 @@ jobs:
           #  attest-name: checkout
           #  attest-config: config/.cocosign.yaml
 
+      # SIGN - upload/update cache to Github artifact
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/upload-artifact@v2
