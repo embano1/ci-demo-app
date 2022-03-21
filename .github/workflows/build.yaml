@@ -166,18 +166,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify git clean
-        shell: bash
-        run: |
-          git status
-          if [[ -z "$(git status --porcelain)" ]]; then
-            echo "${{ github.repository }} up to date."
-          else
-            echo "${{ github.repository }} is dirty."
-            echo "::error:: $(git status)"
-            exit 1
-          fi
-
       - name: Archive goreleaser artifacts
         uses: actions/upload-artifact@v2
         with:
