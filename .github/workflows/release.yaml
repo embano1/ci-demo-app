@@ -9,12 +9,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  # SIGN - checkout sign and upload cache to Github artifact.
+  call-checkout-sign:
+    uses: ./.github/workflows/checkout-sign.yaml
+
   call-unit-test:
-    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml@main
+    needs: [call-checkout-sign]
+    uses: ./.github/workflows/go-unit-tests.yaml
 
   release:
     name: Create Release
-    needs: [call-unit-tests]
+    needs: [call-unit-test]
     timeout-minutes: 10
     strategy:
       matrix:
