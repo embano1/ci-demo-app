@@ -10,58 +10,14 @@ on:
   workflow_dispatch:
 
 jobs:
+
   # SIGN - checkout sign and upload cache to Github artifact.
-  checkout-sign:
-    name: Checkout sign
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      actions: none
-      checks: none
-      contents: read
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
-
-    steps:
-      - name: SIGN - Checkout
-        if: "contains(github.event.head_commit.message, 'sign')"
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-
-      # SIGN - Sign sbom on src
-      - name: SIGN - Sign sbom on src
-        if: "contains(github.event.head_commit.message, 'sign')"
-        id: bomber_attest
-        uses: scribe-security/bomber-action/bom@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-           format: attest
-
-      # SIGN - Archive bomber signature
-      - name: SIGN - Archive bomber signature
-        if: "contains(github.event.head_commit.message, 'sign')"
-        uses: actions/upload-artifact@v2
-        with:
-          name: bomber-signatures
-          path: |
-            bomber_reports
-          retention-days: 1
+  call-checkout-sign:
+    uses: scribe-security/ci-demo-app/.github/workflows/checkout-sign.yaml
 
   call-unit-test:
-    needs: [checkout-sign]
-    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml@main
+    needs: [call-checkout-sign]
+    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml
 
   artifacts:
     name: Create Artifacts (no push/upload)
