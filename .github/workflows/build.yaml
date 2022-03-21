@@ -38,7 +38,8 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: SIGN - Bomber attest src
+      # SIGN - Sign sbom on src
+      - name: SIGN - Sign sbom on src
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bom@master
@@ -48,6 +49,7 @@ jobs:
            verbose: 3
            format: attest
 
+      # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/upload-artifact@v2
@@ -85,15 +87,15 @@ jobs:
         with:
           fetch-depth: 1
 
-      # VERIFY - pull bomber cache
+      # VERIFY - pull archive bomber signature
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
         with:
           name: bomber-signatures
           path: bomber_reports
     
-      # VERIFY - Verify checkout directory
-      - name: VERIFY - Bomber verify checkout
+      # VERIFY - Verify src signed sbom
+      - name:  VERIFY - Verify checkout directory
         if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
@@ -220,7 +222,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      # VERIFY - pull bomber cache
+      # VERIFY - pull archive bomber signature
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
         with:
@@ -242,8 +244,8 @@ jobs:
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
-      # VERIFY - Verify checkout directory
-      - name: VERIFY - Bomber verify checkout
+      # VERIFY - Verify src signed sbom
+      - name: VERIFY - Verify src signed sbom
         if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
@@ -259,7 +261,7 @@ jobs:
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
       # SIGN - Sign image tar (exported from ko)
-      - name: SIGN - Bomber attest build image
+      - name:  SIGN - Sign image tar (exported from ko)
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bom@master
@@ -272,7 +274,7 @@ jobs:
           #  attest-name: checkout
           #  attest-config: config/.cocosign.yaml
 
-      # SIGN - upload/update cache to Github artifact
+      # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/upload-artifact@v2
