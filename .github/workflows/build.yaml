@@ -21,7 +21,7 @@ jobs:
 
   artifacts:
     name: Create Artifacts (no push/upload)
-    needs: [checkout-sign,call-unit-test]
+    needs: [call-checkout-sign,call-unit-test]
     timeout-minutes: 10
     strategy:
       matrix:
