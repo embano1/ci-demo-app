@@ -47,8 +47,6 @@ jobs:
            target: /github/workspace/
            verbose: 3
            format: attest
-          #  attest-name: checkout
-          #  attest-config: config/.cocosign.yaml
 
       - name: SIGN - Archive bomber signature
         if: "contains(github.event.head_commit.message, 'sign')"
@@ -221,6 +219,13 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
+
+      # VERIFY - pull bomber cache
+      - uses: actions/download-artifact@v2
+        if: "contains(github.event.head_commit.message, 'verify')"
+        with:
+          name: bomber-signatures
+          path: bomber_reports
 
       - name: Restore go cache
         id: go-cache
