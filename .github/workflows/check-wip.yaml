@@ -2,10 +2,11 @@
 name: Check "WIP" in PR Title
 
 on:
-  push:
-    branches: ["main", "master"]
+  # push:
+  #   branches: ["main", "master"]
 #   pull_request:
 #     types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
 
 jobs:
   wip:

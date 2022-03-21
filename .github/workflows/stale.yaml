@@ -1,9 +1,10 @@
 name: Close Stale
 
 on:
-  schedule:
-    - cron: "0 1 * * *" # daily
-
+  # schedule:
+  #   - cron: "0 1 * * *" # daily
+  workflow_dispatch:
+  
 jobs:
   stale:
     runs-on: "ubuntu-latest"
