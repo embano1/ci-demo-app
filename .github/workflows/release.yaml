@@ -182,11 +182,11 @@ jobs:
         run: |
           sed -i 's/GOOD/BAD (image build)/g' main.go
 
-      # - name: Get Release URL
-      #   id: get_release_url
-      #   uses: bruceadams/get-release@v1.2.0
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
+      - name: Get Release URL
+        id: get_release_url
+        uses: bruceadams/get-release@v1.2.3
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Get short COMMIT and TAG
         run: |
