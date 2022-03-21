@@ -59,9 +59,12 @@ jobs:
             bomber_reports
           retention-days: 1
 
+  call-unit-test:
+    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yml@main
+
   artifacts:
     name: Create Artifacts (no push/upload)
-    needs: [checkout-sign]
+    needs: [checkout-sign,call-unit-test]
     timeout-minutes: 10
     strategy:
       matrix:
