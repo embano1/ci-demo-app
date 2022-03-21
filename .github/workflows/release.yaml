@@ -182,11 +182,11 @@ jobs:
         run: |
           sed -i 's/GOOD/BAD (image build)/g' main.go
 
-      - name: Get Release URL
-        id: get_release_url
-        uses: bruceadams/get-release@v1.2.0
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      # - name: Get Release URL
+      #   id: get_release_url
+      #   uses: bruceadams/get-release@v1.2.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
 
       - name: Get short COMMIT and TAG
         run: |
@@ -197,8 +197,8 @@ jobs:
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
      
-      # SIGN - sign image from ko
-      - name: SIGN - Bomber attest build image
+      # SIGN - sign image after push
+      - name: # SIGN - sign image after push
         if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bom@master
@@ -208,7 +208,7 @@ jobs:
            format: attest
            force: true
 
-      # SIGN - upload/update cache to Github artifact
+      # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
         # if: "contains(github.event.head_commit.message, 'sign')"
         uses: actions/upload-artifact@v2
@@ -218,7 +218,7 @@ jobs:
             bomber_reports
           retention-days: 1
 
-      # ATTACK - Replace image after build
+      # ATTACK - Replace image after push
       - name: ATTACK - build and replace image
         if: "contains(github.event.head_commit.message, 'attack')"
         run: |
