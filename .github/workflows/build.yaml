@@ -60,6 +60,7 @@ jobs:
           retention-days: 1
 
   call-unit-test:
+    needs: [checkout-sign]
     uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml@main
 
   artifacts:

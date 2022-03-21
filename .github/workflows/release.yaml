@@ -10,7 +10,7 @@ on:
 
 jobs:
   call-unit-test:
-    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yml@main
+    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml@main
 
   release:
     name: Create Release
