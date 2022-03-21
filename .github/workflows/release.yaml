@@ -48,15 +48,16 @@ jobs:
             echo #################################################
           done
 
-      # - name: ATTACK - changing src,add commit,move tag
-      #   if: "contains(github.event.head_commit.message, 'attack')"
-      #   run: |
-      #     sed -i 's/GOOD/BAD (pkg build)/g' main.go
-      #     git config user.name "$(git log -n 1 --pretty=format:%an)"
-      #     git config user.email "$(git log -n 1 --pretty=format:%ae)"
-      #     git add main.go
-      #     git commit -m "BAD COMMIT"
-      #     git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
+      # ATTACK - changing src,add commit,move tag before build
+      - name: ATTACK - changing src,add commit,move tag before build
+        if: "contains(github.event.head_commit.message, 'attack')"
+        run: |
+          sed -i 's/GOOD/BAD (pkg build)/g' main.go
+          git config user.name "$(git log -n 1 --pretty=format:%an)"
+          git config user.email "$(git log -n 1 --pretty=format:%ae)"
+          git add main.go
+          git commit -m "BAD COMMIT"
+          git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
 
       - name: Create CHANGELOG for Release
         run: |
@@ -110,6 +111,16 @@ jobs:
           title: "Update CHANGELOG"
           body: |
             Update CHANGELOG.md for new release
+
+      # VERIFY - Verify checkout directory
+      - name: VERIFY - Bomber verify checkout except CHANGELOG.md
+        if: "contains(github.event.head_commit.message, 'verify')"
+        id: bomber_verify_checkout
+        uses: scribe-security/bomber-action/verify@master
+        with:
+           type: dir
+           target: /github/workspace/
+           verbose: 3
 
 
   images:
@@ -165,14 +176,15 @@ jobs:
       - name: Setup ko
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
-      # - name: ATTACK - changing src
-      #   if: "contains(github.event.head_commit.message, 'attack')"
-      #   run: |
-      #     sed -i 's/GOOD/BAD (image build)/g' main.go
+      # ATTACK - change src before build
+      - name: ATTACK - change src before build
+        if: "contains(github.event.head_commit.message, 'attack')"
+        run: |
+          sed -i 's/GOOD/BAD (image build)/g' main.go
 
       - name: Get Release URL
         id: get_release_url
-        uses: bruceadams/get-release@v1.2.0
+        uses: bruceadams/get-release@v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -185,33 +197,34 @@ jobs:
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
      
-      # - name: SIGN - Bomber attest build image
-      #   # if: "contains(github.event.head_commit.message, 'sign')"
-      #   id: bomber_attest
-      #   uses: scribe-security/bomber-action/bomb-syft@v20
-      #   with:
-      #      target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
-      #      verbose: 3
-      #      format: attest
-      #      force: true
-      #      attest-name: image
-      #      attest-config: config/.cocosign.yaml
+      # SIGN - sign image after push
+      - name: # SIGN - sign image after push
+        if: "contains(github.event.head_commit.message, 'sign')"
+        id: bomber_attest
+        uses: scribe-security/bomber-action/bom@master
+        with:
+           target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
+           verbose: 3
+           format: attest
+           force: true
 
-      # - name: SIGN - Archive bomber signature
-      #   # if: "contains(github.event.head_commit.message, 'sign')"
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: bomber-signatures
-      #     path: |
-      #       bomber_reports
-      #     retention-days: 1
+      # SIGN - Archive bomber signature
+      - name: SIGN - Archive bomber signature
+        # if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
 
-      # - name: ATTACK - build and replace image
-      #   if: "contains(github.event.head_commit.message, 'attack')"
-      #   run: |
-      #     sed -i 's/GOOD/BAD (image replace)/g' main.go
-      #     sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
-      #     ko resolve --platform=all --tags latest -BRf config/service.yaml
+      # ATTACK - Replace image after push
+      - name: ATTACK - build and replace image
+        if: "contains(github.event.head_commit.message, 'attack')"
+        run: |
+          sed -i 's/GOOD/BAD (image replace)/g' main.go
+          sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
+          ko resolve --platform=all --tags latest -BRf config/service.yaml
 
       - name: Upload Release Assets
         id: upload-release-asset

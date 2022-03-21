@@ -1,10 +1,10 @@
 name: E2E Tests
 
 on:
-  # push:
-    # branches: ["main", "master"]
-  pull_request:
-    branches: ["main", "master", "release-*"]
+  push:
+    branches: ["main", "master"]
+  # pull_request:
+  #   branches: ["main", "master", "release-*"]
 
 jobs:
   ko-resolve:

@@ -2,10 +2,11 @@ name: Unit Tests
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["main", "master", "test"]
 
   pull_request:
-    branches: ["main", "master", "release-*"]
+    branches: ["main", "master", "release-*", "test"]
+  
   workflow_dispatch:
 
 jobs:
@@ -23,6 +24,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      # VERIFY - pull bomber cache
+      - uses: actions/download-artifact@v2
+        if: "contains(github.event.head_commit.message, 'verify')"
+        with:
+          name: bomber-signatures
+          path: bomber_reports
+  
       - name: Set up Go ${{ matrix.go-version }}
         uses: actions/setup-go@v2
         with:
