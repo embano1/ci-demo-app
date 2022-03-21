@@ -5,12 +5,16 @@ on:
   push:
     tags:
       - "v*"
-      
+
   workflow_dispatch:
 
 jobs:
+  call-unit-test:
+    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yml@main
+
   release:
     name: Create Release
+    needs: [call-unit-tests]
     timeout-minutes: 10
     strategy:
       matrix:
