@@ -13,11 +13,11 @@ jobs:
 
   # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
-    uses: scribe-security/ci-demo-app/.github/workflows/checkout-sign.yaml
+    uses: .github/workflows/checkout-sign.yaml@
 
   call-unit-test:
     needs: [call-checkout-sign]
-    uses: scribe-security/ci-demo-app/.github/workflows/go-unit-tests.yaml
+    uses: .github/workflows/go-unit-tests.yaml
 
   artifacts:
     name: Create Artifacts (no push/upload)
