@@ -234,8 +234,9 @@ jobs:
           asset_name: release.yaml
           asset_content_type: text/plain
 
-      - name: Upload Release Assets
-        id: upload-release-asset
+      # SIGN - attach image sigtature to release
+      - name: Upload image sig asset
+        id: upload-image-sig-asset
         if: always() && contains(github.event.head_commit.message, 'sign')
         uses: actions/upload-release-asset@v1
         env:
