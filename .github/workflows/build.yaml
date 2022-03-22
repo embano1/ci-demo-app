@@ -1,8 +1,8 @@
 name: Build
 
 on:
-  push:
-    branches: ["main", "master", "test"]
+  # push:
+  #   branches: ["main", "master", "test"]
 
   pull_request:
     branches: ["main", "master", "release-*", "test"]
