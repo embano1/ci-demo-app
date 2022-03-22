@@ -101,44 +101,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  pull-request:
-    needs: release
-    if: ${{ always() }}
-    name: Create CHANGELOG PR
-    runs-on: ubuntu-latest
-    continue-on-error: true # errors caused by this job won't stop workflow
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          # for changelog
-          fetch-depth: 0
-
-      - name: Create CHANGELOG commit
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-
-          # update CHANGELOG
-          ./git-chglog -o CHANGELOG.md
-
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git config user.name "${{ github.actor }}"
-
-          git add CHANGELOG.md
-          git commit -m "Update CHANGELOG for $(basename ${{ github.ref }})"
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          delete-branch: true
-          title: "Update CHANGELOG ${{ github.event.head_commit.message }}"
-          body: |
-            Update CHANGELOG.md for new release
-
   images:
     needs: release
     if: ${{ always() }}
@@ -233,7 +195,7 @@ jobs:
      
       # SIGN - sign image after push
       - name: # SIGN - sign image after push
-        if: "contains(github.event.head_commit.message, 'sign')"
+        if: ${{ always() && contains(github.event.head_commit.message, 'sign') }}
         id: bomber_attest
         uses: scribe-security/bomber-action/bom@master
         with:
@@ -244,7 +206,7 @@ jobs:
 
       # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
-        # if: "contains(github.event.head_commit.message, 'sign')"
+        if: ${{ always() && contains(github.event.head_commit.message, 'sign') }}
         uses: actions/upload-artifact@v2
         with:
           name: bomber-signatures
@@ -254,7 +216,7 @@ jobs:
 
       # ATTACK - Replace image after push
       - name: ATTACK - build and replace image
-        if: "contains(github.event.head_commit.message, 'attack')"
+        if: ${{ always() && contains(github.event.head_commit.message, 'attack') }}
         run: |
           sed -i 's/GOOD/BAD (image replace)/g' main.go
           sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
@@ -262,6 +224,7 @@ jobs:
 
       - name: Upload Release Assets
         id: upload-release-asset
+        if: ${{ always() }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
