@@ -103,6 +103,7 @@ jobs:
 
   pull-request:
     needs: release
+    if: ${{ always() }}
     name: Create CHANGELOG PR
     runs-on: ubuntu-latest
     continue-on-error: true # errors caused by this job won't stop workflow
@@ -140,6 +141,7 @@ jobs:
 
   images:
     needs: release
+    if: ${{ always() }}
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10
     env:
