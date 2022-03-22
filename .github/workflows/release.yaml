@@ -195,8 +195,8 @@ jobs:
      
       # SIGN - sign image after push
       - name: # SIGN - sign image after push
-        if: ${{ always() && contains(github.event.head_commit.message, 'sign') }}
-        id: bomber_attest
+        if: always() && contains(github.event.head_commit.message, 'sign')
+        id: sign_image
         uses: scribe-security/bomber-action/bom@master
         with:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
@@ -206,7 +206,7 @@ jobs:
 
       # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
-        if: ${{ always() && contains(github.event.head_commit.message, 'sign') }}
+        if: always() && contains(github.event.head_commit.message, 'sign')
         uses: actions/upload-artifact@v2
         with:
           name: bomber-signatures
@@ -216,7 +216,7 @@ jobs:
 
       # ATTACK - Replace image after push
       - name: ATTACK - build and replace image
-        if: ${{ always() && contains(github.event.head_commit.message, 'attack') }}
+        if: always() && contains(github.event.head_commit.message, 'attack')
         run: |
           sed -i 's/GOOD/BAD (image replace)/g' main.go
           sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
@@ -224,7 +224,7 @@ jobs:
 
       - name: Upload Release Assets
         id: upload-release-asset
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -233,3 +233,15 @@ jobs:
           asset_path: ./release.yaml
           asset_name: release.yaml
           asset_content_type: text/plain
+
+      - name: Upload Release Assets
+        # id: upload-release-asset
+        # if: ${{ always() && contains(github.event.head_commit.message, 'sign') }}
+        # uses: actions/upload-release-asset@v1
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # with:
+        #   upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+        #   asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
+        #   asset_name: image.sig
+        #   asset_content_type: application/json
