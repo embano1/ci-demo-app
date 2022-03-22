@@ -196,7 +196,7 @@ jobs:
       # VERIFY - Verify src signed sbom
       - name: VERIFY - Verify src signed sbom
         continue-on-error: true
-        if: ${{ always() && contains(github.event.head_commit.message, 'verify') }}
+        if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
         with:
@@ -206,14 +206,13 @@ jobs:
 
       # Not sure why resolve does not work well with --tarball flag..
       - name: Build Images (amd64 only)
-        if: ${{ always() }}
         run: |
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
       # SIGN - Sign image tar (exported from ko)
       - name:  SIGN - Sign image tar (exported from ko)
-        if: contains(github.event.head_commit.message, 'sign')"
+        if: "contains(github.event.head_commit.message, 'sign')"
         id: bomber_attest
         uses: scribe-security/bomber-action/bom@master
         with:
@@ -236,7 +235,6 @@ jobs:
           retention-days: 1
 
       - name: Archive ko artifacts
-        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: release

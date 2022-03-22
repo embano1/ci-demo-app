@@ -76,7 +76,6 @@ jobs:
 
       # VERIFY - Verify src signed sbom
       - name:  VERIFY - Verify checkout directory
-        continue-on-error: true
         if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
@@ -86,6 +85,7 @@ jobs:
            verbose: 3
 
       - name: Create CHANGELOG for Release
+        if: ${{ always() }}
         run: |
           # build from vendor
           go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
@@ -94,6 +94,7 @@ jobs:
           ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
       - name: GoReleaser
+        if: ${{ always() }}
         uses: goreleaser/goreleaser-action@v2
         with:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
@@ -211,7 +212,6 @@ jobs:
 
       # VERIFY - Verify src signed sbom
       - name:  VERIFY - Verify checkout directory
-        continue-on-error: true
         if: "contains(github.event.head_commit.message, 'verify')"
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
