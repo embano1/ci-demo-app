@@ -49,8 +49,25 @@ jobs:
         id: go-cache
         uses: actions/cache@v2
         with:
-          path: ~/go/pkg/mod
+          path: |
+            ~/go/pkg/mod
+            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+
+      # SIGN/VERIFY - install bomber
+      - name: install bomber
+        if: contains(github.event.head_commit.message, 'sign')
+        uses: scribe-security/bomber-action/installer@master
+        env:
+          ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
+
+      # Verify - verify cache
+      - name: # Verify - verify cache
+        if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
+        id: verify_cache
+        run: |
+          bomber verify ~/go/pkg/mod -vv
 
       - name: DEBUG - print library shellcode
         if: steps.go-cache.outputs.cache-hit == 'true'
@@ -100,6 +117,23 @@ jobs:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # SIGN - sign cache
+      - name: # SIGN - sign cache
+        if: contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
+        id: sign_cache
+        run: |
+          bomber sign ~/go/pkg/mod -vv
+
+      # SIGN - Archive bomber signature
+      - name: SIGN - Archive bomber signature
+        if: "contains(github.event.head_commit.message, 'sign')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
 
   images:
     needs: release
@@ -156,7 +190,9 @@ jobs:
         id: go-cache
         uses: actions/cache@v2
         with:
-          path: ~/go/pkg/mod
+          path: |
+            ~/go/pkg/mod
+            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: Setup ko
