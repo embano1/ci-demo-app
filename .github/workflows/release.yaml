@@ -123,7 +123,7 @@ jobs:
         if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
-          bomber sign dir:~/go/pkg/mod -vv
+          bomber bom dir:~/go/pkg/mod -vv -o attest -f
 
       # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
