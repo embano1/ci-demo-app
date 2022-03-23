@@ -51,7 +51,6 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
-            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       # SIGN/VERIFY - install bomber
@@ -63,14 +62,14 @@ jobs:
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
 
       # Verify - verify cache
-      - name: # Verify - verify cache
+      - name: Verify - verify cache
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
           bomber verify ~/go/pkg/mod -vv
 
       - name: DEBUG - print library shellcode
-        if: steps.go-cache.outputs.cache-hit == 'true'
+        if: always() && steps.go-cache.outputs.cache-hit == 'true'
         run: |
           FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
           for file in $FILES
@@ -82,7 +81,7 @@ jobs:
 
       # ATTACK - changing src,add commit,move tag before build
       - name: ATTACK - changing src,add commit,move tag before build
-        if: "contains(github.event.head_commit.message, 'attack')"
+        if: always() && contains(github.event.head_commit.message, 'attack')
         run: |
           sed -i 's/GOOD/BAD (pkg build)/g' main.go
           git config user.name "$(git log -n 1 --pretty=format:%an)"
@@ -93,7 +92,7 @@ jobs:
 
       # VERIFY - Verify src signed sbom
       - name:  VERIFY - Verify checkout directory
-        if: "contains(github.event.head_commit.message, 'verify')"
+        if: always() && contains(github.event.head_commit.message, 'verify')
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
         with:
@@ -119,15 +118,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # SIGN - sign cache
-      - name: # SIGN - sign cache
-        if: contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
+      - name: SIGN - sign cache
+        if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
           bomber sign ~/go/pkg/mod -vv
 
       # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
-        if: "contains(github.event.head_commit.message, 'sign')"
+        if: always() && contains(github.event.head_commit.message, 'sign')
         uses: actions/upload-artifact@v2
         with:
           name: bomber-signatures
