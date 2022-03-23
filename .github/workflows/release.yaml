@@ -196,11 +196,12 @@ jobs:
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: Setup ko
+        if: always()
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
 
       # ATTACK - change src before build
       - name: ATTACK - change src before build
-        if: "contains(github.event.head_commit.message, 'attack')"
+        if: always() && contains(github.event.head_commit.message, 'attack')
         run: |
           sed -i 's/GOOD/BAD (image build)/g' main.go
 
@@ -212,7 +213,7 @@ jobs:
 
       # VERIFY - Verify src signed sbom
       - name:  VERIFY - Verify checkout directory
-        if: "contains(github.event.head_commit.message, 'verify')"
+        if: always() && contains(github.event.head_commit.message, 'verify')
         id: bomber_verify_checkout
         uses: scribe-security/bomber-action/verify@master
         with:
@@ -221,6 +222,7 @@ jobs:
            verbose: 3
 
       - name: Get short COMMIT and TAG
+        if: always()
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
