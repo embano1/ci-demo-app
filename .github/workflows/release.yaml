@@ -51,6 +51,7 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
+            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       # SIGN/VERIFY - install bomber
@@ -66,7 +67,7 @@ jobs:
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-          bomber verify ~/go/pkg/mod -vv
+          bomber verify dir:~/go/pkg/mod -vv
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -122,7 +123,7 @@ jobs:
         if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
-          bomber sign ~/go/pkg/mod -vv
+          bomber sign dir:~/go/pkg/mod -vv
 
       # SIGN - Archive bomber signature
       - name: SIGN - Archive bomber signature
