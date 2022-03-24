@@ -117,6 +117,7 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
+           filter-regex: .*bomber_reports.*
 
       # Verify - verify cache
       - name: Verify - verify cache
