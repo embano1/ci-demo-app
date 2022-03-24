@@ -53,20 +53,6 @@ jobs:
           ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            bomber_reports
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
-
       # VERIFY - pull archive bomber signature
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
@@ -84,6 +70,14 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Restore go cache
+        id: go-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+            bomber_reports
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: debug 
         if: always() 
@@ -153,7 +147,7 @@ jobs:
         id: sign_cache
         run: |
           bomber bom dir:~/go/pkg/mod -vv -o attest -f
-
+          
       - name: debug 
         if: always() 
         run: |
