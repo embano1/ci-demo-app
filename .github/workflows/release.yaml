@@ -59,7 +59,7 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-           ls -lR cache_bomber_reports
+          ls -lR bomber_reports
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -83,7 +83,8 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-           ls -lR cache_bomber_reports
+          ls -lR bomber_reports
+          ls -lR cache_bomber_reports
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
