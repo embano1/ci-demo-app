@@ -118,12 +118,11 @@ jobs:
            verbose: 3
            filter-regex: .*bomber_reports.*
 
-      # Verify - verify cache
+      # VERIFY - verify cache
       - name: VERIFY - verify cache directory
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-# bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
           bomber verify dir:~/go/pkg/mod -vv
 
       - name: Create CHANGELOG for Release
