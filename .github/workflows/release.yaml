@@ -83,7 +83,6 @@ jobs:
         if: always() 
         run: |
           ls -lR bomber_reports  || true
-# ls -lR cache_bomber_reports  || true
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -147,13 +146,11 @@ jobs:
         if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
-# bomber bom dir:~/go/pkg/mod -vv -o attest -f -d cache_bomber_reports
           bomber bom dir:~/go/pkg/mod -vv -o attest -f
       - name: debug 
         if: always() 
         run: |
            ls -lR bomber_reports  || true
-#  ls -lR cache_bomber_reports  || true
 
       # # SIGN - Archive bomber signature
       # - name: SIGN - Archive bomber signature
