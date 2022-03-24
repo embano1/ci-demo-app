@@ -59,7 +59,7 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-          ls -lR bomber_reports
+          ls -lR bomber_reports  || true
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -83,8 +83,8 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-          ls -lR bomber_reports
-          ls -lR cache_bomber_reports
+          ls -lR bomber_reports || true
+          ls -lR cache_bomber_reports  || true
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -153,7 +153,7 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-           ls -lR cache_bomber_reports
+           ls -lR cache_bomber_reports  || true
 
       # # SIGN - Archive bomber signature
       # - name: SIGN - Archive bomber signature
@@ -230,7 +230,7 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
-            bomber_reports
+            cache_bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: Setup ko
