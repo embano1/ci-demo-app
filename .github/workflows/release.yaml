@@ -76,14 +76,14 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
-            cache_bomber_reports
+            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: debug 
         if: always() 
         run: |
           ls -lR bomber_reports  || true
-          ls -lR cache_bomber_reports  || true
+# ls -lR cache_bomber_reports  || true
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -123,7 +123,8 @@ jobs:
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-          bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
+# bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
+          bomber verify dir:~/go/pkg/mod -vv
 
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
@@ -147,12 +148,13 @@ jobs:
         if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
-          bomber bom dir:~/go/pkg/mod -vv -o attest -f -d cache_bomber_reports
-
+# bomber bom dir:~/go/pkg/mod -vv -o attest -f -d cache_bomber_reports
+          bomber bom dir:~/go/pkg/mod -vv -o attest -f
       - name: debug 
         if: always() 
         run: |
-           ls -lR cache_bomber_reports  || true
+           ls -lR bomber_reports  || true
+#  ls -lR cache_bomber_reports  || true
 
       # # SIGN - Archive bomber signature
       # - name: SIGN - Archive bomber signature
@@ -229,14 +231,13 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
-            cache_bomber_reports
+            bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: debug 
         if: always() 
         run: |
           ls -lR bomber_reports  || true
-          ls -lR cache_bomber_reports  || true
 
       - name: Setup ko
         if: always()
@@ -266,11 +267,11 @@ jobs:
            filter-regex: .*bomber_reports.*
 
       # Verify - verify cache
-      - name: Verify - verify cache
+      - name: VERIFY - verify cache
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-          bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
+          bomber verify dir:~/go/pkg/mod -vv
 
       - name: Get short COMMIT and TAG
         if: always()
