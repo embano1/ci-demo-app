@@ -83,8 +83,7 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-          ls -lR bomber_reports || true
-          ls -lR cache_bomber_reports  || true
+          ls -lR . || true
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
