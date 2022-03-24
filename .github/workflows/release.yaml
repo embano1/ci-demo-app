@@ -40,6 +40,10 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       # SIGN/VERIFY - install bomber
       - name: install bomber
@@ -60,11 +64,6 @@ jobs:
         if: always() 
         run: |
           ls -lR bomber_reports  || true
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v2
