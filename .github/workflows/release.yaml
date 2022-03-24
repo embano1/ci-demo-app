@@ -74,12 +74,7 @@ jobs:
           ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
 
-      # Verify - verify cache
-      - name: Verify - verify cache
-        if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
-        id: verify_cache
-        run: |
-          bomber verify dir:~/go/pkg/mod -vv
+
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -112,6 +107,13 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
+
+      # Verify - verify cache
+      - name: Verify - verify cache
+        if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
+        id: verify_cache
+        run: |
+          bomber verify dir:~/go/pkg/mod -vv
 
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
@@ -232,6 +234,13 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
+
+      # Verify - verify cache
+      - name: Verify - verify cache
+        if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
+        id: verify_cache
+        run: |
+          bomber verify dir:~/go/pkg/mod -vv
 
       - name: Get short COMMIT and TAG
         if: always()
