@@ -56,8 +56,10 @@ jobs:
           name: bomber-signatures
           path: bomber_reports
 
-      - run: |
-           ls -lR bomber_reports
+      - name: debug 
+        if: always() 
+        run: |
+           ls -lR cache_bomber_reports
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -75,11 +77,13 @@ jobs:
         with:
           path: |
             ~/go/pkg/mod
-            bomber_reports
+            cache_bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      - run: |
-           ls -lR bomber_reports
+      - name: debug 
+        if: always() 
+        run: |
+           ls -lR cache_bomber_reports
 
       - name: DEBUG - print library shellcode
         if: always() && steps.go-cache.outputs.cache-hit == 'true'
@@ -118,7 +122,7 @@ jobs:
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-          bomber verify dir:~/go/pkg/mod -vv
+          bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
 
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
@@ -142,7 +146,12 @@ jobs:
         if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
         id: sign_cache
         run: |
-          bomber bom dir:~/go/pkg/mod -vv -o attest -f
+          bomber bom dir:~/go/pkg/mod -vv -o attest -f -d cache_bomber_reports
+
+      - name: debug 
+        if: always() 
+        run: |
+           ls -lR cache_bomber_reports
 
       # # SIGN - Archive bomber signature
       # - name: SIGN - Archive bomber signature
