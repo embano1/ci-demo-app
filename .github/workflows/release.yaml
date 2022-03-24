@@ -82,7 +82,6 @@ jobs:
       - name: debug 
         if: always() 
         run: |
-          ls -lR . || true
           ls -lR bomber_reports  || true
           ls -lR cache_bomber_reports  || true
 
@@ -120,7 +119,7 @@ jobs:
            filter-regex: .*bomber_reports.*
 
       # Verify - verify cache
-      - name: Verify - verify cache
+      - name: VERIFY - verify cache directory
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
@@ -233,6 +232,12 @@ jobs:
             cache_bomber_reports
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
+      - name: debug 
+        if: always() 
+        run: |
+          ls -lR bomber_reports  || true
+          ls -lR cache_bomber_reports  || true
+
       - name: Setup ko
         if: always()
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
@@ -258,13 +263,14 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
+           filter-regex: .*bomber_reports.*
 
       # Verify - verify cache
       - name: Verify - verify cache
         if: contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
         id: verify_cache
         run: |
-          bomber verify dir:~/go/pkg/mod -vv
+          bomber verify dir:~/go/pkg/mod -vv -d cache_bomber_reports
 
       - name: Get short COMMIT and TAG
         if: always()
