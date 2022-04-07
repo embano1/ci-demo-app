@@ -33,7 +33,7 @@ jobs:
       uses: imjasonh/setup-ko@v0.4 # will install latest ko version
 
     - name: Check out Code onto GOPATH
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 1
 
