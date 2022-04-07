@@ -1,4 +1,28 @@
 
+<a name="v0.3.4"></a>
+## [Release v0.3.4](https://github.com/embano1/ci-demo-app/compare/v0.3.3...v0.3.4)
+
+> Release Date: 2022-04-07
+
+### 🐞 Fix
+
+- [6cdc69e]	Rename dep review workflow (#62) 
+
+### 🧹 Chore
+
+- [37fc0db]	Bump gogo protobuf and go.mod (#59) 
+- [6cdb4b1]	Bump to checkoutv3
+- [ad651c2]	Add dependency review action (#58) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [6cdc69e]	fix: Rename dep review workflow (#62) 
+- [37fc0db]	chore: Bump gogo protobuf and go.mod (#59) 
+- [6cdb4b1]	chore: Bump to checkoutv3
+- [ad651c2]	chore: Add dependency review action (#58) 
+
 <a name="v0.3.3"></a>
 ## [Release v0.3.3](https://github.com/embano1/ci-demo-app/compare/v0.3.2...v0.3.3)
 
