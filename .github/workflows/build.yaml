@@ -42,7 +42,7 @@ jobs:
           ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
 
       - name: Archive CHANGELOG
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG
           path: |
@@ -70,7 +70,7 @@ jobs:
           fi
 
       - name: Archive goreleaser artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: |
@@ -113,7 +113,7 @@ jobs:
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false --bare -Rf config/ > release.yaml
 
       - name: Archive ko artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: release
           path: |
