@@ -464,7 +464,7 @@ $ docker run --rm -it $(ko publish -L .)
 💡 **Note:** This also works for *vendored* programs!
 
 ```console
-# note that the specified binary is vendored in this repo
+# note that the specified binary must be vendored in the repo for this to work
 $ BINARY=github.com/git-chglog/git-chglog/cmd/git-chglog
 
 # build and run the binary, printing its help section
@@ -565,10 +565,8 @@ individual changes.
 `goreleaser` can use a custom `CHANGELOG` when creating a Github release via the
 `--release-notes` flag.
 
-The `CHANGELOG` is generated with `git-chglog`, which is vendored in this
-repository (see [tools.go](hack/tools.go) for how this is done). `git-chglog`
-uses Go's templating engine to customize the output (see config
-[folder](./.chglog)). 
+The `CHANGELOG` is generated with `git-chglog`. `git-chglog` uses Go's
+templating engine to customize the output (see config [folder](./.chglog)). 
 
 Commit prefixes, e.g. `fix:` are used to group and highlight changes. For
 example:

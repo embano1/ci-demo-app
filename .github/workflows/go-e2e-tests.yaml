@@ -18,7 +18,6 @@ jobs:
     env:
       KO_DOCKER_REPO: kind.local
       KIND_CLUSTER_NAME: e2e
-      GOFLAGS: "-mod=vendor"
       NAMESPACE: "demo-app"
     timeout-minutes: 10
 

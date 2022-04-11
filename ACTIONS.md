@@ -211,7 +211,7 @@ using the Github Actions redirect pattern `>> $GITHUB_ENV`. Otherwise
 
 - name: Test
   env:
-    GOFLAGS: "-mod=vendor -v -race"
+    GOFLAGS: "-v -race"
   run: go test $COVER_OPTS ./...
 ```
 
@@ -443,11 +443,10 @@ The branch checked out is set to `"main"` to ensure we're operating on the
 required for this job but it's a good practice to document the expected
 behavior, i.e. tags are expected to be made against `main` here.
 
-Next, a `RELEASE_CHANGELOG.md` is generated with `git-chglog` (which is a
-vendored dependency in this project). This `CHANGELOG` only contains the commits
-for the current tag (passed as dynamic parameter `$(basename "${{
-github.ref}}")` to the program) and will be used as a file input to `goreleaser`
-in the last step of this job.
+Next, a `RELEASE_CHANGELOG.md` is generated with `git-chglog`. This `CHANGELOG`
+only contains the commits for the current tag (passed as dynamic parameter
+`$(basename "${{ github.ref}}")` to the program) and will be used as a file
+input to `goreleaser` in the last step of this job.
 
 By using the `goreleaser/goreleaser-action@v2`, the setup is simplified and a
 release is created as defined by the `goreleaser` configuration
