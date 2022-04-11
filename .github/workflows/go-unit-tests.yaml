@@ -40,7 +40,7 @@ jobs:
 
       - name: Test
         env:
-          GOFLAGS: "-mod=vendor -v -race"
+          GOFLAGS: "-v -race -timeout=3m"
         run: go test $COVER_OPTS ./...
 
       - name: Verify git clean

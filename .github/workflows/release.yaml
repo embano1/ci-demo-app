@@ -31,12 +31,13 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - name: Create CHANGELOG for Release
+        env:
+          IMAGE: quay.io/git-chglog/git-chglog
+          # https://quay.io/repository/git-chglog/git-chglog from tag v0.14.2
+          IMAGE_SHA: 998e89dab8dd8284cfff5f8cfb9e9af41fe3fcd4671f2e86a180e453c20959e3
         run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-
           # generate CHANGELOG for this Github release tag only
-          ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
+          docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -62,13 +63,13 @@ jobs:
 
       - name: Create CHANGELOG commit
         env:
+          IMAGE: quay.io/git-chglog/git-chglog
+          # https://quay.io/repository/git-chglog/git-chglog from tag v0.14.2
+          IMAGE_SHA: 998e89dab8dd8284cfff5f8cfb9e9af41fe3fcd4671f2e86a180e453c20959e3
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-
           # update CHANGELOG
-          ./git-chglog -o CHANGELOG.md
+          docker run --rm -v $PWD:/workdir ${IMAGE}@sha256:${IMAGE_SHA} -o CHANGELOG.md
 
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
