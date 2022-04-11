@@ -1,4 +1,21 @@
 
+<a name="v0.4.0"></a>
+## [Release v0.4.0](https://github.com/embano1/ci-demo-app/compare/v0.3.4...v0.4.0)
+
+> Release Date: 2022-04-11
+
+### 🧹 Chore
+
+- [0ea6bd7]	Migrate to signed ghcr.io images (#67) 
+- [63c13c9]	Add dependabot configuration (#65) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [0ea6bd7]	chore: Migrate to signed ghcr.io images (#67) 
+- [63c13c9]	chore: Add dependabot configuration (#65) 
+
 <a name="v0.3.4"></a>
 ## [Release v0.3.4](https://github.com/embano1/ci-demo-app/compare/v0.3.3...v0.3.4)
 
