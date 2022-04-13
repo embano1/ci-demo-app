@@ -10,17 +10,21 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/time/rate"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/signals"
 )
 
 const (
-	// http timeouts
 	timeout     = time.Second * 5
 	healthzPath = "/healthz"
 	defaultPort = "8080"
+	maxRPS      = time.Millisecond * 100 // 10 rps
+
+	requestID = "req-correlation-id"
 )
 
 // set at compile time
@@ -91,9 +95,11 @@ func run(ctx context.Context) error {
 }
 
 func newServer(ctx context.Context) *http.Server {
+	rl := rate.NewLimiter(rate.Every(maxRPS), 10)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc(healthzPath, requestLogger(ctx, healthZHandler(ctx)))
-	mux.HandleFunc("/", requestLogger(ctx, greeterHandler(ctx)))
+	mux.HandleFunc("/", requestLogger(ctx, rateLimiter(ctx, rl, greeterHandler(ctx))))
 
 	port := getPort()
 	addr := fmt.Sprintf(":%s", port)
@@ -114,9 +120,33 @@ func getPort() string {
 	return defaultPort
 }
 
+func rateLimiter(ctx context.Context, rl *rate.Limiter, next http.HandlerFunc) func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, req *http.Request) {
+		if !rl.Allow() {
+			var id string
+			id = req.Header.Get(requestID)
+
+			if id == "" {
+				id = "undefined"
+			}
+
+			logging.FromContext(ctx).With(zap.String("id", id)).Debug("rate limited")
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		next(w, req)
+	}
+}
+
 func requestLogger(ctx context.Context, next http.HandlerFunc) func(w http.ResponseWriter, req *http.Request) {
 	return func(w http.ResponseWriter, req *http.Request) {
-		logging.FromContext(ctx).Debugw("new request", "method", req.Method, "path", html.EscapeString(req.URL.Path), "client", req.RemoteAddr)
+
+		// inject correlation ID
+		id := uuid.New().String()
+		req.Header.Del(requestID) // clear if exist
+		req.Header.Add(requestID, id)
+
+		logging.FromContext(ctx).With(zap.String("id", id)).Debugw("new request", "method", req.Method, "path", html.EscapeString(req.URL.Path), "client", req.RemoteAddr)
 		next(w, req)
 	}
 }
