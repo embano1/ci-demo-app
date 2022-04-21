@@ -15,9 +15,7 @@ const (
 	timeout = time.Second * 30
 )
 
-var (
-	url string
-)
+var url string
 
 func main() {
 	flag.StringVar(&url, "url", "http://demo-app.default.svc.cluster.local", "target URL")
