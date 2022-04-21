@@ -19,11 +19,21 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: "main"
+
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -54,7 +64,7 @@ jobs:
     continue-on-error: true # errors caused by this job won't stop workflow
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           # for changelog
@@ -96,6 +106,21 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
@@ -107,11 +132,6 @@ jobs:
       - name: Setup ko
         # will install latest ko version and by default login/configure for ghcr.io
         uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4.0
-
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
 
       - name: Get Release URL
         id: get_release_url
