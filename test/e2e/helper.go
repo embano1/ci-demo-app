@@ -1,4 +1,4 @@
-// +build e2e
+//go:build e2e
 
 package e2e
 
@@ -30,8 +30,10 @@ const (
 	sep             = "-"
 )
 
-type waitFunc func()
-type cleanupFunc func()
+type (
+	waitFunc    func()
+	cleanupFunc func()
+)
 
 func createHttpClient(t *testing.T, client *kubernetes.Clientset) (waitFunc, cleanupFunc) {
 	t.Helper()
@@ -57,7 +59,8 @@ func createHttpClient(t *testing.T, client *kubernetes.Clientset) (waitFunc, cle
 							Image:           imageName(t, clientImageName),
 							Args:            []string{"-url", serverURL(t, env.ServerName)},
 							ImagePullPolicy: corev1.PullIfNotPresent,
-						}},
+						},
+					},
 					RestartPolicy: corev1.RestartPolicyNever,
 				},
 			},

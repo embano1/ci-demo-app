@@ -48,7 +48,9 @@ jobs:
 
     - name: Setup KinD Cluster
       env:
-        KIND_VERSION: v0.11.1
+        KIND_VERSION: v0.12.0
+        NODE_VERSION: v1.23.5
+        NODE_SHA: sha256:a69c29d3d502635369a5fe92d8e503c09581fcd406ba6598acc5d80ff5ba81b1
       run: |
         set -x
         curl -Lo ./kind https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-$(uname)-amd64
@@ -61,7 +63,9 @@ jobs:
         kind: Cluster
         nodes:
         - role: control-plane
+          image: kindest/node:${NODE_VERSION}@${NODE_SHA}
         - role: worker
+          image: kindest/node:${NODE_VERSION}@${NODE_SHA}
         EOF
 
         # Create a cluster!
@@ -69,7 +73,7 @@ jobs:
 
     - name: Setup Knative Serving
       env:
-        KNATIVE_VERSION: v0.23.0
+        KNATIVE_VERSION: knative-v1.4.0
       run: |
         echo "::group::Serving CRDs"
         kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
@@ -118,3 +122,12 @@ jobs:
         kubectl get pods --all-namespaces
         kubectl -n ${NAMESPACE} describe pods
         kubectl -n ${NAMESPACE} get events
+
+    - name: Collect diagnostics
+      uses: chainguard-dev/actions/kind-diag@main
+      # Only upload logs on failure.
+      if: ${{ failure() }}
+      with:
+        cluster-resources: nodes
+        namespace-resources: pods,svc
+        artifact-name: logs
