@@ -1,3 +1,13 @@
+## Project Status 🚦
+
+[![Build](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml)
+[![Tests](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml)
+[![Latest Release](https://img.shields.io/github/release/embano1/ci-demo-app.svg?logo=github&style=flat-square)](https://github.com/embano1/ci-demo-app/releases/latest)
+[![Go Report Card](https://goreportcard.com/badge/github.com/embano1/ci-demo-app)](https://goreportcard.com/report/github.com/embano1/ci-demo-app)
+[![codecov](https://codecov.io/gh/embano1/ci-demo-app/branch/main/graph/badge.svg?token=TC7MW723JO)](https://codecov.io/gh/embano1/ci-demo-app)
+[![go.mod Go version](https://img.shields.io/github/go-mod/go-version/embano1/ci-demo-app)](https://github.com/embano1/ci-demo-app)
+
+
 # Motivation 💪
 
 I created this repository for learning and education purposes to help everyone
@@ -39,15 +49,6 @@ packages**, e.g. container images.
 Even if you don't use Github Actions (yet), I hope the repository still provides
 value since the tools used here can be used standalone, too.
 
-## Project Status 🚦
-
-[![Build](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml)
-[![Tests](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml)
-[![Latest Release](https://img.shields.io/github/release/embano1/ci-demo-app.svg?logo=github&style=flat-square)](https://github.com/embano1/ci-demo-app/releases/latest)
-[![Go Report Card](https://goreportcard.com/badge/github.com/embano1/ci-demo-app)](https://goreportcard.com/report/github.com/embano1/ci-demo-app)
-[![codecov](https://codecov.io/gh/embano1/ci-demo-app/branch/main/graph/badge.svg?token=TC7MW723JO)](https://codecov.io/gh/embano1/ci-demo-app)
-[![go.mod Go version](https://img.shields.io/github/go-mod/go-version/embano1/ci-demo-app)](https://github.com/embano1/ci-demo-app)
-
 ## Features 🤩
 
 Based on a trivial Go demo application this repository was built to show the
@@ -82,23 +83,34 @@ be found in the dedicated
 Quick install via `brew`:
 
 ```console
-$ brew install embano1/ci-demo-app/demo-app
+brew install embano1/ci-demo-app/demo-app
 ```
 
-### Docker 🐳
+### Container Images 🐳
 
-Multi-arch (platform) Docker images are pushed to Docker Hub as part of the
-release pipeline. Visit the Docker Hub [Project
-page](https://hub.docker.com/r/embano1/ci-demo-app) for details.
+Multi-arch (platform) OCI-compliant container images are pushed to Github
+Container Registry ([Github Packages](https://github.com/features/packages)) as
+part of the release pipeline. Images are also publicly signed using `cosign` and
+the [sigstore](https://www.sigstore.dev/) project.
 
-Run the app via `docker`:
+Visit the [package
+page](https://github.com/embano1/ci-demo-app/pkgs/container/ci-demo-app) for
+details.
+
+Example how to run the demo app via `docker`:
 
 ```console
-$ # expose default port 8080 to 8080 on the Docker host
-$ # interrupt with CTRL-C
-$ docker run -it --rm -p 8080:8080 embano1/ci-demo-app:v0.2.7
-2021-05-04T14:31:00.658Z      INFO    ci-demo-app     ci-demo-app/main.go:85  running server  {"commit": "e616df52", "address": ":8080"}
-2021-05-04T14:31:02.933Z      INFO    ci-demo-app     ci-demo-app/main.go:81  got signal, attempting graceful shutdown        {"commit": "e616df52"}
+# print version information
+docker run ghcr.io/embano1/ci-demo-app:latest version
+version: v0.4.0
+commit: c59a1872
+
+# expose default port 8080 to 8080 on the Docker host
+# interrupt with CTRL-C
+docker run -p 8080:8080 ghcr.io/embano1/ci-demo-app:latest
+2022-04-22T08:34:09.432Z        INFO    ci-demo-app     ci-demo-app/main.go:86  running server  {"commit": "c59a1872", "version": "v0.4.0", "address": ":8080"}
+2022-04-22T08:34:09.561Z        DEBUG   ci-demo-app     ci-demo-app/main.go:119 new request     {"commit": "c59a1872", "version": "v0.4.0", "method": "GET", "path": "/api", "client": "172.17.0.1:63376"}
+2022-04-22T08:34:15.841Z        INFO    ci-demo-app     ci-demo-app/main.go:79  got signal, attempting graceful shutdown     {"commit": "c59a1872", "version": "v0.4.0"}
 ```
 
 ### Source Tarballs 👾
@@ -116,7 +128,6 @@ more about Github Actions, please see this [document](DETAILS.md).
 # Out of Scope (for now) ❌
 
 - Golang deep dive, advanced testing, etc. (this repo isn't about teaching Go)
-- Using Github [Packages](https://github.com/features/packages)
 - Advanced 3rd party integration, e.g. Slack, bots to manage issues, comments,
   etc.
 - External (manual) workflow dispatch triggers
