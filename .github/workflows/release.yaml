@@ -120,7 +120,7 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
-           filter-regex: .*bomber_reports.*
+          #  filter-regex: .*bomber_reports.*
 
       # VERIFY - verify cache
       - name: VERIFY - verify cache directory
@@ -266,7 +266,7 @@ jobs:
            type: dir
            target: /github/workspace/
            verbose: 3
-           filter-regex: .*bomber_reports.*
+          #  filter-regex: .*bomber_reports.*
 
       # Verify - verify cache
       - name: VERIFY - verify cache
