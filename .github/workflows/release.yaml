@@ -48,7 +48,7 @@ jobs:
       # SIGN/VERIFY - install bomber
       - name: install bomber
         if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/gensbom/installer@master
+        uses: scribe-security/actions/installer@master
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
@@ -198,7 +198,7 @@ jobs:
       # SIGN/VERIFY - install bomber
       - name: install bomber
         if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/gensbom/installer@master
+        uses: scribe-security/actions/installer@master
         env:
           ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
