@@ -53,6 +53,11 @@ jobs:
           ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
 
+      - name: debug 
+        if: always() 
+        run: |
+          git status
+
       # VERIFY - pull archive bomber signature
       - uses: actions/download-artifact@v2
         if: "contains(github.event.head_commit.message, 'verify')"
