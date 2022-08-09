@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	go.uber.org/zap v1.21.0
+	go.uber.org/zap v1.22.0
 	golang.org/x/sync v0.0.0-20220513210516-0976fa681c29
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.24.3
