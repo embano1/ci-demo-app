@@ -12,7 +12,7 @@ jobs:
     name: Code Linting
     strategy:
       matrix:
-        go-version: ["1.17"] # >=1.16 required due to io.ReadAll()
+        go-version: ["1.18"]
         platform: ["ubuntu-latest"]
 
     runs-on: ${{ matrix.platform }}
@@ -24,4 +24,4 @@ jobs:
         fetch-depth: 1
         
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc # v3.1.0
+      uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
