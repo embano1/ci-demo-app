@@ -44,7 +44,7 @@ jobs:
       id: go
 
     - name: Setup ko
-      uses: imjasonh/setup-ko@78eea08f10db87a7a23a666a4a6fe2734f2eeb8d # will install latest ko version
+      uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # will install latest ko version
 
     - name: Setup KinD Cluster
       env:
