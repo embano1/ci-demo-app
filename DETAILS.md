@@ -126,10 +126,10 @@ jobs:
     # use windows runner (latest version)
     runs-on: windows-latest
     steps:
-      - name: Set up Go 1.16
+      - name: Set up Go 1.19
         uses: actions/setup-go@v2
         with:
-          go-version: "1.16"
+          go-version: "1.19"
       - name: Print Go version
         # execute arbitrary commands in defined SHELL
         run: |
@@ -223,10 +223,10 @@ e.g.:
 
 ```yaml
 steps:
-  - name: Set up Go 1.16
+  - name: Set up Go 1.19
     uses: actions/setup-go@v2
     with:
-      go-version: "1.16"
+      go-version: "1.19"
 ```
 
 Depending on your preferences and background, these code snippets can be written

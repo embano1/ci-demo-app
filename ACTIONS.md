@@ -174,7 +174,7 @@ right away so it can be easily extended later.
 
 ```yaml
 matrix:
-  go-version: ["1.16"]
+  go-version: ["1.19"]
   platform: ["ubuntu-latest", "windows-latest"]
 ```
 
@@ -243,7 +243,7 @@ version when triggered:
 ```yaml
 strategy:
   matrix:
-    go-version: ["1.15","1.16"]
+    go-version: ["1.18","1.19"]
     platform: ["ubuntu-latest", "windows-latest"]
 runs-on: ${{ matrix.platform }}
 timeout-minutes: 10

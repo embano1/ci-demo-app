@@ -12,7 +12,7 @@ jobs:
     name: e2e tests
     strategy:
       matrix:
-        go-version: ["1.18"]
+        go-version: ["1.19"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     env:
@@ -48,8 +48,8 @@ jobs:
 
     - name: Setup KinD Cluster
       env:
-        KIND_VERSION: v0.12.0
-        NODE_VERSION: v1.23.5
+        KIND_VERSION: v0.17.0
+        NODE_VERSION: v1.25.3
         NODE_SHA: sha256:a69c29d3d502635369a5fe92d8e503c09581fcd406ba6598acc5d80ff5ba81b1
       run: |
         set -x
@@ -73,7 +73,7 @@ jobs:
 
     - name: Setup Knative Serving
       env:
-        KNATIVE_VERSION: knative-v1.4.0
+        KNATIVE_VERSION: knative-v1.8.1
       run: |
         echo "::group::Serving CRDs"
         kubectl apply -f https://github.com/knative/serving/releases/download/${KNATIVE_VERSION}/serving-crds.yaml
