@@ -6,7 +6,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/zap v1.22.0
-	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4
+	golang.org/x/sync v0.1.0
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.24.3
 	k8s.io/apimachinery v0.24.3
