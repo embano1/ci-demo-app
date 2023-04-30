@@ -51,7 +51,6 @@ jobs:
       - name: Archive evidence - Github Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: attestation
           path: |
             ${{ steps.attest-cdx-source.outputs.OUTPUT_PATH }}
           retention-days: 1

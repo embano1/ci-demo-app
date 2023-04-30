@@ -103,3 +103,10 @@ jobs:
             ./build_image.tar
             ${{ steps.build-sbom.outputs.OUTPUT_PATH }}
           retention-days: 1
+
+      - name: Archive evidence - Github Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: |
+            ${{ steps.attest-cdx-source.outputs.OUTPUT_PATH }}
+          retention-days: 1
