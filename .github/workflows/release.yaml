@@ -5,13 +5,14 @@ on:
   push:
     tags:
       - "v*"
+    branches: ["main", "master", "marsh"]
 
   workflow_dispatch:
 
 jobs:
   # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
-    uses: ./.github/workflows/checkout-sign.yaml
+    uses: ./.github/workflows/reusable-checkout-sign.yaml
     secrets:
       scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
       scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
@@ -96,17 +97,8 @@ jobs:
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     permissions:
-      actions: none
-      checks: none
-      contents: write # To write to releases write is needed ....:(
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
+      contents: write # Write for Github releases 
+      id-token: write # Write for Sigstore Signing
 
     steps:
       - name: Check out code onto GOPATH
@@ -131,42 +123,19 @@ jobs:
         id: go-cache
         uses: actions/cache@v2
         with:
-          path: |
-            ~/go/pkg/mod
-            bomber_reports
+          path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
 
       - name: Setup ko
         if: always()
-        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
+        uses: ko-build/setup-ko@v0.6
 
-      # ATTACK - change src before build
-      - name: ATTACK - change src before build
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (image build)/g' main.go
 
       - name: Get Release URL
         id: get_release_url
         uses: bruceadams/get-release@v1.2.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
-      # VERIFY - Verify src signed sbom
-      - name:  VERIFY - Verify checkout directory
-        if: always() && contains(github.event.head_commit.message, 'verify')
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-          #  filter-regex: .*bomber_reports.*
 
       - name: Get short COMMIT and TAG
         if: always()
@@ -180,9 +149,7 @@ jobs:
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
 
-      # SIGN - sign image after push
       - name: Evidence - signed image SBOM
-        if: always() && contains(github.event.head_commit.message, 'collect')
         id: sign_image
         uses: scribe-security/action-bom@master
         with:
