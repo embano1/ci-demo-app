@@ -12,6 +12,9 @@ jobs:
   # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
     uses: ./.github/workflows/checkout-sign.yaml
+    secrets:
+      scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+      scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
   call-unit-test:
     needs: [call-checkout-sign]
@@ -35,14 +38,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      # SIGN/VERIFY - install bomber
-      - name: install bomber
-        if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/installer@master
-        env:
-          ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
 
       - name: debug 
         if: always() 
@@ -69,26 +64,6 @@ jobs:
             cat $file | grep -A 4 "Infow(msg"
             echo #################################################
           done
-
-      # ATTACK - changing src,add commit,move tag before build
-      - name: ATTACK - changing src,add commit,move tag before build
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (pkg build)/g' main.go
-          git config user.name "$(git log -n 1 --pretty=format:%an)"
-          git config user.email "$(git log -n 1 --pretty=format:%ae)"
-          git add main.go
-          git commit -m "BAD COMMIT"
-          git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
-
-      # VERIFY - Verify src signed sbom
-      - name:  VERIFY - Verify checkout directory
-        if: always() && contains(github.event.head_commit.message, 'verify')
-        id: verify_checkout
-        uses: scribe-security/action-verify@master
-        with:
-           target: git:.
-           verbose: 2
            
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
@@ -106,17 +81,6 @@ jobs:
           args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-      # # SIGN - Archive bomber signature
-      - name: SIGN - Archive bomber signature
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        uses: actions/upload-artifact@v2
-        with:
-          name: bomber-signatures
-          path: |
-            bomber_reports
-          retention-days: 1
 
   images:
     needs: release
@@ -150,20 +114,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # SIGN/VERIFY - install bomber
-      - name: install bomber
-        if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/installer@master
-        env:
-          ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
-
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1

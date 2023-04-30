@@ -13,9 +13,6 @@ jobs:
 
   call-checkout-sign:
     uses: ./.github/workflows/reusable-checkout-sign.yaml
-    secrets:
-      scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
-      scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
   call-unit-test:
     needs: [call-checkout-sign]
@@ -47,13 +44,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
-
       - name: Restore go cache
         id: go-cache
         uses: actions/cache@v2
@@ -69,40 +59,18 @@ jobs:
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
-      # VERIFY - Verify src signed sbom
-      - name: VERIFY - Verify src signed sbom
-        if: "contains(github.event.head_commit.message, 'verify')"
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-
-      # Not sure why resolve does not work well with --tarball flag..
       - name: Build Images (amd64 only)
         run: |
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
       - name:  Evidence - SBOM image tar (exported from ko)
-        if: "contains(github.event.head_commit.message, 'collect')"
         id: build-sbom
         uses: scribe-security/action-bom@master
         with:
            target: docker-archive:build_image.tar
            verbose: 2
            format: json
-
-      - name: Archive ko artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: |
-            ./release.yaml
-            ./build_image.tar
-            ${{ steps.build-sbom.outputs.OUTPUT_PATH }}
-          retention-days: 1
 
       - name: Archive evidence - Github Artifact
         uses: actions/upload-artifact@v2
