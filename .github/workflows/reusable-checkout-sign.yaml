@@ -23,7 +23,6 @@ jobs:
 
     steps:
       - name: Checkout
-        if: "contains(github.event.head_commit.message, 'collect')"
         uses: actions/checkout@v2
 
       - name: Set Scribe Enable
@@ -37,7 +36,6 @@ jobs:
           fi
 
       - name: Evidence - Sign Source SBOM
-        if: "contains(github.event.head_commit.message, 'collect')"
         id: attest-cdx-source
         uses: scribe-security/action-bom@master
         with:
@@ -49,7 +47,6 @@ jobs:
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
 
       - name: Archive evidence - Github Artifact
-        if: "contains(github.event.head_commit.message, 'collect')"
         uses: actions/upload-artifact@v2
         with:
           name: attestation
