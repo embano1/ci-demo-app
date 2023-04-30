@@ -1,0 +1,58 @@
+name: .checkout-sign
+
+on:
+  workflow_call:
+    secrets: 
+      scribe-client-id:
+        required: false
+      scribe-client-secret:
+        required: false
+
+jobs:
+  # Collect - sign source SBOM and upload Scribe and Github artifact.
+  checkout-sign:
+    name: Checkout Sign
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        if: "contains(github.event.head_commit.message, 'collect')"
+        uses: actions/checkout@v2
+
+      - name: Set Scribe Enable
+        run: |
+          if [ "${{ secrets.scribe-client-id }}" == "" ]; then
+            echo "Scribe is disabled"
+            echo "SCRIBE_ENABLE=false" >> "${GITHUB_ENV}"
+          else
+            echo "Scribe is enabled"
+            echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Evidence - Sign Source SBOM
+        if: "contains(github.event.head_commit.message, 'collect')"
+        id: attest-cdx-source
+        uses: scribe-security/action-bom@master
+        with:
+           target: git:.
+           verbose: 2
+           format: attest
+           scribe-enable: ${{ env.SCRIBE_ENABLE }}
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+
+      - name: Archive evidence - Github Artifact
+        if: "contains(github.event.head_commit.message, 'collect')"
+        uses: actions/upload-artifact@v2
+        with:
+          name: attestation
+          path: |
+            ${{ steps.attest-cdx-source.outputs.OUTPUT_PATH }}
+          retention-days: 1

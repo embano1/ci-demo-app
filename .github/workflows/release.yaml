@@ -27,16 +27,7 @@ jobs:
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     permissions:
-      actions: none
-      checks: none
       contents: write # To write to releases write is needed ....:(
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
       id-token: write
 
     steps:
@@ -58,31 +49,10 @@ jobs:
         run: |
           git status
 
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            bomber_reports
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
       - name: debug 
         if: always() 
@@ -114,21 +84,12 @@ jobs:
       # VERIFY - Verify src signed sbom
       - name:  VERIFY - Verify checkout directory
         if: always() && contains(github.event.head_commit.message, 'verify')
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
+        id: verify_checkout
+        uses: scribe-security/action-verify@master
         with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-          #  filter-regex: .*bomber_reports.*
-
-      # VERIFY - verify cache
-      - name: VERIFY - verify cache directory
-        if: always() && contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
-        id: verify_cache
-        run: |
-          bomber verify dir:~/go/pkg/mod -vv
-
+           target: git:.
+           verbose: 2
+           
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
         run: |
@@ -146,27 +107,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # SIGN - sign cache
-      - name: SIGN - sign cache
-        if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
-        id: sign_cache
-        run: |
-          bomber bom dir:~/go/pkg/mod -vv -o attest -f
-          
-      - name: debug 
-        if: always() 
-        run: |
-           ls -lR bomber_reports  || true
 
       # # SIGN - Archive bomber signature
-      # - name: SIGN - Archive bomber signature
-      #   if: always() && contains(github.event.head_commit.message, 'sign')
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: bomber-signatures
-      #     path: |
-      #       bomber_reports
-      #     retention-days: 1
+      - name: SIGN - Archive bomber signature
+        if: always() && contains(github.event.head_commit.message, 'sign')
+        uses: actions/upload-artifact@v2
+        with:
+          name: bomber-signatures
+          path: |
+            bomber_reports
+          retention-days: 1
 
   images:
     needs: release
@@ -268,13 +218,6 @@ jobs:
            verbose: 3
           #  filter-regex: .*bomber_reports.*
 
-      # Verify - verify cache
-      - name: VERIFY - verify cache
-        if: always() && contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
-        id: verify_cache
-        run: |
-          bomber verify dir:~/go/pkg/mod -vv
-
       - name: Get short COMMIT and TAG
         if: always()
         run: |
@@ -285,57 +228,39 @@ jobs:
         if: always()
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
-     
+          ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+
       # SIGN - sign image after push
-      - name: SIGN - sign image after push
-        if: always() && contains(github.event.head_commit.message, 'sign')
+      - name: Evidence - signed image SBOM
+        if: always() && contains(github.event.head_commit.message, 'collect')
         id: sign_image
-        uses: scribe-security/actions/gensbom/bom@master
+        uses: scribe-security/action-bom@master
         with:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
-           verbose: 3
+           verbose: 2
            format: attest
-           force: true
 
-      # SIGN - Archive bomber signature
-      - name: SIGN - Archive bomber signature
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        uses: actions/upload-artifact@v2
-        with:
-          name: bomber-signatures
-          path: |
-            bomber_reports
-          retention-days: 1
+      # - name: Upload Release Assets
+      #   id: upload-release-asset
+      #   if: always()
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+      #     asset_path: ./release.yaml
+      #     asset_name: release.yaml
+      #     asset_content_type: text/plain
 
-      # ATTACK - Replace image after push
-      - name: ATTACK - build and replace image
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (image replace)/g' main.go
-          sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
-          ko resolve --platform=all --tags latest -BRf config/service.yaml
-
-      - name: Upload Release Assets
-        id: upload-release-asset
-        if: always()
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-          asset_path: ./release.yaml
-          asset_name: release.yaml
-          asset_content_type: text/plain
-
-      # SIGN - attach image sigtature to release
-      - name: Upload image sig asset
-        id: upload-image-sig-asset
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-          asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
-          asset_name: image.sig
-          asset_content_type: application/json
+      # # SIGN - attach image sigtature to release
+      # - name: Upload image sig asset
+      #   id: upload-image-sig-asset
+      #   if: always() && contains(github.event.head_commit.message, 'sign')
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+      #     asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
+      #     asset_name: rele.sbom
+      #     asset_content_type: application/json
