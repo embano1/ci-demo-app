@@ -1,0 +1,59 @@
+name: .compliance
+
+on:
+  workflow_call:
+    secrets: 
+      scribe-client-id:
+        required: false
+      scribe-client-secret:
+        required: false
+    inputs:
+      target:
+        type: string
+        required: true
+
+jobs:
+  # Collect - sign source SBOM and upload Scribe and Github artifact.
+  compliance:
+    name: Verify compliance
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # - name: Download Artifact
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: checkout-evidence # Download current build evidence from artifacts
+
+      - name: Set Scribe Enable
+        run: |
+          if [ "${{ secrets.scribe-client-id }}" == "" ]; then
+            echo "Scribe is disabled"
+            echo "SCRIBE_ENABLE=false" >> "${GITHUB_ENV}"
+          else
+            echo "Scribe is enabled"
+            echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Verify Policy
+        id: verify-policy
+        uses: scribe-security/action-verify@master
+        with:
+           target: ${{ inputs.target }}
+           verbose: 2
+           scribe-enable: ${{ env.SCRIBE_ENABLE }}
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+        env:
+          DEBUG: true

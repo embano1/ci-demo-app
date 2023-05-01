@@ -9,6 +9,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp
+
 jobs:
   # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
@@ -73,7 +76,6 @@ jobs:
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10
     env:
-      KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp
       ARTIFACTORY_URL: "https://scribesecuriy.jfrog.io"
     strategy:
       matrix:
@@ -136,9 +138,10 @@ jobs:
         id: sign_image
         uses: scribe-security/action-bom@master
         with:
-           target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
+          #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
+           target: busybox:latest
            verbose: 2
-           format: attest
+           format: attest-slsa
            scribe-enable: true
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
@@ -179,3 +182,20 @@ jobs:
       #     asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
       #     asset_name: rele.sbom
       #     asset_content_type: application/json
+
+  call-verify-policy:
+    needs: [images]
+    steps:
+      - name: Get short COMMIT and TAG
+        if: always()
+        run: |
+          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+      
+      - uses: ./.github/workflows/reusable-compliance.yaml
+        secrets:
+          scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+          scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }}
+        with:
+          target: busybox:latest
+          # target:  ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
