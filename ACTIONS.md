@@ -249,7 +249,7 @@ runs-on: ${{ matrix.platform }}
 timeout-minutes: 10
 steps:
 - name: Set up Go ${{ matrix.go-version }}
-  uses: actions/setup-go@v2
+  uses: actions/setup-go@v4
   with:
     go-version: ${{ matrix.go-version }}
   id: go
@@ -427,10 +427,10 @@ successful (see `needs: release`).
 
 ##### Job `id: release`
 
-With `actions/checkout@v2` the repository is checked out as usual, but with two additional parameters:
+With `actions/checkout@v3` the repository is checked out as usual, but with two additional parameters:
 
 ```yaml
-uses: actions/checkout@v2
+uses: actions/checkout@v3
 with:
   fetch-depth: 0
   ref: "main"

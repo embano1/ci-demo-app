@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -46,7 +46,7 @@ jobs:
           git status
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
            
@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Check out code onto GOPATH
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
@@ -99,7 +99,7 @@ jobs:
           password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
    
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
 
