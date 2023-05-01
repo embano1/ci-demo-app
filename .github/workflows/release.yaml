@@ -25,58 +25,58 @@ jobs:
       scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
       scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
-  call-unit-test:
-    needs: [call-checkout-sign]
-    uses: ./.github/workflows/go-unit-tests.yaml
+  # call-unit-test:
+  #   needs: [call-checkout-sign]
+  #   uses: ./.github/workflows/go-unit-tests.yaml
 
-  release:
-    name: Create Release
-    needs: [call-unit-test]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: ["1.17"]
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      contents: write # To write to releases write is needed ....:(
-      id-token: write
+  # release:
+  #   name: Create Release
+  #   needs: [call-unit-test]
+  #   timeout-minutes: 10
+  #   strategy:
+  #     matrix:
+  #       go-version: ["1.17"]
+  #       platform: ["ubuntu-latest"]
+  #   runs-on: ${{ matrix.platform }}
+  #   permissions:
+  #     contents: write # To write to releases write is needed ....:(
+  #     id-token: write
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: debug 
-        if: always() 
-        run: |
-          git status
+  #     - name: debug 
+  #       if: always() 
+  #       run: |
+  #         git status
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go-version }}
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: ${{ matrix.go-version }}
            
-      - name: Create CHANGELOG for Release
-        if: ${{ always() }}
-        run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+  #     - name: Create CHANGELOG for Release
+  #       if: ${{ always() }}
+  #       run: |
+  #         # build from vendor
+  #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-          # generate CHANGELOG for this Github release tag only
-          ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
+  #         # generate CHANGELOG for this Github release tag only
+  #         ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
-      - name: GoReleaser
-        if: ${{ always() }}
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: GoReleaser
+  #       if: ${{ always() }}
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   images:
-    needs: release
+    # needs: release
     if: ${{ always() }}
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10
@@ -98,46 +98,46 @@ jobs:
           fetch-depth: 1
 
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.ARTIFACTORY_URL }}
-          username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ${{ env.ARTIFACTORY_URL }}
+      #     username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
+      #     password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
    
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go-version }}
+      # - name: Set up Go
+      #   uses: actions/setup-go@v4
+      #   with:
+      #     go-version: ${{ matrix.go-version }}
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+      # - name: Restore go cache
+      #   id: go-cache
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/go/pkg/mod
+      #     key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Setup ko
-        if: always()
-        uses: ko-build/setup-ko@v0.6
+      # - name: Setup ko
+      #   if: always()
+      #   uses: ko-build/setup-ko@v0.6
 
-      - name: Get Release URL
-        id: get_release_url
-        uses: bruceadams/get-release@v1.2.3
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      # - name: Get Release URL
+      #   id: get_release_url
+      #   uses: bruceadams/get-release@v1.2.3
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Get short COMMIT and TAG
-        if: always()
-        run: |
-          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
+      # - name: Get short COMMIT and TAG
+      #   if: always()
+      #   run: |
+      #     echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+      #     echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
-      - name: Build and Publish Images, Produce Release Artifact.
-        if: always()
-        run: |
-          ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
-          ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+      # - name: Build and Publish Images, Produce Release Artifact.
+      #   if: always()
+      #   run: |
+      #     ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
+      #     ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
 
       - name: Evidence - signed image SBOM
         id: sign_image
@@ -146,7 +146,7 @@ jobs:
           #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
            target: busybox:latest
            verbose: 2
-           format: attest-slsa
+           format: attest
            scribe-enable: true
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
@@ -156,12 +156,12 @@ jobs:
         with:
           name: checkout-evidence # Replace with the name of the artifact you want to download
 
-      - name: Release-Github
-        uses: softprops/action-gh-release@v1
-        with:
-          name: evidence
-          files: |
-            scribe/valint
+      # - name: Release-Github
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     name: evidence
+      #     files: |
+      #       scribe/valint
     
       # - name: Upload Release Assets
       #   id: upload-release-asset
@@ -189,6 +189,7 @@ jobs:
       #     asset_content_type: application/json
 
   call-verify-policy:
+    needs: [images]
     uses: ./.github/workflows/reusable-compliance.yaml
     with:
       target: busybox:latest
