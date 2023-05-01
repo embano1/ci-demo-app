@@ -149,8 +149,21 @@ jobs:
            verbose: 2
            format: attest
            scribe-enable: true
-           scribe-client-id: ${{ secrets.scribe-client-id }}
-           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+           scribe-client-id:  ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+           scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET  }}
+
+      - name: Verify Policy
+        id: verify-policy
+        uses: scribe-security/action-verify@master
+        with:
+           target: ${{ inputs.target }}
+           verbose: 2
+           input-format: attest
+           scribe-enable: true
+           scribe-client-id:  ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+           scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET  }}
+        env:
+          DEBUG: true
 
       - name: Download Artifact
         uses: actions/download-artifact@v2
