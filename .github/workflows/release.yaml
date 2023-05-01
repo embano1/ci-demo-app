@@ -189,30 +189,10 @@ jobs:
       #     asset_content_type: application/json
 
   call-verify-policy:
-    strategy:
-      matrix:
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    # needs: [images]
-    steps:
-      - name: Get short COMMIT and TAG
-        if: always()
-        run: |
-          echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
-      
-      - uses: ./.github/workflows/reusable-compliance.yaml
-        with:
-          target: busybox:latest
- 
-          # target:  ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
-
-
-  # call-verify-policy:
-  #   uses: ./.github/workflows/reusable-compliance.yaml
-  #     with:
-  #       target: busybox:latest
-  #       # target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.GITHUB_REF_NAME }}
-  #     secrets:
-  #       scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
-  #       scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
+    uses: ./.github/workflows/reusable-compliance.yaml
+      with:
+        target: busybox:latest
+        # target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.GITHUB_REF_NAME }}
+      secrets:
+        scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+        scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
