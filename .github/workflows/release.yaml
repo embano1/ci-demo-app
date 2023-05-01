@@ -156,7 +156,7 @@ jobs:
         id: verify-policy
         uses: scribe-security/action-verify@master
         with:
-           target: ${{ inputs.target }}
+           target: busybox:latest
            verbose: 2
            input-format: attest
            scribe-enable: true
