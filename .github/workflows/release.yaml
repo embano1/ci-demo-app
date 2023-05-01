@@ -9,6 +9,11 @@ on:
 
   workflow_dispatch:
 
+concurrency: 
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+
 env:
   KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp
 
