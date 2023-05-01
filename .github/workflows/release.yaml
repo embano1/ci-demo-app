@@ -184,6 +184,10 @@ jobs:
       #     asset_content_type: application/json
 
   call-verify-policy:
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
     needs: [images]
     steps:
       - name: Get short COMMIT and TAG
