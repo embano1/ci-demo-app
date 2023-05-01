@@ -49,22 +49,6 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
-
-      - name: DEBUG - print library shellcode
-        if: always() && steps.go-cache.outputs.cache-hit == 'true'
-        run: |
-          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
-          for file in $FILES
-          do
-            echo ##################### $file #####################
-            cat $file | grep -A 4 "Infow(msg"
-            echo #################################################
-          done
            
       - name: Create CHANGELOG for Release
         if: ${{ always() }}
@@ -130,7 +114,6 @@ jobs:
         if: always()
         uses: ko-build/setup-ko@v0.6
 
-
       - name: Get Release URL
         id: get_release_url
         uses: bruceadams/get-release@v1.2.3
@@ -156,7 +139,22 @@ jobs:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
            verbose: 2
            format: attest
+           scribe-enable: true
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
 
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: checkout-evidence # Replace with the name of the artifact you want to download
+
+      - name: Release-Github
+        uses: softprops/action-gh-release@v1
+        with:
+          name: evidence
+          files: |
+            scribe/valint
+    
       # - name: Upload Release Assets
       #   id: upload-release-asset
       #   if: always()
