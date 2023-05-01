@@ -193,7 +193,7 @@ jobs:
       matrix:
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
-    needs: [images]
+    # needs: [images]
     steps:
       - name: Get short COMMIT and TAG
         if: always()
@@ -204,4 +204,15 @@ jobs:
       - uses: ./.github/workflows/reusable-compliance.yaml
         with:
           target: busybox:latest
+ 
           # target:  ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
+
+
+  # call-verify-policy:
+  #   uses: ./.github/workflows/reusable-compliance.yaml
+  #     with:
+  #       target: busybox:latest
+  #       # target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.GITHUB_REF_NAME }}
+  #     secrets:
+  #       scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+  #       scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
