@@ -99,3 +99,9 @@ jobs:
       - run: |
           ls -lh
           ls -lh evidence
+
+      - name: Release-Github
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            evidence/*
