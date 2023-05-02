@@ -96,12 +96,12 @@ jobs:
           name: image-evidence
           path: evidence
 
-      - run: |
-          ls -lh
-          ls -lh evidence
+      - name: Compress Evidence
+        run: |
+          tar xzvf evidence.tar.gz evidence
 
       - name: Release-Github
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            evidence/*
+            evidence.tar.gz
