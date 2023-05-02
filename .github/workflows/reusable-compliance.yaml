@@ -52,6 +52,7 @@ jobs:
         with:
            target: ${{ inputs.target }}
            verbose: 2
+           product-key: ${{ env.GITHUB_REPOSITORY }}
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
