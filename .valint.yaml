@@ -11,12 +11,8 @@ attest:
           input:
             signed: true
             format: attest-slsa
-            identity:
-              emails:
-                - mdstrauss91@gmail.com
-                - someonelse@mycompany.com
               uris:
-                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/reusable-checkout-sign.yaml@refs/heads/marsh
             match:
               target_type: image
 
@@ -27,11 +23,8 @@ attest:
             signed: true
             format: attest
             identity:
-              emails:
-                - mdstrauss91@gmail.com
-                - someonelse@mycompany.com
               uris:
-                - https://github.com/louischatriot/nedb/.github/workflows/release.yml@refs/heads/main
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/reusable-checkout-sign.yaml@refs/heads/marsh
             match:
               target_type: git
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
