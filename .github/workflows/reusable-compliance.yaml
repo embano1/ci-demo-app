@@ -57,7 +57,7 @@ jobs:
           fi
 
       - name: Verify Policy
-        id: verify-policy
+        id: verify-bundle
         uses: scribe-security/action-verify@master
         with:
            target: bundle_${{steps.policy_bundle.outputs.tag_name}}.tar.gz
