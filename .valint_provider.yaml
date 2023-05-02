@@ -4,7 +4,7 @@ attest:
     - name: marsh_policy_trust
       enable: true
       modules:
-        - name: signed_image_SLSA_prov
+        - name: bundle_SLSA_prov
           type: verify-artifact # Verify artifact Origin and Source
           enable: true
           input:
@@ -12,6 +12,6 @@ attest:
             format: attest-slsa
             identity:
               uris:
-                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
+                - https://github.com/scribe-security/policy-modules/.github/workflows/reusable_release.yml@refs/tags/v0.0.2
             match:
               target_type: file
