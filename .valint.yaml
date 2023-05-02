@@ -11,8 +11,9 @@ attest:
           input:
             signed: true
             format: attest-slsa
+            identity:
               uris:
-                - https://github.com/scribe-security/ci-demo-app/.github/workflows/reusable-checkout-sign.yaml@refs/heads/marsh
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
             match:
               target_type: image
 
@@ -29,3 +30,24 @@ attest:
               target_type: git
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
                     
+        - name: verify_git_owners
+          type: git-scm-rule 
+          enable: true
+          input:
+            signed_commits: false
+            match:
+              target_git_url: https://github.com/scribe-security/ci-demo-app.git
+              target_git_branch: main
+              format: attest-cyclonedx-json
+            admin:
+            - mdstrauss91@gmail.com
+            - embano1@users.noreply.github.com
+            - mgasch@vmware.com
+            default:
+              - mdstrauss91@gmail.com
+              - embano1@users.noreply.github.com
+              - mgasch@vmware.com
+            specific:
+              - path: .github/workflows
+                owners:
+                  - mdstrauss91@gmail.com
