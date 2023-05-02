@@ -138,9 +138,9 @@ jobs:
           export KO_TAG=$(basename "${{ github.ref }}")
           echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
           export IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-          echo "IMAGE=$IMAGE" >> $env:GITHUB_OUTPUT
-
+          echo "test=hello" >> "$GITHUB_OUTPUT"
+          echo "IMAGE=$IMAGE" >> "$GITHUB_OUTPUT"
+          
       - name: Build and Publish Images, Produce Release Artifact.
         if: always()
         run: |
