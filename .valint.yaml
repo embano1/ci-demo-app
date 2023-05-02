@@ -1,0 +1,38 @@
+attest:
+  cocosign:
+    policies:
+    - name: marsh_policy
+      enable: true
+      modules:
+
+        - name: signed_image_SLSA_prov
+          type: verify-artifact # Verify artifact Origin and Source
+          enable: true
+          input:
+            signed: true
+            format: attest-slsa
+            identity:
+              emails:
+                - mdstrauss91@gmail.com
+                - someonelse@mycompany.com
+              uris:
+                - https://github.com/louischatriot/nedb/.github/workflows/release.yml@refs/heads/main
+            match:
+              target_type: image
+
+        - name: signed_sources_SBOMs
+          type: verify-artifact # Verify artifact Origin and Source
+          enable: true
+          input:
+            signed: true
+            format: attest
+            identity:
+              emails:
+                - mdstrauss91@gmail.com
+                - someonelse@mycompany.com
+              uris:
+                - https://github.com/louischatriot/nedb/.github/workflows/release.yml@refs/heads/main
+            match:
+              target_type: git
+              target_git_url: https://github.com/louischatriot/nedb.git
+                    
