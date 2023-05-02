@@ -5,7 +5,7 @@ on:
   push:
     tags:
       - "v*"
-    branches: ["main", "master", "marsh"]
+    # branches: ["main", "master", "marsh"]
 
   workflow_dispatch:
   
@@ -172,7 +172,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-              ./release.yaml
+            ./release.yaml
     
       # - name: Upload Release Assets
       #   id: upload-release-asset
