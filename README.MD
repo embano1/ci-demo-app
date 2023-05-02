@@ -1,8 +1,24 @@
-# Policy as code Demo 💪
-Demo showcases Scribe Policy As Code capabilities.
+# Continuous Compliance Platform Demo
 
+This demo repository showcases a continuous compliance platform based on attestations that enables software consumers and producers to transparently demonstrate trust and compliance to secure software development life cycle (SDLC), promote security best practices, meet regulatory requirements, and mitigate cyber risks.
+
+Overview of the Platform
+The platform consists of several building blocks that work together to ensure the security and compliance of a supply chain:
+
+* Evidence: Immutable objects that contain metadata needed to enable policy enforcement and meet compliance requirements.
+* Attestations: Verifiable evidence linked to a specific environmental context, conveying trust using some form of PKI signatures.
+* Environmental Context: A labeling system that ties the model together and provides normalized access to many processes of your development process and CI/CD pipeline.
+* Policies: A set of user-configured policy modules that define the required compliance report.
+Stores: Services providing hosting, upload/download, and querying capabilities for evidence.
+* Policy Providers: Entities responsible for signing and providing policy modules.
+
+## Policy Provider repo
 * [Policy Module Rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
 * [Policy Module Releases](https://github.com/scribe-security/policy-modules/releases)
+
+## Consumer repo (This repo)
+* [Policy](https://github.com/scribe-security/ci-demo-app/blob/main/.valint)
+* [Policy Module Policy](https://github.com/scribe-security/ci-demo-app/blob/main/.valint)
 * [Release Actions](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
 
 ## Policy Modules

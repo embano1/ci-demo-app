@@ -37,9 +37,6 @@ jobs:
           repository: scribe-security/policy-modules
           latest: true
 
-      - run: |
-          ls -lh
-
       - name: Set Scribe Enable
         run: |
           if [ "${{ secrets.scribe-client-id }}" == "" ]; then
@@ -87,8 +84,10 @@ jobs:
         with:
           name: checkout-evidence
 
-
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
           name: image-evidence
+
+      - run: |
+          ls -lh
