@@ -34,20 +34,15 @@ attest:
           type: git-scm-rule 
           enable: true
           input:
-            signed_commits: false
+            signed_commits: true
             match:
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
               target_git_branch: main
               format: attest-cyclonedx-json
             admin:
-            - mdstrauss91@gmail.com
-            - embano1@users.noreply.github.com
             - mgasch@vmware.com
-            default:
-              - mdstrauss91@gmail.com
-              - embano1@users.noreply.github.com
-              - mgasch@vmware.com
+            - mdstrauss91@gmail.com
             specific:
-              - path: .github/workflows
-                owners:
-                  - mdstrauss91@gmail.com
+            - path: "CHANGELOG.md"
+              owners:
+              - embano1@users.noreply.github.com
