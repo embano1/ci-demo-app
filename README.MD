@@ -12,38 +12,47 @@ The platform consists of several building blocks that work together to ensure th
 Stores: Services providing hosting, upload/download, and querying capabilities for evidence.
 * Policy Providers: Entities responsible for signing and providing policy modules.
 
-## Policy Provider repo
-* [Policy Module Rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
-* [Policy Module Releases](https://github.com/scribe-security/policy-modules/releases)
-
-## Consumer repo (This repo)
-* [Policy](https://github.com/scribe-security/ci-demo-app/blob/main/.valint)
-* [Policy Module Policy](https://github.com/scribe-security/ci-demo-app/blob/main/.valint)
-* [Release Actions](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
-
-## Policy Modules
+## Policy Provider example repo
 Policy providers can provide OPA based Policy modules.
 Modules are signed by provider and can be verified by consumers.
 Using the policy modules, consumers can generate compliance reports fitted to the providers regulations.
 
-See https://github.com/scribe-security/policy-modules repo for details.
+The following files as an example for a policy module:
+* [example.rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
 
-## Policies
-* .valint.yaml - Policies select the modules and configuration required by a specific report.
-* .valint_provider - Policy used to verify the Policy bundle trust (who is the provider).
+Release: [Releases](https://github.com/scribe-security/ci-demo-app/blob/releases)
+Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
 
-## Evidence
-* Checkout stage: Signed SBOM.
-  * SBOM includes commits, but also a graph of what file in your source was edited by what commit.
+See https://github.com/scribe-security/policy-modules repo as an example.
+
+## Policy evaluator Repository (This Repository)
+Policy evaluation can be run continuously after each release verify compliance as shown by this repo.
+Policy evaluation can also happen continuously in an [Admission](https://scribe-security.netlify.app/docs/other-integrations/admission-controller).
+Policy evaluation can also happen manually by by CISO as any point.
+
+The following files in this repository are relevant to policy evaluation:
+* [.valint.yaml](https://github.com/scribe-security/ci-demo-app/blob/main/.valint.yaml): This file defines the policies and configuration required for a compliance report.
+* [.valint_provder](https://github.com/scribe-security/ci-demo-app/blob/main/.valint_provider.yaml): This file specifies the policy provider and verifies the trustworthiness of the policy bundle.
+
+Release: [Releases](https://github.com/scribe-security/ci-demo-app/blob/releases)
+Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
+
+## Evidence collection
+The following evidence is collected during the software supply chain:
+* Checkout stage: Signed SBOM. The SBOM includes commits and a graph of what file in your source was edited by what commit.
 * Image Release stage: Signed SLSA Prov.
+Attached to Github Releases as well as uploaded to Scribe.
 
 ## Evaluation
-* Check release tagged sources are signed.
-* Check release image is signed.
-* SBOM collected on sources.
-* SLSA prov collected on img.
-* Check Code owners (Who is modifying what part of the SCM)
+The following checks are performed during compliance evaluation:
 
+* Check that tagged sources are signed.
+* Check that the release image is signed.
+* Collect an SBOM on sources.
+* Collect an SLSA prov on the image.
+* Check code owners (who is modifying what part of the SCM).
+
+---
 # Demo app💡
 
 This repository shows an end-to-end release management approach for
