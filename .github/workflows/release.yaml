@@ -8,6 +8,7 @@ on:
     branches: ["main", "master", "marsh"]
 
   workflow_dispatch:
+  
 
 concurrency: 
   group: release-${{ github.ref }}
@@ -138,7 +139,7 @@ jobs:
           echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
           export IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-          echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUTS
+          echo "IMAGE=$IMAGE" >> $env:GITHUB_OUTPUT
 
       - name: Build and Publish Images, Produce Release Artifact.
         if: always()
