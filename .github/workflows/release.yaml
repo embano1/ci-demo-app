@@ -168,12 +168,12 @@ jobs:
             ${{ steps.attest-cdx-image.outputs.OUTPUT_PATH }}
           retention-days: 1
 
-      - name: Release-Github
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-              ./release.yaml
-      #         scribe/valint
+      # - name: Release-Github
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: |
+      #         ./release.yaml
+      # #         scribe/valint
     
       # - name: Upload Release Assets
       #   id: upload-release-asset
