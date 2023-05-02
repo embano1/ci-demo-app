@@ -44,6 +44,7 @@ jobs:
            target: git:.
            verbose: 2
            format: attest
+           product-key: ${{ env.GITHUB_REPOSITORY }}
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
