@@ -147,7 +147,7 @@ jobs:
       - name: Evidence - signed image SBOM
         if: always()
         id: sign_image
-        uses: scribe-security/action-bom@master
+        uses: scribe-security/action-bom@dev
         with:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
            verbose: 2
