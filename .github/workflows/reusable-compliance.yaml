@@ -55,7 +55,7 @@ jobs:
         id: verify-bundle
         uses: scribe-security/action-verify@master
         with:
-           target: bundle_${{steps.policy_bundle.outputs.tag_name}}.tar.gz
+           target: file:bundle_${{steps.policy_bundle.outputs.tag_name}}.tar.gz
            verbose: 2
            product-key: ${{ env.GITHUB_REPOSITORY }}
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
