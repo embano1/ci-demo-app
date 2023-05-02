@@ -35,16 +35,11 @@ jobs:
         id: policy_bundle
         uses: robinraju/release-downloader@v1.7
         with:
-          repository: "scribe-security/policy-modules"
+          repository: scribe-security/policy-modules
           latest: true
 
       - run: |
           ls -lh
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: checkout-evidence # Download current build evidence from artifacts
 
       - name: Set Scribe Enable
         run: |
@@ -81,3 +76,8 @@ jobs:
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
         env:
           DEBUG: true
+
+      # - name: Download Artifact
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: checkout-evidence # Download current build evidence from artifacts
