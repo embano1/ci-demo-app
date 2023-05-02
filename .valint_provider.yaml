@@ -14,4 +14,4 @@ attest:
               uris:
                 - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
             match:
-              target_type: image
+              target_type: file
