@@ -31,7 +31,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: robinraju/release-downloader@v1.7
+      - name: Download Policy bundle
+        id: policy_bundle
+        uses: robinraju/release-downloader@v1.7
         with:
           repository: "scribe-security/policy-modules"
           latest: true
@@ -53,6 +55,19 @@ jobs:
             echo "Scribe is enabled"
             echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
           fi
+
+      - name: Verify Policy
+        id: verify-policy
+        uses: scribe-security/action-verify@master
+        with:
+           target: bundle_${{steps.policy_bundle.outputs.tag_name}}.tar.gz
+           verbose: 2
+           product-key: ${{ env.GITHUB_REPOSITORY }}
+           scribe-enable: ${{ env.SCRIBE_ENABLE }}
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+        env:
+          DEBUG: true
 
       - name: Verify Policy
         id: verify-policy

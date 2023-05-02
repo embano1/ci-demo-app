@@ -18,190 +18,190 @@ env:
   KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local
 
 jobs:
-  # SIGN - checkout sign and upload cache to Github artifact.
-  call-checkout-sign:
-    uses: ./.github/workflows/reusable-checkout-sign.yaml
-    secrets:
-      scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
-      scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
+  # # SIGN - checkout sign and upload cache to Github artifact.
+  # call-checkout-sign:
+  #   uses: ./.github/workflows/reusable-checkout-sign.yaml
+  #   secrets:
+  #     scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+  #     scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
-  # call-unit-test:
+  # # call-unit-test:
+  # #   needs: [call-checkout-sign]
+  # #   uses: ./.github/workflows/go-unit-tests.yaml
+
+  # # release:
+  # #   name: Create Release
+  # #   needs: [call-unit-test]
+  # #   timeout-minutes: 10
+  # #   strategy:
+  # #     matrix:
+  # #       go-version: ["1.17"]
+  # #       platform: ["ubuntu-latest"]
+  # #   runs-on: ${{ matrix.platform }}
+  # #   permissions:
+  # #     contents: write # To write to releases write is needed ....:(
+  # #     id-token: write
+
+  # #   steps:
+  # #     - name: Checkout
+  # #       uses: actions/checkout@v3
+  # #       with:
+  # #         fetch-depth: 0
+
+  # #     - name: debug 
+  # #       if: always() 
+  # #       run: |
+  # #         git status
+
+  # #     - name: Set up Go
+  # #       uses: actions/setup-go@v4
+  # #       with:
+  # #         go-version: ${{ matrix.go-version }}
+           
+  # #     - name: Create CHANGELOG for Release
+  # #       if: ${{ always() }}
+  # #       run: |
+  # #         # build from vendor
+  # #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+
+  # #         # generate CHANGELOG for this Github release tag only
+  # #         ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
+
+  # #     - name: GoReleaser
+  # #       if: ${{ always() }}
+  # #       uses: goreleaser/goreleaser-action@v2
+  # #       with:
+  # #         args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+  # #       env:
+  # #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # images:
+  #   # needs: release
   #   needs: [call-checkout-sign]
-  #   uses: ./.github/workflows/go-unit-tests.yaml
-
-  # release:
-  #   name: Create Release
-  #   needs: [call-unit-test]
+  #   if: ${{ always() }}
+  #   name: Release ko Artifact and Docker Image
   #   timeout-minutes: 10
+  #   env:
+  #     ARTIFACTORY_URL: "https://scribesecuriy.jfrog.io"
   #   strategy:
   #     matrix:
   #       go-version: ["1.17"]
   #       platform: ["ubuntu-latest"]
   #   runs-on: ${{ matrix.platform }}
   #   permissions:
-  #     contents: write # To write to releases write is needed ....:(
-  #     id-token: write
-
+  #     contents: write # Write for Github releases 
+  #     id-token: write # Write for Sigstore Signing
+  #   outputs:
+  #     image: ${{ steps.set_env.outputs.IMAGE }}
   #   steps:
-  #     - name: Checkout
+  #     - name: Check out code onto GOPATH
   #       uses: actions/checkout@v3
   #       with:
-  #         fetch-depth: 0
+  #         fetch-depth: 1
 
-  #     - name: debug 
-  #       if: always() 
-  #       run: |
-  #         git status
 
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v2
   #       with:
-  #         go-version: ${{ matrix.go-version }}
-           
-  #     - name: Create CHANGELOG for Release
-  #       if: ${{ always() }}
-  #       run: |
-  #         # build from vendor
-  #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-
-  #         # generate CHANGELOG for this Github release tag only
-  #         ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
-
-  #     - name: GoReleaser
-  #       if: ${{ always() }}
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  images:
-    # needs: release
-    needs: [call-checkout-sign]
-    if: ${{ always() }}
-    name: Release ko Artifact and Docker Image
-    timeout-minutes: 10
-    env:
-      ARTIFACTORY_URL: "https://scribesecuriy.jfrog.io"
-    strategy:
-      matrix:
-        go-version: ["1.17"]
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      contents: write # Write for Github releases 
-      id-token: write # Write for Sigstore Signing
-    outputs:
-      image: ${{ steps.set_env.outputs.IMAGE }}
-    steps:
-      - name: Check out code onto GOPATH
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.ARTIFACTORY_URL }}
-          username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
+  #         registry: ${{ env.ARTIFACTORY_URL }}
+  #         username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
+  #         password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
    
-      # - name: Set up Go
-      #   uses: actions/setup-go@v4
-      #   with:
-      #     go-version: ${{ matrix.go-version }}
+  #     # - name: Set up Go
+  #     #   uses: actions/setup-go@v4
+  #     #   with:
+  #     #     go-version: ${{ matrix.go-version }}
 
-      # - name: Restore go cache
-      #   id: go-cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/go/pkg/mod
-      #     key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+  #     # - name: Restore go cache
+  #     #   id: go-cache
+  #     #   uses: actions/cache@v2
+  #     #   with:
+  #     #     path: ~/go/pkg/mod
+  #     #     key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
 
-      # - name: Setup ko
-      #   if: always()
-      #   uses: ko-build/setup-ko@v0.6
+  #     # - name: Setup ko
+  #     #   if: always()
+  #     #   uses: ko-build/setup-ko@v0.6
 
-      # # - name: Get Release URL
-      # #   if: always()
-      # #   id: get_release_url
-      # #   uses: bruceadams/get-release@v1.2.3
-      # #   env:
-      # #     GITHUB_TOKEN: ${{ github.token }}
+  #     # # - name: Get Release URL
+  #     # #   if: always()
+  #     # #   id: get_release_url
+  #     # #   uses: bruceadams/get-release@v1.2.3
+  #     # #   env:
+  #     # #     GITHUB_TOKEN: ${{ github.token }}
 
-      # - name: Set Env and Outputs
-      #   id: set_env
-      #   if: always()
-      #   run: |
-      #     echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-      #     export KO_TAG=$(basename "${{ github.ref }}")
-      #     echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
-      #     echo "test=hello" >> "$GITHUB_OUTPUT"
-      #     echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG" >> "$GITHUB_OUTPUT"
+  #     # - name: Set Env and Outputs
+  #     #   id: set_env
+  #     #   if: always()
+  #     #   run: |
+  #     #     echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
+  #     #     export KO_TAG=$(basename "${{ github.ref }}")
+  #     #     echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
+  #     #     echo "test=hello" >> "$GITHUB_OUTPUT"
+  #     #     echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG" >> "$GITHUB_OUTPUT"
           
-      # - name: Build and Publish Images, Produce Release Artifact.
-      #   if: always()
-      #   run: |
-      #     ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
-      #     ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+  #     # - name: Build and Publish Images, Produce Release Artifact.
+  #     #   if: always()
+  #     #   run: |
+  #     #     ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
+  #     #     ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
 
-      - name: Evidence - signed image SBOM
-        if: always()
-        id: attest-cdx-image
-        uses: scribe-security/action-bom@dev
-        with:
-          #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
-           target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:latest
-           verbose: 2
-           format: attest-slsa
-           product-key: ${{ env.GITHUB_REPOSITORY }}
-           scribe-enable: true
-           scribe-client-id:  ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
-           scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET  }}
+  #     - name: Evidence - signed image SBOM
+  #       if: always()
+  #       id: attest-cdx-image
+  #       uses: scribe-security/action-bom@dev
+  #       with:
+  #         #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
+  #          target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:latest
+  #          verbose: 2
+  #          format: attest-slsa
+  #          product-key: ${{ env.GITHUB_REPOSITORY }}
+  #          scribe-enable: true
+  #          scribe-client-id:  ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+  #          scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET  }}
 
-      - name: Archive evidence - Github Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: image-evidence
-          path: |
-            ${{ steps.attest-cdx-image.outputs.OUTPUT_PATH }}
-          retention-days: 1
+  #     - name: Archive evidence - Github Artifact
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: image-evidence
+  #         path: |
+  #           ${{ steps.attest-cdx-image.outputs.OUTPUT_PATH }}
+  #         retention-days: 1
 
-      # - name: Release-Github
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: |
-      #         ./release.yaml
-      # #         scribe/valint
+  #     # - name: Release-Github
+  #     #   uses: softprops/action-gh-release@v1
+  #     #   with:
+  #     #     files: |
+  #     #         ./release.yaml
+  #     # #         scribe/valint
     
-      # - name: Upload Release Assets
-      #   id: upload-release-asset
-      #   if: always()
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-      #     asset_path: ./release.yaml
-      #     asset_name: release.yaml
-      #     asset_content_type: text/plain
+  #     # - name: Upload Release Assets
+  #     #   id: upload-release-asset
+  #     #   if: always()
+  #     #   uses: actions/upload-release-asset@v1
+  #     #   env:
+  #     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     #   with:
+  #     #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+  #     #     asset_path: ./release.yaml
+  #     #     asset_name: release.yaml
+  #     #     asset_content_type: text/plain
 
-      # # SIGN - attach image sigtature to release
-      # - name: Upload image sig asset
-      #   id: upload-image-sig-asset
-      #   if: always() && contains(github.event.head_commit.message, 'sign')
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-      #     asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
-      #     asset_name: rele.sbom
-      #     asset_content_type: application/json
+  #     # # SIGN - attach image sigtature to release
+  #     # - name: Upload image sig asset
+  #     #   id: upload-image-sig-asset
+  #     #   if: always() && contains(github.event.head_commit.message, 'sign')
+  #     #   uses: actions/upload-release-asset@v1
+  #     #   env:
+  #     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     #   with:
+  #     #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+  #     #     asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
+  #     #     asset_name: rele.sbom
+  #     #     asset_content_type: application/json
 
   call-verify-policy:
-    needs: [images]
+    # needs: [images]
     uses: ./.github/workflows/reusable-compliance.yaml
     with:
       # target: ${{ needs.images.outputs.image }}
