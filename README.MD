@@ -20,8 +20,8 @@ Using the policy modules, consumers can generate compliance reports fitted to th
 The following files as an example for a policy module:
 * [example.rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
 
-Release: [Releases](https://github.com/scribe-security/ci-demo-app/blob/releases)
-Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
+Release: [Releases](https://github.com/scribe-security/policy-modules/releases)
+Logs: [Releases log](https://github.com/scribe-security/policy-modules/actions/workflows/release.yml)
 
 See https://github.com/scribe-security/policy-modules repo as an example.
 
@@ -34,7 +34,7 @@ The following files in this repository are relevant to policy evaluation:
 * [.valint.yaml](https://github.com/scribe-security/ci-demo-app/blob/main/.valint.yaml): This file defines the policies and configuration required for a compliance report.
 * [.valint_provider](https://github.com/scribe-security/ci-demo-app/blob/main/.valint_provider.yaml): This file specifies the policy provider and verifies the trustworthiness of the policy bundle.
 
-Release: [Releases](https://github.com/scribe-security/ci-demo-app/blob/releases)
+Release: [Releases](https://github.com/scribe-security/ci-demo-app/releases)
 Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
 
 ## Evidence collection
