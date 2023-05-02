@@ -16,7 +16,7 @@ attest:
                 - mdstrauss91@gmail.com
                 - someonelse@mycompany.com
               uris:
-                - https://github.com/louischatriot/nedb/.github/workflows/release.yml@refs/heads/main
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
             match:
               target_type: image
 
@@ -31,7 +31,7 @@ attest:
                 - mdstrauss91@gmail.com
                 - someonelse@mycompany.com
               uris:
-                - https://github.com/louischatriot/nedb/.github/workflows/release.yml@refs/heads/main
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
             match:
               target_type: git
               target_git_url: https://github.com/louischatriot/nedb.git
