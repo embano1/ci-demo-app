@@ -107,3 +107,4 @@ jobs:
         with:
           files: |
             evidence.tar.gz
+          draft: false

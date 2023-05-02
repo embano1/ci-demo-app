@@ -48,13 +48,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
       - name: Setup ko
         uses: ko-build/setup-ko@v0.6
 
