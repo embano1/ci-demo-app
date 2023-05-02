@@ -1,6 +1,10 @@
 # Policy as code Demo 💪
 Demo showcases Scribe Policy As Code capabilities.
 
+* [Policy Module Rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
+* [Policy Module Releases](https://github.com/scribe-security/policy-modules/releases)
+* [Release Actions](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
+
 ## Policy Modules
 Policy providers can provide OPA based Policy modules.
 Modules are signed by provider and can be verified by consumers.
@@ -12,13 +16,11 @@ See https://github.com/scribe-security/policy-modules repo for details.
 * .valint.yaml - Policies select the modules and configuration required by a specific report.
 * .valint_provider - Policy used to verify the Policy bundle trust (who is the provider).
 
-## Evidence collection
-* Checkout stage:
-  * Sign sources
-  * Collect source SBOM
-* Image Release stage:
-  * Sign image
-  * Collect image SLSA prov
+## Evidence
+* Checkout stage: Signed SBOM.
+  * SBOM includes commits, but also a graph of what file in your source was edited by what commit.
+* Image Release stage: Signed SLSA Prov.
+
 ## Evaluation
 * Check release tagged sources are signed.
 * Check release image is signed.
