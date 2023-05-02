@@ -134,8 +134,9 @@ jobs:
         if: always()
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
-          echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }} >> $GITHUB_ENV
+          export KO_TAG=$(basename "${{ github.ref }}")
+          echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
+          echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG" >> $GITHUB_ENV
 
       - name: Build and Publish Images, Produce Release Artifact.
         if: always()
@@ -162,9 +163,9 @@ jobs:
       # - name: Release-Github
       #   uses: softprops/action-gh-release@v1
       #   with:
-      #     name: evidence
       #     files: |
-      #       scribe/valint
+      #         ./release.yaml
+      #         scribe/valint
     
       # - name: Upload Release Assets
       #   id: upload-release-asset
