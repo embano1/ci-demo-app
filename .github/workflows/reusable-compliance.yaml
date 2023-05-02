@@ -31,7 +31,6 @@ jobs:
         with:
           fetch-depth: 0
 
-
       - uses: robinraju/release-downloader@v1.7
         with:
           repository: "scribe-security/policy-modules"
