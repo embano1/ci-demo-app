@@ -9,10 +9,9 @@ on:
         required: false
 
 jobs:
-  # Collect - sign source SBOM and upload Scribe and Github artifact.
   checkout-sign:
     name: Checkout Sign
-    timeout-minutes: 10
+    timeout-minutes: 3
     strategy:
       matrix:
         platform: ["ubuntu-latest"]
