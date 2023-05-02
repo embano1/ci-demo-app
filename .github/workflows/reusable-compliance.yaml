@@ -13,7 +13,6 @@ on:
         required: true
 
 jobs:
-  # Collect - sign source SBOM and upload Scribe and Github artifact.
   compliance:
     name: Verify compliance
     timeout-minutes: 10
@@ -51,11 +50,11 @@ jobs:
             echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
           fi
 
-      - name: Verify Policy
+      - name: Verify Policy Bundle
         id: verify-bundle
         uses: scribe-security/action-verify@master
         with:
-           target: file:bundle_${{ replace(steps.policy_bundle.outputs.tag_name, 'v', '') }.tar.gz
+           target: file:bundle_${{ replace(steps.policy_bundle.outputs.tag_name, 'v', '') }}.tar.gz
            verbose: 2
            config: .valint_provider.yaml
            product-key: ${{ env.GITHUB_REPOSITORY }}
