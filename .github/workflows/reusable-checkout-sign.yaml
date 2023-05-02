@@ -7,12 +7,6 @@ on:
         required: false
       scribe-client-secret:
         required: false
-  workflow_dispatch:
-    inputs:
-      url:
-        description: 'Scribe url'
-        required: false
-        default: https://api.dev.scribesecurity.com
 
 jobs:
   # Collect - sign source SBOM and upload Scribe and Github artifact.
