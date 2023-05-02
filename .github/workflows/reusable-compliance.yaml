@@ -50,11 +50,16 @@ jobs:
             echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
           fi
 
+      - name: Set Env and Outputs
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          echo "BUNDLE_TAG=${TAG#v}" >> $GITHUB_ENV          
+
       - name: Verify Policy Bundle
         id: verify-bundle
         uses: scribe-security/action-verify@master
         with:
-           target: file:bundle_${{ replace(steps.policy_bundle.outputs.tag_name, 'v', '') }}.tar.gz
+           target: file:bundle_${{ env.BUNDLE_TAG }}.tar.gz
            verbose: 2
            config: .valint_provider.yaml
            product-key: ${{ env.GITHUB_REPOSITORY }}
