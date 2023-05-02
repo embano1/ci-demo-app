@@ -1,0 +1,17 @@
+attest:
+  cocosign:
+    policies:
+    - name: marsh_policy_trust
+      enable: true
+      modules:
+        - name: signed_image_SLSA_prov
+          type: verify-artifact # Verify artifact Origin and Source
+          enable: true
+          input:
+            signed: true
+            format: attest-slsa
+            identity:
+              uris:
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/heads/marsh
+            match:
+              target_type: image
