@@ -34,7 +34,7 @@ attest:
           type: git-scm-rule 
           enable: true
           input:
-            signed_commits: true
+            signed_commits: false
             match:
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
               target_git_branch: main

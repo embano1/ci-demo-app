@@ -82,7 +82,13 @@ jobs:
         env:
           DEBUG: true
 
-      # - name: Download Artifact
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: checkout-evidence # Download current build evidence from artifacts
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: checkout-evidence
+
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: image-evidence
