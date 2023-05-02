@@ -32,7 +32,7 @@ Policy evaluation can also happen manually by by CISO as any point.
 
 The following files in this repository are relevant to policy evaluation:
 * [.valint.yaml](https://github.com/scribe-security/ci-demo-app/blob/main/.valint.yaml): This file defines the policies and configuration required for a compliance report.
-* [.valint_provder](https://github.com/scribe-security/ci-demo-app/blob/main/.valint_provider.yaml): This file specifies the policy provider and verifies the trustworthiness of the policy bundle.
+* [.valint_provider](https://github.com/scribe-security/ci-demo-app/blob/main/.valint_provider.yaml): This file specifies the policy provider and verifies the trustworthiness of the policy bundle.
 
 Release: [Releases](https://github.com/scribe-security/ci-demo-app/blob/releases)
 Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)

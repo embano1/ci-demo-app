@@ -17,7 +17,7 @@ attest:
             match:
               target_type: image
 
-        - name: signed_sources_SBOMs
+        - name: signed_sources_SBOM
           type: verify-artifact # Verify artifact Origin and Source
           enable: true
           input:
@@ -30,7 +30,7 @@ attest:
               target_type: git
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
                     
-        - name: verify_git_owners
+        - name: git_owners
           type: git-scm-rule 
           enable: true
           input:

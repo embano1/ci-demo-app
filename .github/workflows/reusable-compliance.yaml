@@ -98,6 +98,8 @@ jobs:
 
       - name: Compress Evidence
         run: |
+          cp .valint.yaml
+          cp .valint_provider.yaml
           tar czvf evidence.tar.gz evidence
 
       - name: Release-Github
