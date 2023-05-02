@@ -79,15 +79,23 @@ jobs:
         env:
           DEBUG: true
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
+      - run: |
+          mkdir evidence
+
+      - name: Download source evidence
+        id: dl_source_ev
+        uses: actions/download-artifact@v3
         with:
           name: checkout-evidence
+          path: evidence
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
+      - name: Download image evidence
+        id: dl_image_ev
+        uses: actions/download-artifact@v3
         with:
           name: image-evidence
+          path: evidence
 
       - run: |
           ls -lh
+          ls -lh evidence
