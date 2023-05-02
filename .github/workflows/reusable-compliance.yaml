@@ -31,10 +31,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download Policy Bundle
-        run: gh release download scribe-security/policy-modules
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: robinraju/release-downloader@v1.7
+        with:
+          repository: "scribe-security/policy-modules"
+          latest: true
+
+      - run: |
+          ls -lh
 
       - name: Download Artifact
         uses: actions/download-artifact@v2
