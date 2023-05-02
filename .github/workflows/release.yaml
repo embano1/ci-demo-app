@@ -91,7 +91,7 @@ jobs:
       contents: write # Write for Github releases 
       id-token: write # Write for Sigstore Signing
     outputs:
-      image: ${{ steps.image_name.outputs.IMAGE }}
+      image: ${{ steps.set_env.outputs.IMAGE }}
     steps:
       - name: Check out code onto GOPATH
         uses: actions/checkout@v3
@@ -129,14 +129,16 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Get short COMMIT and TAG
-        id: image_name
+      - name: Set Env and Outputs
+        id: set_env
         if: always()
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           export KO_TAG=$(basename "${{ github.ref }}")
           echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
-          echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG" >> $GITHUB_ENV
+          export IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUTS
 
       - name: Build and Publish Images, Produce Release Artifact.
         if: always()
