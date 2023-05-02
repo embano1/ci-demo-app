@@ -52,7 +52,7 @@ jobs:
 
       - name: Set Env and Outputs
         run: |
-          TAG=${{ github.event.release.tag_name }}
+          TAG=${{ steps.policy_bundle.outputs.tag_name }}
           echo "BUNDLE_TAG=${TAG#v}" >> $GITHUB_ENV          
 
       - name: Verify Policy Bundle
