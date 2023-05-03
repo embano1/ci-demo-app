@@ -100,6 +100,7 @@ jobs:
         run: |
           cp .valint.yaml evidence
           cp .valint_provider.yaml evidence
+          cp bundle_*.tar.gz evidence
           tar czvf evidence.tar.gz evidence
 
       - name: Release-Github
