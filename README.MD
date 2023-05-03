@@ -6,8 +6,7 @@ Overview of the Platform
 The platform consists of several building blocks that work together to ensure the security and compliance of a supply chain:
 
 # Platform digram 
-<img src='img//module_digram.jpg
-' alt='Platform Digram' width='80%' min-width='600px'/>
+<img src='img//module_digram.jpg' alt='Platform Digram' width='80%' min-width='600px'/>
 
 <img src='img/platform_table.jpg' alt='Platform table' width='80%' min-width='600px'/>
 
