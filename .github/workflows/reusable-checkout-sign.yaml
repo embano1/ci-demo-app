@@ -38,7 +38,7 @@ jobs:
 
       - name: Evidence - Sign Source SBOM
         id: attest-cdx-source
-        uses: scribe-security/action-bom@master
+        uses: scribe-security/action-bom@dev
         with:
            target: git:.
            verbose: 1
