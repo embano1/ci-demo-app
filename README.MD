@@ -5,6 +5,12 @@ This demo repository showcases a continuous compliance platform based on attesta
 Overview of the Platform
 The platform consists of several building blocks that work together to ensure the security and compliance of a supply chain:
 
+# Platform digram 
+<img src='img//module_digram.jpg
+' alt='Platform Digram' width='80%' min-width='600px'/>
+
+<img src='img/platform_table.jpg' alt='Platform table' width='80%' min-width='600px'/>
+
 * Evidence: Immutable objects that contain metadata needed to enable policy enforcement and meet compliance requirements.
 * Attestations: Verifiable evidence linked to a specific environmental context, conveying trust using some form of PKI signatures.
 * Environmental Context: A labeling system that ties the model together and provides normalized access to many processes of your development process and CI/CD pipeline.

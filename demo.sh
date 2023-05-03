@@ -60,35 +60,5 @@ function UpdateFile() {
     git push --tags
 }
 
-
-#create new tag
-
-UpdateFile "normalize" "go.sum"
-UpdateFile "sign,verify" "README.md"
-UpdateFile "attack" "go.sum"
-UpdateFile "attack,sign,verify" "go.sum"
-
+UpdateFile "bump-version - demo release" "README.md"
 echo "Updating $VERSION to $NEW_TAG"
-
-#get current hash and see if it already has a tag
-# GIT_COMMIT=`git rev-parse HEAD`
-# NEEDS_TAG=`git describe --contains $GIT_COMMIT`
-
-# #only tag if no tag already (would be better if the git describe command above could have a silent option)
-# if [ -z "$NEEDS_TAG" ]; then
-#     echo "Tagged with $NEW_TAG (Ignoring fatal:cannot describe - this means commit is untagged) "
-#     # git tag $NEW_TAG
-#     # git push --tags
-# else
-#     echo "Already a tag on this commit"
-# fi
-
-# echo -e "" >> go.sum
-# git add go.sum
-# git commit -m "normlize"
-# git tag -a $tag -m "normlize"
-
-
-
-# git push origin main
-# git push --tags
