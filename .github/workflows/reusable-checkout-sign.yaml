@@ -38,7 +38,7 @@ jobs:
 
       - name: Evidence - Sign Source SBOM
         id: attest-cdx-source
-        uses: scribe-security/action-bom@dev
+        uses: scribe-security/action-bom@master
         with:
            target: git:.
            verbose: 1
@@ -47,6 +47,7 @@ jobs:
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
+           git-tag: 
 
       - name: Archive evidence - Github Artifact
         uses: actions/upload-artifact@v3
