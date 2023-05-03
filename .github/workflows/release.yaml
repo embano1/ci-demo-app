@@ -5,176 +5,83 @@ on:
   push:
     tags:
       - "v*"
+    # branches: ["main", "master", "marsh"]
 
   workflow_dispatch:
+  
+
+concurrency: 
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local
 
 jobs:
   # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
-    uses: ./.github/workflows/checkout-sign.yaml
+    uses: ./.github/workflows/reusable-checkout-sign.yaml
+    secrets:
+      scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+      scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
-  call-unit-test:
-    needs: [call-checkout-sign]
-    uses: ./.github/workflows/go-unit-tests.yaml
+  # call-unit-test:
+  #   needs: [call-checkout-sign]
+  #   uses: ./.github/workflows/go-unit-tests.yaml
 
-  release:
-    name: Create Release
-    needs: [call-unit-test]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: ["1.17"]
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      actions: none
-      checks: none
-      contents: write # To write to releases write is needed ....:(
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
+  # release:
+  #   name: Create Release
+  #   needs: [call-unit-test]
+  #   timeout-minutes: 10
+  #   strategy:
+  #     matrix:
+  #       go-version: ["1.17"]
+  #       platform: ["ubuntu-latest"]
+  #   runs-on: ${{ matrix.platform }}
+  #   permissions:
+  #     contents: write # To write to releases write is needed ....:(
+  #     id-token: write
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      # SIGN/VERIFY - install bomber
-      - name: install bomber
-        if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/installer@master
-        env:
-          ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
+  #     - name: debug 
+  #       if: always() 
+  #       run: |
+  #         git status
 
-      - name: debug 
-        if: always() 
-        run: |
-          git status
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: ${{ matrix.go-version }}
+           
+  #     - name: Create CHANGELOG for Release
+  #       if: ${{ always() }}
+  #       run: |
+  #         # build from vendor
+  #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
+  #         # generate CHANGELOG for this Github release tag only
+  #         ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            bomber_reports
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
-
-      - name: DEBUG - print library shellcode
-        if: always() && steps.go-cache.outputs.cache-hit == 'true'
-        run: |
-          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
-          for file in $FILES
-          do
-            echo ##################### $file #####################
-            cat $file | grep -A 4 "Infow(msg"
-            echo #################################################
-          done
-
-      # ATTACK - changing src,add commit,move tag before build
-      - name: ATTACK - changing src,add commit,move tag before build
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (pkg build)/g' main.go
-          git config user.name "$(git log -n 1 --pretty=format:%an)"
-          git config user.email "$(git log -n 1 --pretty=format:%ae)"
-          git add main.go
-          git commit -m "BAD COMMIT"
-          git tag -a -f $(git describe --tags --abbrev=0) -m "BAD TAG"
-
-      # VERIFY - Verify src signed sbom
-      - name:  VERIFY - Verify checkout directory
-        if: always() && contains(github.event.head_commit.message, 'verify')
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-          #  filter-regex: .*bomber_reports.*
-
-      # VERIFY - verify cache
-      - name: VERIFY - verify cache directory
-        if: always() && contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
-        id: verify_cache
-        run: |
-          bomber verify dir:~/go/pkg/mod -vv
-
-      - name: Create CHANGELOG for Release
-        if: ${{ always() }}
-        run: |
-          # build from vendor
-          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-
-          # generate CHANGELOG for this Github release tag only
-          ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
-
-      - name: GoReleaser
-        if: ${{ always() }}
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # SIGN - sign cache
-      - name: SIGN - sign cache
-        if: always() && contains(github.event.head_commit.message, 'sign') && steps.go-cache.outputs.cache-hit != 'true'
-        id: sign_cache
-        run: |
-          bomber bom dir:~/go/pkg/mod -vv -o attest -f
-          
-      - name: debug 
-        if: always() 
-        run: |
-           ls -lR bomber_reports  || true
-
-      # # SIGN - Archive bomber signature
-      # - name: SIGN - Archive bomber signature
-      #   if: always() && contains(github.event.head_commit.message, 'sign')
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: bomber-signatures
-      #     path: |
-      #       bomber_reports
-      #     retention-days: 1
+  #     - name: GoReleaser
+  #       if: ${{ always() }}
+  #       uses: goreleaser/goreleaser-action@v2
+  #       with:
+  #         args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   images:
-    needs: release
+    # needs: release
+    needs: [call-checkout-sign]
     if: ${{ always() }}
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10
     env:
-      KO_DOCKER_REPO: scribesecuriy.jfrog.io/scribe-docker-public-local/demoapp
       ARTIFACTORY_URL: "https://scribesecuriy.jfrog.io"
     strategy:
       matrix:
@@ -182,160 +89,116 @@ jobs:
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     permissions:
-      actions: none
-      checks: none
-      contents: write # To write to releases write is needed ....:(
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
-
+      contents: write # Write for Github releases 
+      id-token: write # Write for Sigstore Signing
+    outputs:
+      image: ${{ steps.set_env.outputs.IMAGE }}
     steps:
       - name: Check out code onto GOPATH
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
-      # SIGN/VERIFY - install bomber
-      - name: install bomber
-        if: contains(github.event.head_commit.message, 'sign')
-        uses: scribe-security/actions/installer@master
-        env:
-          ARTIFACTORY_USERNAME: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
-
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          name: bomber-signatures
-          path: bomber_reports
+          go-version: ${{ matrix.go-version }}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.ARTIFACTORY_URL }}
           username: ${{ secrets.RELEASE_ARTIFACTORY_USERNAME }}
           password: ${{ secrets.RELEASE_ARTIFACTORY_PASSWORD }}
    
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            bomber_reports
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
-      - name: debug 
-        if: always() 
-        run: |
-          ls -lR bomber_reports  || true
 
       - name: Setup ko
         if: always()
-        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
+        uses: ko-build/setup-ko@v0.6
 
-      # ATTACK - change src before build
-      - name: ATTACK - change src before build
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (image build)/g' main.go
+      # - name: Get Release URL
+      #   if: always()
+      #   id: get_release_url
+      #   uses: bruceadams/get-release@v1.2.3
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Get Release URL
-        id: get_release_url
-        uses: bruceadams/get-release@v1.2.3
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      # VERIFY - Verify src signed sbom
-      - name:  VERIFY - Verify checkout directory
-        if: always() && contains(github.event.head_commit.message, 'verify')
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-          #  filter-regex: .*bomber_reports.*
-
-      # Verify - verify cache
-      - name: VERIFY - verify cache
-        if: always() && contains(github.event.head_commit.message, 'verify') && steps.go-cache.outputs.cache-hit == 'true'
-        id: verify_cache
-        run: |
-          bomber verify dir:~/go/pkg/mod -vv
-
-      - name: Get short COMMIT and TAG
+      - name: Set Env and Outputs
+        id: set_env
         if: always()
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
-          echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
-
+          export KO_TAG=$(basename "${{ github.ref }}")
+          echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
+          echo "test=hello" >> "$GITHUB_OUTPUT"
+          echo "IMAGE=${{ env.KO_DOCKER_REPO }}/ci-demo-app:$KO_TAG" >> "$GITHUB_OUTPUT"
+          
       - name: Build and Publish Images, Produce Release Artifact.
         if: always()
         run: |
           ko resolve --platform=all --tags ${KO_TAG},${KO_COMMIT},latest -BRf config > release.yaml
-     
-      # SIGN - sign image after push
-      - name: SIGN - sign image after push
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        id: sign_image
-        uses: scribe-security/actions/gensbom/bom@master
+          ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
+
+      - name: Evidence - signed image SBOM
+        if: always()
+        id: attest-cdx-image
+        uses: scribe-security/action-bom@dev
         with:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
-           verbose: 3
-           format: attest
-           force: true
+          #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:latest
+           verbose: 2
+           format: attest-slsa
+           product-key: ${{ env.GITHUB_REPOSITORY }}
+           scribe-enable: true
+           scribe-client-id:  ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+           scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET  }}
 
-      # SIGN - Archive bomber signature
-      - name: SIGN - Archive bomber signature
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        uses: actions/upload-artifact@v2
+      - name: Archive evidence - Github Artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: bomber-signatures
+          name: image-evidence
           path: |
-            bomber_reports
+            ${{ steps.attest-cdx-image.outputs.OUTPUT_PATH }}
           retention-days: 1
 
-      # ATTACK - Replace image after push
-      - name: ATTACK - build and replace image
-        if: always() && contains(github.event.head_commit.message, 'attack')
-        run: |
-          sed -i 's/GOOD/BAD (image replace)/g' main.go
-          sed -i 's/BAD (image build)/BAD (image replace)/g' main.go
-          ko resolve --platform=all --tags latest -BRf config/service.yaml
-
-      - name: Upload Release Assets
-        id: upload-release-asset
-        if: always()
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release-Github
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-          asset_path: ./release.yaml
-          asset_name: release.yaml
-          asset_content_type: text/plain
+          files: |
+            ./release.yaml
+          draft: false
 
-      # SIGN - attach image sigtature to release
-      - name: Upload image sig asset
-        id: upload-image-sig-asset
-        if: always() && contains(github.event.head_commit.message, 'sign')
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.get_release_url.outputs.upload_url }}
-          asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
-          asset_name: image.sig
-          asset_content_type: application/json
+      # - name: Upload Release Assets
+      #   id: upload-release-asset
+      #   if: always()
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+      #     asset_path: ./release.yaml
+      #     asset_name: release.yaml
+      #     asset_content_type: text/plain
+
+      # # SIGN - attach image sigtature to release
+      # - name: Upload image sig asset
+      #   id: upload-image-sig-asset
+      #   if: always() && contains(github.event.head_commit.message, 'sign')
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.get_release_url.outputs.upload_url }}
+      #     asset_path: ${{ steps.sign_image.outputs.OUTPUT_PATH }}
+      #     asset_name: rele.sbom
+      #     asset_content_type: application/json
+
+  call-verify-policy:
+    needs: [images]
+    uses: ./.github/workflows/reusable-compliance.yaml
+    with:
+      target: ${{ needs.images.outputs.image }}
+      # target: scribesecuriy.jfrog.io/scribe-docker-public-local/ci-demo-app:latest
+    secrets:
+      scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
+      scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 

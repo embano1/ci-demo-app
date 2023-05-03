@@ -1,0 +1,110 @@
+name: .compliance
+
+on:
+  workflow_call:
+    secrets: 
+      scribe-client-id:
+        required: false
+      scribe-client-secret:
+        required: false
+    inputs:
+      target:
+        type: string
+        required: true
+
+jobs:
+  compliance:
+    name: Verify compliance
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download Policy bundle
+        id: policy_bundle
+        uses: robinraju/release-downloader@v1.7
+        with:
+          repository: scribe-security/policy-modules
+          latest: true
+
+      - name: Set Scribe Enable
+        run: |
+          if [ "${{ secrets.scribe-client-id }}" == "" ]; then
+            echo "Scribe is disabled"
+            echo "SCRIBE_ENABLE=false" >> "${GITHUB_ENV}"
+          else
+            echo "Scribe is enabled"
+            echo "SCRIBE_ENABLE=true" >> "${GITHUB_ENV}"
+          fi
+
+      - name: Set Env and Outputs
+        run: |
+          TAG=${{ steps.policy_bundle.outputs.tag_name }}
+          echo "BUNDLE_TAG=${TAG#v}" >> $GITHUB_ENV          
+
+      - name: Verify Policy Bundle
+        id: verify-bundle
+        uses: scribe-security/action-verify@master
+        with:
+           target: file:bundle_${{ env.BUNDLE_TAG }}.tar.gz
+           verbose: 2
+           config: .valint_provider.yaml
+           product-key: ${{ env.GITHUB_REPOSITORY }}
+           scribe-enable: ${{ env.SCRIBE_ENABLE }}
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+        env:
+          DEBUG: true
+
+      - name: Verify Policy
+        id: verify-policy
+        uses: scribe-security/action-verify@master
+        with:
+           target: ${{ inputs.target }}
+           verbose: 2
+           product-key: ${{ env.GITHUB_REPOSITORY }}
+           scribe-enable: ${{ env.SCRIBE_ENABLE }}
+           scribe-client-id: ${{ secrets.scribe-client-id }}
+           scribe-client-secret: ${{ secrets.scribe-client-secret }}
+        env:
+          DEBUG: true
+
+      - run: |
+          mkdir evidence
+
+      - name: Download source evidence
+        id: dl_source_ev
+        uses: actions/download-artifact@v3
+        with:
+          name: checkout-evidence
+          path: evidence
+
+      - name: Download image evidence
+        id: dl_image_ev
+        uses: actions/download-artifact@v3
+        with:
+          name: image-evidence
+          path: evidence
+
+      - name: Compress Evidence
+        run: |
+          cp .valint.yaml evidence
+          cp .valint_provider.yaml evidence
+          tar czvf evidence.tar.gz evidence
+
+      - name: Release-Github
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            evidence.tar.gz
+          draft: false

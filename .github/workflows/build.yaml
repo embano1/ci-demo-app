@@ -2,142 +2,28 @@ name: Build
 
 on:
   # push:
-  #   branches: ["main", "master", "test"]
+  #   branches: ["main", "master", "marsh"]
 
   pull_request:
-    branches: ["main", "master", "release-*", "test"]
+    branches: ["main", "master", "release-*", "marsh"]
   
   workflow_dispatch:
 
+concurrency: 
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
-  # SIGN - checkout sign and upload cache to Github artifact.
   call-checkout-sign:
-    uses: ./.github/workflows/checkout-sign.yaml
+    uses: ./.github/workflows/reusable-checkout-sign.yaml
 
   call-unit-test:
     needs: [call-checkout-sign]
     uses: ./.github/workflows/go-unit-tests.yaml
 
-  artifacts:
-    name: Create Artifacts (no push/upload)
-    needs: [call-unit-test]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: ["1.17"]
-        platform: ["ubuntu-latest"]
-    runs-on: ${{ matrix.platform }}
-    permissions:
-      actions: none
-      checks: none
-      contents: read
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
-      id-token: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
-    
-      # VERIFY - Verify src signed sbom
-      - name:  VERIFY - Verify checkout directory
-        continue-on-error: true
-        if: "contains(github.event.head_commit.message, 'verify')"
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
-      # ATTACK - LOG attacked library (DEBUG)
-      - name: DEBUG - print library shellcode
-        if: steps.go-cache.outputs.cache-hit == 'true'
-        run: |
-          FILES=`find -O3 -L ~/go/pkg/mod/go.uber.org/zap* -name "sugar.go"`
-          for file in $FILES
-          do
-            echo ############## $file #####################
-            cat $file | grep -A 4 "Infow(msg"
-          done
-
-      # - name: Create CHANGELOG
-      #   run: |
-      #     # build from vendor
-      #     go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
-          
-      #     # use a pseudo tag to only include changes since last release
-      #     NEXT_TAG=$(git describe --abbrev=0 --tags)-next
-      #     echo ### $NEXT_TAG 
-      #     # generate CHANGELOG
-      #     ./git-chglog --next-tag ${NEXT_TAG} -o RELEASE_CHANGELOG.md ${NEXT_TAG}
-
-      # - name: Archive CHANGELOG
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: CHANGELOG
-      #     path: |
-      #       ./RELEASE_CHANGELOG.md
-      #     retention-days: 1
-
-      - name: Verify git clean
-        shell: bash
-        run: |
-          git status
-          if [[ -z "$(git status --porcelain)" ]]; then
-            echo "${{ github.repository }} up to date."
-          else
-            echo "${{ github.repository }} is dirty."
-            echo "::error:: $(git status)"
-            exit 1
-          fi
-
-      - name: GoReleaser
-        uses: goreleaser/goreleaser-action@v2
-        with:
-          # no push
-          args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Archive goreleaser artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: |
-            dist/demo-app*x86_64*.tar.gz
-            dist/checksums.txt
-          retention-days: 1
-
   release:
-    needs: artifacts
+    needs: [call-unit-test]
     name: Build ko Artifact and Docker Image (no push)
     timeout-minutes: 10
     env:
@@ -148,96 +34,44 @@ jobs:
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
     permissions:
-      actions: none
-      checks: none
       contents: read
-      deployments: none
-      issues: none
-      packages: none
-      pull-requests: none
-      repository-projects: none
-      security-events: none
-      statuses: none
       id-token: write
 
     steps:
       - name: Check out code onto GOPATH
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 1
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
 
-      # VERIFY - pull archive bomber signature
-      - uses: actions/download-artifact@v2
-        if: "contains(github.event.head_commit.message, 'verify')"
-        with:
-          name: bomber-signatures
-          path: bomber_reports
-
-      - name: Restore go cache
-        id: go-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-
       - name: Setup ko
-        uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4 tag, will install latest ko version
+        uses: ko-build/setup-ko@v0.6
 
       - name: Get short COMMIT and TAG
         run: |
           echo "KO_COMMIT=$(echo -n $GITHUB_SHA | cut -c -8)" >> $GITHUB_ENV
           echo "KO_TAG=$(basename "${{ github.ref }}")" >> $GITHUB_ENV
 
-      # VERIFY - Verify src signed sbom
-      - name: VERIFY - Verify src signed sbom
-        if: "contains(github.event.head_commit.message, 'verify')"
-        id: bomber_verify_checkout
-        uses: scribe-security/actions/gensbom/verify@master
-        with:
-           type: dir
-           target: /github/workspace/
-           verbose: 3
-
-      # Not sure why resolve does not work well with --tarball flag..
       - name: Build Images (amd64 only)
         run: |
           ko resolve --tags ${KO_TAG},${KO_COMMIT},latest --push=false -BRf config/service.yaml  > release.yaml
           ko publish --tags ${KO_TAG},${KO_COMMIT},latest github.com/scribe-security/ci-demo-app --push=false -B --tarball build_image.tar
       
-      # SIGN - Sign image tar (exported from ko)
-      - name:  SIGN - Sign image tar (exported from ko)
-        if: "contains(github.event.head_commit.message, 'sign')"
-        id: bomber_attest
-        uses: scribe-security/actions/gensbom/bom@master
+      - name:  Evidence - SBOM image tar (exported from ko)
+        id: build-sbom
+        uses: scribe-security/action-bom@master
         with:
-           type: docker-archive
-           target: build_image.tar
-           verbose: 3
-           format: attest
-           force: true
-          #  attest-name: checkout
-          #  attest-config: config/.cocosign.yaml
+           target: docker-archive:build_image.tar
+           verbose: 2
+           format: json
 
-      # SIGN - Archive bomber signature
-      - name: SIGN - Archive bomber signature
-        if: "contains(github.event.head_commit.message, 'sign')"
-        uses: actions/upload-artifact@v2
+      - name: Archive evidence - Github Artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: bomber-signatures
           path: |
-            bomber_reports
-          retention-days: 1
-
-      - name: Archive ko artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: release
-          path: |
-            ./release.yaml
-            ./build_image.tar
+            ${{ steps.attest-cdx-source.outputs.OUTPUT_PATH }}
           retention-days: 1

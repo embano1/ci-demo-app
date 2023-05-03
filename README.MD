@@ -1,23 +1,64 @@
-# Motivation 💪
+# Continuous Compliance Platform Demo
 
-I created this repository for learning and education purposes to help everyone
-to level up their (open source) projects with good documentation and
-code/release automation. I spend a lot of time learning and experimenting with
-different tools and integrations to manage the projects I'm working, thus trying
-to give some inspiration to save you precious time 😀
+This demo repository showcases a continuous compliance platform based on attestations that enables software consumers and producers to transparently demonstrate trust and compliance to secure software development life cycle (SDLC), promote security best practices, meet regulatory requirements, and mitigate cyber risks.
 
-Of course there's many ways to automate the release process for your (Go)
-applications, so consider the examples shared in this repository **ONE** but not
-**THE** way.
+Overview of the Platform
+The platform consists of several building blocks that work together to ensure the security and compliance of a supply chain:
 
-Even though this repository puts a focus on building and releasing Go
-applications, the Github Actions workflows and explanations provided apply to
-any language/environment.
+# Platform digram 
+<img src='img//module_digram.jpg' alt='Platform Digram' width='80%' min-width='600px'/>
 
-💡 **Note:** Check out this online `README` [generator](https://readme.so/) to
-bootstrap a nice landing page for your users. 
+<img src='img/platform_table.jpg' alt='Platform table' width='80%' min-width='600px'/>
 
-# About 💡
+* Evidence: Immutable objects that contain metadata needed to enable policy enforcement and meet compliance requirements.
+* Attestations: Verifiable evidence linked to a specific environmental context, conveying trust using some form of PKI signatures.
+* Environmental Context: A labeling system that ties the model together and provides normalized access to many processes of your development process and CI/CD pipeline.
+* Policies: A set of user-configured policy modules that define the required compliance report.
+Stores: Services providing hosting, upload/download, and querying capabilities for evidence.
+* Policy Providers: Entities responsible for signing and providing policy modules.
+
+## Policy Provider example repo
+Policy providers can provide OPA based Policy modules.
+Modules are signed by provider and can be verified by consumers.
+Using the policy modules, consumers can generate compliance reports fitted to the providers regulations.
+
+The following files as an example for a policy module:
+* [example.rego](https://github.com/scribe-security/policy-modules/blob/main/modules/example.rego)
+
+Release: [Releases](https://github.com/scribe-security/policy-modules/releases)
+Logs: [Releases log](https://github.com/scribe-security/policy-modules/actions/workflows/release.yml)
+
+See https://github.com/scribe-security/policy-modules repo as an example.
+
+## Policy evaluator Repository (This Repository)
+Policy evaluation can be run continuously after each release verify compliance as shown by this repo.
+Policy evaluation can also happen continuously in an [Admission](https://scribe-security.netlify.app/docs/other-integrations/admission-controller).
+Policy evaluation can also happen manually by by CISO as any point.
+
+The following files in this repository are relevant to policy evaluation:
+* [.valint.yaml](https://github.com/scribe-security/ci-demo-app/blob/main/.valint.yaml): This file defines the policies and configuration required for a compliance report.
+* [.valint_provider](https://github.com/scribe-security/ci-demo-app/blob/main/.valint_provider.yaml): This file specifies the policy provider and verifies the trustworthiness of the policy bundle.
+
+Release: [Releases](https://github.com/scribe-security/ci-demo-app/releases)
+Logs: [Releases log](https://github.com/scribe-security/ci-demo-app/actions/workflows/release.yaml)
+
+## Evidence collection
+The following evidence is collected during the software supply chain:
+* Checkout stage: Signed SBOM. The SBOM includes commits and a graph of what file in your source was edited by what commit.
+* Image Release stage: Signed SLSA Prov.
+Attached to Github Releases as well as uploaded to Scribe.
+
+## Evaluation
+The following checks are performed during compliance evaluation:
+
+* Check that tagged sources are signed.
+* Check that the release image is signed.
+* Collect an SBOM on sources.
+* Collect an SLSA prov on the image.
+* Check code owners (who is modifying what part of the SCM).
+
+---
+# Demo app💡
 
 This repository shows an end-to-end release management approach for
 [Go](https://golang.org/) applications using [Github
@@ -27,26 +68,14 @@ release management**, [`ko`](https://github.com/google/ko) to build OCI-complian
 **container images**, and Kubernetes in Docker
 ([`kind`](https://github.com/kubernetes-sigs/kind)) for **end-to-end testing**.
 
-Another goodie: depending on your repository settings and usage, you are likely
-to stay within the generous Github Actions [**free
-tier**](https://docs.github.com/en/github/setting-up-and-managing-billing-and-payments-on-github/about-billing-for-github-actions).
-
-Github Actions is also deeply integrated into [Github
-Packages](https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages),
-a software package hosting service that allows you to **host your software
-packages**, e.g. container images.
-
-Even if you don't use Github Actions (yet), I hope the repository still provides
-value since the tools used here can be used standalone, too.
-
 ## Project Status 🚦
 
-[![Build](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/build.yaml)
-[![Tests](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml/badge.svg)](https://github.com/embano1/ci-demo-app/actions/workflows/go-unit-tests.yaml)
-[![Latest Release](https://img.shields.io/github/release/embano1/ci-demo-app.svg?logo=github&style=flat-square)](https://github.com/embano1/ci-demo-app/releases/latest)
-[![Go Report Card](https://goreportcard.com/badge/github.com/embano1/ci-demo-app)](https://goreportcard.com/report/github.com/embano1/ci-demo-app)
-[![codecov](https://codecov.io/gh/embano1/ci-demo-app/branch/main/graph/badge.svg?token=TC7MW723JO)](https://codecov.io/gh/embano1/ci-demo-app)
-[![go.mod Go version](https://img.shields.io/github/go-mod/go-version/embano1/ci-demo-app)](https://github.com/embano1/ci-demo-app)
+[![Build](https://github.com/scribe-security/ci-demo-app/actions/workflows/build.yaml/badge.svg)](https://github.com/scribe-security/ci-demo-app/actions/workflows/build.yaml)
+[![Tests](https://github.com/scribe-security/ci-demo-app/actions/workflows/go-unit-tests.yaml/badge.svg)](https://github.com/scribe-security/ci-demo-app/actions/workflows/go-unit-tests.yaml)
+[![Latest Release](https://img.shields.io/github/release/scribe-security/ci-demo-app.svg?logo=github&style=flat-square)](https://github.com/scribe-security/ci-demo-app/releases/latest)
+[![Go Report Card](https://goreportcard.com/badge/github.com/scribe-security/ci-demo-app)](https://goreportcard.com/report/github.com/scribe-security/ci-demo-app)
+[![codecov](https://codecov.io/gh/scribe-security/ci-demo-app/branch/main/graph/badge.svg?token=TC7MW723JO)](https://codecov.io/gh/scribe-security/ci-demo-app)
+[![go.mod Go version](https://img.shields.io/github/go-mod/go-version/scribe-security/ci-demo-app)](https://github.com/scribe-security/ci-demo-app)
 
 ## Features 🤩
 
@@ -54,7 +83,7 @@ Based on a trivial Go demo application this repository was built to show the
 power of Github Actions and related Go tools with the following highlights:
 
 💫 &nbsp; Add Continuous Integration and **end-to-end release automation** with
-[Github Actions](https://github.com/embano1/ci-demo-app/actions) ("workflows")  
+[Github Actions](https://github.com/scribe-security/ci-demo-app/actions) ("workflows")  
 💫 &nbsp; Add [**status badges**](#project-status-) to your project `README.md`  
 💫 &nbsp; **Manage your repository** (issues) and contributions (PRs) with
 automatic greetings and code quality checks  
@@ -70,68 +99,21 @@ testing against real APIs (Kubernetes)
 
 You can grab the resulting artifacts produced by the Github release
 [workflow](./.github/workflows/release.yaml) from the
-[releases](https://github.com/embano1/ci-demo-app/releases) page.
-
-### Homebrew 🍺
-
-As part of this project, a Homebrew formula is maintained and continuously
-updated as part of the release pipeline. Detailed installation instructions can
-be found in the dedicated
-[repository](https://github.com/embano1/homebrew-ci-demo-app).
-
-Quick install via `brew`:
-
-```console
-$ brew install embano1/ci-demo-app/demo-app
-```
+[releases](https://github.com/scribe-security/ci-demo-app/releases) page.
 
 ### Docker 🐳
 
-Multi-arch (platform) Docker images are pushed to Docker Hub as part of the
-release pipeline. Visit the Docker Hub [Project
-page](https://hub.docker.com/r/embano1/ci-demo-app) for details.
-
+Multi-arch (platform) Docker images are pushed to Scribe Artifactory as part of the
+release pipeline. 
 Run the app via `docker`:
 
 ```console
 $ # expose default port 8080 to 8080 on the Docker host
 $ # interrupt with CTRL-C
-$ docker run -it --rm -p 8080:8080 embano1/ci-demo-app:v0.2.7
+$ docker run -it --rm -p 8080:8080 scribesecuriy.jfrog.io/scribe-docker-public-local/ci-demo-app:latest
 2021-05-04T14:31:00.658Z      INFO    ci-demo-app     ci-demo-app/main.go:85  running server  {"commit": "e616df52", "address": ":8080"}
 2021-05-04T14:31:02.933Z      INFO    ci-demo-app     ci-demo-app/main.go:81  got signal, attempting graceful shutdown        {"commit": "e616df52"}
 ```
-
-### Source Tarballs 👾
-See [Github Release](https://github.com/embano1/ci-demo-app/releases) page. A
-full [`CHANGELOG`](./CHANGELOG.md) is also provided.
-
-# Navigating this Repository 🧭
-
-If you want to see the Github Action workflows used in this repository *in
-action* please see this [document](./ACTIONS.md).
-
-If you are interested in the individual tools used here or you want to learn
-more about Github Actions, please see this [document](DETAILS.md).
-
-# Out of Scope (for now) ❌
-
-- Golang deep dive, advanced testing, etc. (this repo isn't about teaching Go)
-- Using Github [Packages](https://github.com/features/packages)
-- Advanced 3rd party integration, e.g. Slack, bots to manage issues, comments,
-  etc.
-- External (manual) workflow dispatch triggers
-- Branch protection and role based access control
-- Organization-wide workflows and templates
-- Detailed security and repository hardening and guidelines (see [notes](DETAILS.md) here)
-- Detailed guidelines for writing your custom Github Actions
-- Creating/distributing software artifacts other than Go binaries/Homebrew
-  formulas (see `goreleaser` section in [DETAILS](./DETAILS.md) to get some
-  inspiration)
-
-# Credits 💐
-
-A BIG THANK YOU to the [Knative](https://knative.dev/) community for their endless
-inspiration 
 
 
 

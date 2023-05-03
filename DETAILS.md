@@ -127,7 +127,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Set up Go 1.16
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
           go-version: "1.16"
       - name: Print Go version
@@ -224,7 +224,7 @@ e.g.:
 ```yaml
 steps:
   - name: Set up Go 1.16
-    uses: actions/setup-go@v2
+    uses: actions/setup-go@v4
     with:
       go-version: "1.16"
 ```

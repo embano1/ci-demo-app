@@ -1,0 +1,17 @@
+attest:
+  cocosign:
+    policies:
+    - name: marsh_policy_trust
+      enable: true
+      modules:
+        - name: bundle_SLSA_prov
+          type: verify-artifact # Verify artifact Origin and Source
+          enable: true
+          input:
+            signed: true
+            format: attest-slsa
+            identity:
+              uris:
+                - https://github.com/scribe-security/policy-modules/.github/workflows/reusable_release.yml@refs/tags/v0.0.2
+            match:
+              target_type: file
