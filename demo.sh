@@ -38,6 +38,8 @@ function NewTag() {
 function AddTaggedCommit() {
     MESSAGE=$1
     NewTag
+    echo "PREV:$VERSION, NEW: $NEW_TAG"
+    sed "s/$VERSION/$NEW_TAG/g" .valint.yaml
     git commit -m $MESSAGE
 
     GIT_COMMIT=`git rev-parse HEAD`
@@ -55,10 +57,12 @@ function UpdateFile() {
     FILE=$2
     echo -e "" >> $FILE
     git add $FILE
+    git add .valint.yaml
     AddTaggedCommit $MESSAGE
     git push origin main
     git push --tags
 }
 
+
 UpdateFile "bump-version - demo release" "README.md"
-echo "Updating $VERSION to $NEW_TAG"
+# echo "Updating $VERSION to $NEW_TAG"
