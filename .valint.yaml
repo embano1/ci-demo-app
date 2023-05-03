@@ -13,7 +13,7 @@ attest:
             format: attest-slsa
             identity:
               uris:
-                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/tags/v0.5.124
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/release.yaml@refs/tags/v0.5.125
             match:
               target_type: image
 
@@ -25,7 +25,7 @@ attest:
             format: attest
             identity:
               uris:
-                - https://github.com/scribe-security/ci-demo-app/.github/workflows/reusable-checkout-sign.yaml@refs/tags/v0.5.124
+                - https://github.com/scribe-security/ci-demo-app/.github/workflows/reusable-checkout-sign.yaml@refs/tags/v0.5.125
             match:
               target_type: git
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
@@ -37,7 +37,7 @@ attest:
         #     signed_commits: false
         #     match:
         #       git_url: https://github.com/scribe-security/ci-demo-app.git
-        #       git_tag: v0.5.124
+        #       git_tag: v0.5.125
         #       format: attest-cyclonedx-json
         #     admin:
         #     - mgasch@vmware.com
