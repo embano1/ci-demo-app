@@ -63,8 +63,6 @@ jobs:
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
-        env:
-          DEBUG: true
 
       - name: Verify Policy
         id: verify-policy
@@ -76,8 +74,6 @@ jobs:
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
-        env:
-          DEBUG: true
 
       - run: |
           mkdir evidence

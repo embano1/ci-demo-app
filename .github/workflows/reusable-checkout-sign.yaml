@@ -41,7 +41,7 @@ jobs:
         uses: scribe-security/action-bom@master
         with:
            target: git:.
-           verbose: 2
+           verbose: 1
            format: attest
            product-key: ${{ env.GITHUB_REPOSITORY }}
            scribe-enable: ${{ env.SCRIBE_ENABLE }}

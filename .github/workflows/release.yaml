@@ -146,7 +146,7 @@ jobs:
         with:
            target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:${{ env.KO_TAG }}
           #  target: ${{ env.KO_DOCKER_REPO }}/ci-demo-app:latest
-           verbose: 2
+           verbose: 1
            format: attest-slsa
            product-key: ${{ env.GITHUB_REPOSITORY }}
            scribe-enable: true
