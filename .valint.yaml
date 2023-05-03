@@ -36,8 +36,8 @@ attest:
           input:
             signed_commits: false
             match:
-              target_git_url: https://github.com/scribe-security/ci-demo-app.git
-              target_git_tag: v0.5.124
+              git_url: https://github.com/scribe-security/ci-demo-app.git
+              git_tag: v0.5.124
               format: attest-cyclonedx-json
             admin:
             - mgasch@vmware.com
