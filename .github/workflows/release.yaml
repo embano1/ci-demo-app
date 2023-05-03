@@ -25,59 +25,59 @@ jobs:
       scribe-client-id: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_ID  }}
       scribe-client-secret: ${{ secrets.SCRIBE_PROD_M2M_CLIENT_SECRET }} 
 
-  # call-unit-test:
-  #   needs: [call-checkout-sign]
-  #   uses: ./.github/workflows/go-unit-tests.yaml
+  call-unit-test:
+    needs: [call-checkout-sign]
+    uses: ./.github/workflows/go-unit-tests.yaml
 
-  # release:
-  #   name: Create Release
-  #   needs: [call-unit-test]
-  #   timeout-minutes: 10
-  #   strategy:
-  #     matrix:
-  #       go-version: ["1.17"]
-  #       platform: ["ubuntu-latest"]
-  #   runs-on: ${{ matrix.platform }}
-  #   permissions:
-  #     contents: write # To write to releases write is needed ....:(
-  #     id-token: write
+  release:
+    name: Create Release
+    needs: [call-unit-test]
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        go-version: ["1.17"]
+        platform: ["ubuntu-latest"]
+    runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: write # To write to releases write is needed ....:(
+      id-token: write
 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-  #     - name: debug 
-  #       if: always() 
-  #       run: |
-  #         git status
+      - name: debug 
+        if: always() 
+        run: |
+          git status
 
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version: ${{ matrix.go-version }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
            
-  #     - name: Create CHANGELOG for Release
-  #       if: ${{ always() }}
-  #       run: |
-  #         # build from vendor
-  #         go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
+      - name: Create CHANGELOG for Release
+        if: ${{ always() }}
+        run: |
+          # build from vendor
+          go build -mod=vendor github.com/git-chglog/git-chglog/cmd/git-chglog
 
-  #         # generate CHANGELOG for this Github release tag only
-  #         ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
+          # generate CHANGELOG for this Github release tag only
+          ./git-chglog -o RELEASE_CHANGELOG.md $(basename "${{ github.ref }}" )
 
-  #     - name: GoReleaser
-  #       if: ${{ always() }}
-  #       uses: goreleaser/goreleaser-action@v2
-  #       with:
-  #         args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: GoReleaser
+        if: ${{ always() }}
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   images:
-    # needs: release
-    needs: [call-checkout-sign]
+    needs: release
+    # needs: [call-checkout-sign]
     if: ${{ always() }}
     name: Release ko Artifact and Docker Image
     timeout-minutes: 10

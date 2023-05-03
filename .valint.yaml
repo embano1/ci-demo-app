@@ -30,19 +30,19 @@ attest:
               target_type: git
               target_git_url: https://github.com/scribe-security/ci-demo-app.git
                     
-        - name: git_owners
-          type: git-scm-rule 
-          enable: true
-          input:
-            signed_commits: false
-            match:
-              git_url: https://github.com/scribe-security/ci-demo-app.git
-              git_tag: v0.5.124
-              format: attest-cyclonedx-json
-            admin:
-            - mgasch@vmware.com
-            - mdstrauss91@gmail.com
-            specific:
-            - path: "CHANGELOG.md"
-              owners:
-              - embano1@users.noreply.github.com
+        # - name: git_owners
+        #   type: git-scm-rule 
+        #   enable: true
+        #   input:
+        #     signed_commits: false
+        #     match:
+        #       target_git_url: https://github.com/scribe-security/ci-demo-app.git
+        #       target_git_tag: v0.5.124
+        #       format: attest-cyclonedx-json
+        #     admin:
+        #     - mgasch@vmware.com
+        #     - mdstrauss91@gmail.com
+        #     specific:
+        #     - path: "CHANGELOG.md"
+        #       owners:
+        #       - embano1@users.noreply.github.com
