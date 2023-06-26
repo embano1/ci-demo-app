@@ -127,7 +127,7 @@ jobs:
           go-version: ${{ matrix.go-version }}
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@1a22e17968bb5f9192b82a39d3ffb322627f5169 # v2.2.0
+        uses: sigstore/cosign-installer@d13028333d784fcc802b67ec924bcebe75aa0a5f # v2.2.0
 
       - name: Setup ko
         # will install latest ko version and by default login/configure for ghcr.io
