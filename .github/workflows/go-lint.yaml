@@ -24,4 +24,4 @@ jobs:
         fetch-depth: 1
         
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@5f1fec7010f6ae3b84ea4f7b2129beb8639b564f
+      uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc
