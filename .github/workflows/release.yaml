@@ -52,7 +52,7 @@ jobs:
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
         with:
-          args: release --rm-dist --release-notes RELEASE_CHANGELOG.md
+          args: release --clean --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}

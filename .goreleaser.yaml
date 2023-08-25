@@ -24,11 +24,6 @@ archives:
     builds:
       - demo-app
     name_template: "demo-app_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-    replacements: &replacements
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      amd64: x86_64
     format_overrides:
       - goos: windows
         format: zip
@@ -52,7 +47,7 @@ brews:
   - name: demo-app
     ids:
       - demo-app
-    tap:
+    repository:
       owner: embano1
       name: homebrew-ci-demo-app
       # needs repo permissions on target, eg using PAT

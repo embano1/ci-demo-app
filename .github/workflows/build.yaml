@@ -64,7 +64,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v4
         with:
           # no push
-          args: release --rm-dist --snapshot --release-notes RELEASE_CHANGELOG.md
+          args: release --clean --snapshot --release-notes RELEASE_CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
         with:
           name: dist
           path: |
-            dist/demo-app*x86_64*.tar.gz
+            dist/demo-app*.tar.gz
             dist/checksums.txt
           retention-days: 1
 
