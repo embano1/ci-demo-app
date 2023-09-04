@@ -1,4 +1,85 @@
 
+<a name="v0.4.1"></a>
+## [Release v0.4.1](https://github.com/embano1/ci-demo-app/compare/v0.4.0...v0.4.1)
+
+> Release Date: 2023-09-04
+
+### 🐞 Fix
+
+- [1d6297d]	bump go version in release workflow
+
+### 🧹 Chore
+
+- [351fa54]	update goreleaser config
+- [236da3f]	update deps
+- [7716e6b]	Update deps
+- [6fa442e]	Update deps
+- [2364c0c]	Update dependencies
+- [fa577ee]	Bump dependencies
+- [67ee4da]	Update dependencies
+- [0b9caa2]	Update dependencies
+- [d9fc2a6]	Remove Docker login action (#98) 
+- [b6b82bc]	Use actions/cache (#94) 
+- [9317978]	Add golangci-lint (#83) 
+- [d4ab144]	Remove vendoring (#80) 
+
+### ⚠️ BREAKING
+
+### 📖 Commits
+
+- [1d6297d]	fix: bump go version in release workflow
+- [9120d0f]	chore(deps): Bump sigstore/cosign-installer from 3.1.1 to 3.1.2
+- [351fa54]	chore: update goreleaser config
+- [236da3f]	chore: update deps
+- [2d74fdb]	chore(deps): Bump golangci/golangci-lint-action from 3.5.0 to 3.7.0
+- [c4f9fec]	chore(deps): Bump sigstore/cosign-installer
+- [35b21e5]	chore(deps): Bump sigstore/cosign-installer
+- [ae31b56]	chore(deps): Bump golangci/golangci-lint-action from 3.4.0 to 3.5.0
+- [f1538c8]	chore(deps): Bump chuhlomin/render-template from 1.5 to 1.7
+- [0170c7a]	Update check-wip.yaml
+- [b181f62]	chore(deps): Bump sigstore/cosign-installer from 2.5.0 to 3.0.2
+- [3e538a1]	chore(deps): Bump peter-evans/create-or-update-comment from 2 to 3
+- [5cf1f74]	chore(deps): Bump peter-evans/create-pull-request from 4 to 5
+- [f74d8c9]	chore(deps): Bump actions/stale from 7 to 8
+- [8bd84a0]	chore(deps): Bump actions/setup-go from 3 to 4
+- [7716e6b]	chore: Update deps
+- [2da8059]	chore(deps): Bump actions/dependency-review-action from 2 to 3
+- [f27c724]	chore(deps): Bump andstor/file-existence-action from 1 to 2
+- [eaeeced]	chore(deps): Bump goreleaser/goreleaser-action from 3 to 4
+- [24ee30a]	chore(deps): Bump golangci/golangci-lint-action from 3.2.0 to 3.4.0
+- [c16db2b]	chore(deps): Bump actions/stale from 5 to 7
+- [85f8689]	chore(deps): Bump imjasonh/setup-ko from 0.5 to 0.6
+- [6fa442e]	chore: Update deps
+- [d4b1cea]	chore(deps): Bump imjasonh/setup-ko from 0.4 to 0.5
+- [0b018ef]	chore(deps): Bump sigstore/cosign-installer from 2.4.1 to 2.5.0
+- [2364c0c]	chore: Update dependencies
+- [9fc4cec]	chore(deps): Bump sigstore/cosign-installer from 2.4.0 to 2.4.1
+- [0823920]	chore(deps): Bump actions/dependency-review-action from 1 to 2
+- [aa8bfe2]	chore(deps): Bump sigstore/cosign-installer from 2.3.0 to 2.4.0
+- [fa577ee]	chore: Bump dependencies
+- [8c7e136]	chore(deps): Bump goreleaser/goreleaser-action from 2 to 3
+- [b347f93]	chore(deps): Bump chuhlomin/render-template from 1.2 to 1.5
+- [3ed7a60]	chore(deps): Bump golangci/golangci-lint-action from 3.1.0 to 3.2.0
+- [f8fe076]	chore(deps): Bump sigstore/cosign-installer from 2.2.0 to 2.3.0
+- [8df9086]	chore(deps): Bump github/codeql-action from 1 to 2
+- [bb1b645]	docs: Update README (#79) 
+- [67ee4da]	chore: Update dependencies
+- [0b9caa2]	chore: Update dependencies
+- [d9fc2a6]	chore: Remove Docker login action (#98) 
+- [b6b82bc]	chore: Use actions/cache (#94) 
+- [9e74ff6]	chore(deps): Bump go.uber.org/zap from 1.16.0 to 1.21.0
+- [05a742e]	chore(deps): Bump github.com/hashicorp/go-retryablehttp
+- [9317978]	chore: Add golangci-lint (#83) 
+- [a6ac2a9]	chore(deps): Bump actions/setup-go from 2 to 3
+- [f5f7bbf]	chore(deps): Bump peter-evans/create-or-update-comment from 1 to 2
+- [5efb0ae]	chore(deps): Bump actions/stale from 3 to 5
+- [126b428]	fixup! chore: Remove vendoring
+- [d4ab144]	chore: Remove vendoring (#80) 
+- [2a7a18f]	chore(deps): Bump actions/upload-artifact from 2 to 3
+- [afbef9b]	chore(deps): Bump codecov/codecov-action from 1 to 3
+- [89e4085]	chore(deps): Bump peter-evans/create-pull-request from 3 to 4
+- [b159e3f]	chore(deps): Bump bruceadams/get-release from 1.2.0 to 1.2.3
+
 <a name="v0.4.0"></a>
 ## [Release v0.4.0](https://github.com/embano1/ci-demo-app/compare/v0.3.4...v0.4.0)
 
