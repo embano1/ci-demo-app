@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: ["1.18"]
+        go-version: ["1.19"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
 
@@ -101,7 +101,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: ["1.18"]
+        go-version: ["1.19"]
         platform: ["ubuntu-latest"]
     runs-on: ${{ matrix.platform }}
 
