@@ -51,7 +51,7 @@ jobs:
           retention-days: 1
 
       - name: GoReleaser
-        uses: goreleaser/goreleaser-action@v4
+        uses: goreleaser/goreleaser-action@v5
         with:
           # no push
           args: release --clean --snapshot --release-notes RELEASE_CHANGELOG.md
