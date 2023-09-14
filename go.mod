@@ -10,7 +10,7 @@ require (
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.28.2
 	k8s.io/apimachinery v0.28.2
-	k8s.io/client-go v0.28.1
+	k8s.io/client-go v0.28.2
 	knative.dev/pkg v0.0.0-20230914012755-978068686674
 )
 
