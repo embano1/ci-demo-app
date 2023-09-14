@@ -9,7 +9,7 @@ require (
 	golang.org/x/sync v0.3.0
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.28.1
-	k8s.io/apimachinery v0.28.1
+	k8s.io/apimachinery v0.28.2
 	k8s.io/client-go v0.28.1
 	knative.dev/pkg v0.0.0-20230821102121-81e4ee140363
 )
