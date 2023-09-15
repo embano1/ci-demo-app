@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/kelseyhightower/envconfig v1.4.0
-	go.uber.org/zap v1.25.0
+	go.uber.org/zap v1.26.0
 	golang.org/x/sync v0.3.0
 	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.28.2
@@ -15,7 +15,6 @@ require (
 )
 
 require (
-	github.com/benbjohnson/clock v1.3.5 // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
