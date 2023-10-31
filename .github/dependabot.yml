@@ -8,7 +8,7 @@ updates:
   groups:
     kubernetes:
       patterns:
-      - "k8s.io"
+      - "k8s.io/*"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
