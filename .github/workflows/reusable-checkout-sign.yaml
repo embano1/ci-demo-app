@@ -28,6 +28,8 @@ jobs:
 
       - name: Set Scribe Enable
         run: |
+          export KO_TAG=$(basename "${{ github.ref }}")
+          echo "KO_TAG=$KO_TAG" >> $GITHUB_ENV
           if [ "${{ secrets.scribe-client-id }}" == "" ]; then
             echo "Scribe is disabled"
             echo "SCRIBE_ENABLE=false" >> "${GITHUB_ENV}"
@@ -41,9 +43,10 @@ jobs:
         uses: scribe-security/action-bom@master
         with:
            target: git:.
-           verbose: 1
+           verbose: 2
            format: attest
            product-key: ${{ env.GITHUB_REPOSITORY }}
+           product-version: ${{ env.KO_TAG }}
            scribe-enable: ${{ env.SCRIBE_ENABLE }}
            scribe-client-id: ${{ secrets.scribe-client-id }}
            scribe-client-secret: ${{ secrets.scribe-client-secret }}
