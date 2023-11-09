@@ -3,7 +3,7 @@ module github.com/embano1/ci-demo-app
 go 1.17
 
 require (
-	github.com/hashicorp/go-retryablehttp v0.7.4
+	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/sync v0.5.0
