@@ -8,9 +8,9 @@ require (
 	go.uber.org/zap v1.26.0
 	golang.org/x/sync v0.5.0
 	gotest.tools v2.2.0+incompatible
-	k8s.io/api v0.28.3
-	k8s.io/apimachinery v0.28.3
-	k8s.io/client-go v0.28.3
+	k8s.io/api v0.28.4
+	k8s.io/apimachinery v0.28.4
+	k8s.io/client-go v0.28.4
 	knative.dev/pkg v0.0.0-20231023152443-b7a62c0b7003
 )
 
